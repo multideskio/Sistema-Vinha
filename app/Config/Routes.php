@@ -1,0 +1,118 @@
+<?php
+
+use CodeIgniter\Router\RouteCollection;
+
+/**
+ * @var RouteCollection $routes
+ */
+$routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
+$routes->get('sair', 'Home::sair');
+$routes->get('teste', 'Home::teste');
+
+
+/*$routes->get('pix', 'Home::pix');
+$routes->get('debito', 'Home::debito');
+$routes->get('credito', 'Home::credito');
+$routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'Home::teste');*/
+
+$routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
+    $routes->resource('administracao'); //['filter' => 'logged']
+    $routes->resource('emails', ['filter' => 'logged']);
+
+    
+    $routes->get('transacoes/user', 'Transacoes::usuario', ['filter' => 'logged']);
+
+    $routes->resource('transacoes', ['filter' => 'logged']);
+
+    $routes->get('gerentes/list', 'Gerentes::list');
+    $routes->resource('gerentes', ['filter' => 'logged']);
+
+    $routes->get('igrejas/list', 'Igrejas::list');
+    $routes->resource('igrejas', ['filter' => 'logged']);
+
+    $routes->resource('logs', ['filter' => 'logged']);
+
+    $routes->get('regioes/list', 'Regioes::list');
+    $routes->resource('regioes', ['filter' => 'logged']);
+
+    $routes->get('supervisores/list', 'Supervisores::list');
+    $routes->resource('supervisores', ['filter' => 'logged']);
+
+
+    $routes->resource('pastores', ['filter' => 'logged']);
+
+    $routes->get('cielo/cron', 'Cielo::cron');
+    $routes->post('cielo/credit-card-charge', 'Cielo::createCreditCardCharge');
+    $routes->post('cielo/debit-card-charge', 'Cielo::createDebitCardCharge');
+    $routes->post('cielo/boleto-charge', 'Cielo::createBoletoCharge');
+    $routes->post('cielo/pix-charge', 'Cielo::createPixCharge');
+    $routes->get('cielo/payment-status/(:segment)', 'Cielo::checkPaymentStatus/$1');
+
+    $routes->resource('gateways', ['filter' => 'logged']); //['filter' => 'logged']
+
+
+    //Acçoes de login e usuários  
+    $routes->get('usuarios/user', 'Usuarios::userData', ['filter' => 'logged']);
+    $routes->resource('usuarios', ['filter' => ['logged', 'admin']]); //, ['filter' => 'logged']
+
+    $routes->get('google', 'Usuarios::google');
+    $routes->match(['post', 'get'], 'authenticate', 'Usuarios::authenticate');
+    $routes->get('confirmacao/(:any)', 'Usuarios::confirmacao/$1');
+    
+    //(:any)
+    $routes->resource('whatsapp', ['filter' => 'logged']);
+});
+
+
+//Acesso de quem administra o sistema
+$routes->group('admin', ['filter' => ['logged', 'admin']], static function ($routes) {
+    $routes->get('',             'Admin::index');
+    $routes->get('home',         'Admin::index');
+    $routes->get('regiao',       'Admin::regiao');
+    $routes->get('supervisores', 'Admin::supervisores');
+    $routes->get('gerentes',     'Admin::gerentes');
+    $routes->get('pastores',     'Admin::pastores');
+    $routes->get('igrejas',      'Admin::igrejas');
+    $routes->get('usuarios',     'Admin::usuarios');
+
+    $routes->get('recebimento',  'Admin::recebimento');
+    $routes->get('retorno',      'Admin::retorno');
+    $routes->get('remessa',      'Admin::remessa');
+
+    $routes->get('gateways',      'Admin::gateways');
+});
+
+
+
+
+//Acesso de quem administra uma supervisao
+$routes->group('supervisao', ['filter' => 'supervisor'], static function ($routes) {
+    $routes->get('', 'Supervisor::index');
+});
+
+
+
+//Acesso mais baixo de quem dizima
+$routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
+    $routes->get('', 'Igreja::index');
+    $routes->get('pagamentos', 'Igreja::pagamentos');
+    $routes->get('transacoes', 'Igreja::transacoes');
+});
+
+
+$routes->group('gerente', ['filter' => 'gerente'],static function ($routes) {
+    $routes->get('', 'Gerente::index');
+});
+
+
+
+
+//Login
+$routes->group('login', static function ($routes) {
+    $routes->get('', 'Login::index');
+    $routes->get('nova-conta', 'Login::novaconta');
+    $routes->get('reset', 'Login::index');
+
+    //Confirma
+    $routes->get('confirmacao/(:any)', 'Login::confirmacao/$1');
+});
