@@ -19,7 +19,8 @@ class Cors implements FilterInterface
         $response = service('response');
 
         // Lista de origens permitidas
-        $allowedOrigins = ['http://localhost:8080','https://g.multidesk.io/'];
+        $allowedOrigins = ['http://localhost:8080','https://g.multidesk.io', 'https://multidesk.io'];
+        
         $origin = $request->getServer('HTTP_ORIGIN') ?? '';
 
         // Se a origem não é permitida e não é uma requisição do mesmo domínio, retornar 403
