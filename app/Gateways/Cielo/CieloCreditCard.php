@@ -39,10 +39,12 @@ class CieloCreditCard extends CieloBase
     {
         try {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
+            
             $endPoint = '/1/sales/';
+            
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
 
-            $this->saveTransactionCredit($params, $response, $descricao, 'Crédito', $desc_l);
+            $this->saveTransactionCreditCard($params, $response, $descricao, 'Crédito', $desc_l);
 
             if(!$response['Payment']['ReturnMessage'] == 'Operation Successful'){
                 throw new Exception('Tranzação não autorizada', 1);
@@ -53,6 +55,4 @@ class CieloCreditCard extends CieloBase
             throw new Exception("Erro ao criar cobrança de cartão de crédito: " . $e->getMessage());
         }
     }
-
-    
 }

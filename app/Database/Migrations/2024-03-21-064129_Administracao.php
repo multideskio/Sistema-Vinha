@@ -102,6 +102,41 @@ class Administracao extends Migration
                 'null' => true,
                 'COMMENT' => 'Evolution API'
             ],
+            'smtp_host' => [
+                'type' => 'VARCHAR',
+                'constraint' => '60',
+                'null' => true
+            ],
+            'smtp_user' => [
+                'type' => 'VARCHAR',
+                'constraint' => '60',
+                'null' => true
+            ],
+            'smtp_pass' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+                'null' => true
+            ],
+            'smtp_port' => [
+                'type' => 'VARCHAR',
+                'constraint' => '5',
+                'null' => true
+            ],
+            'smtp_crypt' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+                'null' => true
+            ],
+            'google_client_id' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+                'null' => true
+            ],
+            'google_client_secret' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+                'null' => true
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

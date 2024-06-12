@@ -15,7 +15,7 @@
                             <a class="nav-link" id="custom-v-pills-profile-tab" data-bs-toggle="pill" href="#custom-v-pills-profile" role="tab" aria-controls="custom-v-pills-profile" aria-selected="false">
                                 <i class=" ri-bank-card-line d-block fs-20 mb-1"></i> CARTÃO DE CRÉDITO
                             </a>
-                          <!--  <a class="nav-link" id="custom-v-pills-messages-tab" data-bs-toggle="pill" href="#custom-v-pills-messages" role="tab" aria-controls="custom-v-pills-messages" aria-selected="false">
+                            <!--  <a class="nav-link" id="custom-v-pills-messages-tab" data-bs-toggle="pill" href="#custom-v-pills-messages" role="tab" aria-controls="custom-v-pills-messages" aria-selected="false">
                                 <i class="ri-mail-line d-block fs-20 mb-1"></i> CARTÃO DE DÉBITO
                             </a> -->
                         </div>
@@ -53,6 +53,10 @@
                                                 <option value="dizimo">Dízimo</option>
                                                 <option value="oferta">Oferta</option>
                                             </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="descLongaPix">Caso seja necessário, dê mais detalhes sobre esse pagamento</label>
+                                            <textarea class="form-control form-control-lg" name="descPix" id="descLongaPix" rows="3" placeholder="Ex: Oferta missões"></textarea>
                                         </div>
                                         <div class="mt-2 mb-4">
                                             <button class="btn btn-lg btn-primary" type="submit">GERAR PIX</button>
@@ -117,7 +121,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="descLonga">Caso seja necessário, dê mais detalhes sobre esse pagamento</label>
-                                                    <textarea class="form-control form-control-lg" name="desc" id="descLonga" rows="3" placeholder="Ex: Oferta missões"></textarea>
+                                                <textarea class="form-control form-control-lg" name="desc" id="descLonga" rows="3" placeholder="Ex: Oferta missões"></textarea>
                                             </div>
                                             <div class="mb-3">
                                                 <button class="btn btn-primary btn-lg w-100" type="submit">PAGAR AGORA</button>
@@ -134,7 +138,7 @@
                                             <div class="card-body">
                                                 <div class="card-wrapper mb-3"></div>
                                                 <div class="mt-3 text-center">
-                                                    <img src="/assets/images/sistema/cards.png" class="img-fluid rounded-top" alt="" width="250px"/>
+                                                    <img src="/assets/images/sistema/cards.png" class="img-fluid rounded-top" alt="" width="250px" />
 
                                                 </div>
                                             </div>
@@ -151,7 +155,7 @@
                         <div class="tab-pane fade" id="custom-v-pills-messages" role="tabpanel" aria-labelledby="custom-v-pills-messages-tab">
                             <div class="d-flex mb-4">
                                 <div class="flex-shrink-0">
-                                    <img src="assets/images/small/img-7.jpg" alt="" width="150" class="rounded">
+                                    <img src="/assets/images/small/img-7.jpg" alt="" width="150" class="rounded">
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <p class="mb-0">Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin. Cred vinyl keffiyeh DIY salvia PBR.</p>
@@ -162,7 +166,7 @@
                                     <p class="mb-0">They all have something to say beyond the words on the page. They can come across as casual or neutral, exotic or graphic. That's why it's important to think about your message, then choose a font that fits. Cosby sweater eu banh mi, qui irure terry richardson ex squid.</p>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <img src="assets/images/small/img-8.jpg" alt="" width="150" class="rounded">
+                                    <img src="/assets/images/small/img-8.jpg" alt="" width="150" class="rounded">
                                 </div>
                             </div>
                         </div>

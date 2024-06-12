@@ -2,8 +2,14 @@
 
 namespace App\Gateways\Cielo;
 
+use App\Models\AdminModel;
 use App\Models\GatewaysModel;
+use App\Models\GerentesModel;
+use App\Models\IgrejasModel;
+use App\Models\PastoresModel;
+use App\Models\SupervisoresModel;
 use App\Models\TransacoesModel;
+use App\Models\UsuariosModel;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
@@ -197,11 +203,54 @@ class CieloBase
                 if (count($rows)) {
                     $row = $rows[0];
                     $status = $this->transactionsModel->update($row['id'], [
-                        'data_pagamento' => $response['Payment']['CapturedDate'], 'log' => null
+                        'data_pagamento' => $response['Payment']['CapturedDate'],
+                        'status' => 1,
+                        'status_text' => 'Pago'
                     ]);
+
                     if ($status === false) {
                         return $this->transactionsModel->errors();
                     }
+                };
+            } catch (\Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+        };
+
+        return [
+            'paymentId' => $response['Payment']['PaymentId'],
+            'status' => $response['Payment']['Status'],
+            'statusName' => $this->getPaymentStatusName($response['Payment']['Status']),
+            'full' => $response
+        ];
+    }
+
+    /**
+     * Handles the check payment status response.
+     *
+     * @param array $response
+     * @return array
+     */
+    protected function handleCheckPaymentStatusResponsePix(array $response): array
+    {
+        if ($response['Payment']['Status'] === 2) {
+            try {
+                $rows = $this->transactionsModel->where('id_transacao', $response['Payment']['PaymentId'])->findAll();
+                if (count($rows)) {
+                    $row = $rows[0];
+                    $status = $this->transactionsModel->update($row['id'], [
+                        'data_pagamento' => $response['Payment']['CapturedDate'],
+                        'status' => 1,
+                        'status_text' => 'Pago'
+                    ]);
+
+                    if ($status === false) {
+                        return $this->transactionsModel->errors();
+                    }
+
+                    $whatsApp = new CieloWhatsApp;
+                    $dataClient = $this->buscaDadosMembro($rows);
+                    $whatsApp->pago($dataClient, '');
                 };
             } catch (\Exception $e) {
                 throw new Exception($e->getMessage());
@@ -245,7 +294,7 @@ class CieloBase
      * @param array $response
      * @return bool
      */
-    protected function saveTransactionPix(array $params, array $response, string $descricao, string $tipo, string $desc_l = ''): bool
+    protected function saveTransactionPix(array $params, array $response, string $descricao, string $tipo, string $desc_l): bool
     {
 
         $data = [
@@ -275,23 +324,126 @@ class CieloBase
      * @param array $response
      * @return bool
      */
-    protected function saveTransactionCredit(array $params, array $response, string $descricao, string $tipo, string $desc_l = null): bool
+    protected function saveTransactionCreditCard(array $params, array $response, string $descricao, string $tipo, string $desc_l = null): bool
     {
 
-        if($response['Payment']['ReturnMessage'] == 'Operation Successful'){
+        if ($response['Payment']['ReturnMessage'] == 'Operation Successful') {
             $status_text = 'Pago';
             $status = 1;
             $datePg = $response['Payment']['ReceivedDate'];
-        }elseif($response['Payment']['ReturnMessage'] == 'Transacao autorizada'){
+
+            if (session('data')['tipo'] == 'pastor') {
+                $builderPerfil = new PastoresModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'igreja') {
+                $builderPerfil = new IgrejasModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'supervisor') {
+                $builderPerfil = new SupervisoresModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'gerente') {
+                $builderPerfil = new GerentesModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'superadmin') {
+                $builderPerfil = new AdminModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            $sendCieloWhatsApp = new CieloWhatsApp;
+
+            $sendCieloWhatsApp->pago($rowPastor, '');
+        } elseif ($response['Payment']['ReturnMessage'] == 'Transacao autorizada') {
             $status_text = 'Pago';
             $status = 1;
             $datePg = $response['Payment']['ReceivedDate'];
-        }else{
-            $status_text = 'Falha';
+
+            if (session('data')['tipo'] == 'pastor') {
+                $builderPerfil = new PastoresModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'igreja') {
+                $builderPerfil = new IgrejasModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'supervisor') {
+                $builderPerfil = new SupervisoresModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'gerente') {
+                $builderPerfil = new GerentesModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            if (session('data')['tipo'] == 'superadmin') {
+                $builderPerfil = new AdminModel();
+                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            }
+
+            $sendCieloWhatsApp = new CieloWhatsApp;
+
+            $sendCieloWhatsApp->pago($rowPastor, '');
+        } else {
+            $status_text = 'Cancelado';
             $status = 0;
             $datePg = null;
         }
 
+        $data = [
+            'id_pedido' => $response['MerchantOrderId'],
+            'id_adm' => session('data')['idAdm'],
+            'id_user' => session('data')['id'],
+            'id_cliente' => session('data')['id_perfil'],
+            'id_transacao' => $response['Payment']['PaymentId'],
+            'gateway' => 'cielo',
+            'valor' => centavosParaReais($response['Payment']['Amount']),
+            'log' => json_encode($response),
+            'descricao' => $descricao,
+            'tipo_pagamento' => $tipo,
+            'status_text' => $status_text,
+            'status' => $status,
+            'data_pagamento' => $datePg,
+            'descricao_longa' => $desc_l
+        ];
+
+        if (!$this->transactionsModel->where('id_transacao', $response['Payment']['PaymentId'])->countAllResults()) {
+            $this->transactionsModel->insert($data);
+        }
+        return true;
+    }
+    /**
+     * Saves the transaction.
+     *
+     * @param array $params
+     * @param array $response
+     * @return bool
+     */
+    protected function saveTransactionCredit(array $params, array $response, string $descricao, string $tipo, string $desc_l = null): bool
+    {
+
+        if ($response['Payment']['ReturnMessage'] == 'Operation Successful') {
+            $status_text = 'Pago';
+            $status = 1;
+            $datePg = $response['Payment']['ReceivedDate'];
+        } elseif ($response['Payment']['ReturnMessage'] == 'Transacao autorizada') {
+            $status_text = 'Pago';
+            $status = 1;
+            $datePg = $response['Payment']['ReceivedDate'];
+        } else {
+            $status_text = 'Falha';
+            $status = 0;
+            $datePg = null;
+        }
         $data = [
             'id_pedido' => $response['MerchantOrderId'],
             'id_adm' => session('data')['idAdm'],
@@ -331,7 +483,72 @@ class CieloBase
             $endPoint = "/1/sales/{$paymentId}";
             return $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponse', true);
         } catch (Exception $e) {
-            throw new Exception("Erro ao verificar status do pagamento: " . $e->getMessage());
+            // Logar o erro e retornar uma resposta de erro padrão
+            log_message('error', "Erro ao verificar status do pagamento para ID {$paymentId}: " . $e->getMessage());
+            return [
+                'status' => 'error',
+                'message' => "Erro ao verificar status do pagamento: " . $e->getMessage(),
+                'statusName' => 'Unknown', // Status default para tratar como erro desconhecido
+                'full' => [] // Dados adicionais vazios
+            ];
+        }
+    }
+
+
+    /**
+     * Checks the payment status.
+     *
+     * @param string $paymentId
+     * @return array
+     * @throws Exception
+     */
+    public function checkPaymentStatusPix(string $paymentId): array
+    {
+        try {
+            if (empty($paymentId)) {
+                throw new Exception('O ID do pagamento é obrigatório.');
+            }
+            $endPoint = "/1/sales/{$paymentId}";
+            return $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponsePix', true);
+        } catch (Exception $e) {
+            // Logar o erro e retornar uma resposta de erro padrão
+            log_message('error', "Erro ao verificar status do pagamento para ID {$paymentId}: " . $e->getMessage());
+            return [
+                'status' => 'error',
+                'message' => "Erro ao verificar status do pagamento: " . $e->getMessage(),
+                'statusName' => 'Unknown', // Status default para tratar como erro desconhecido
+                'full' => [] // Dados adicionais vazios
+            ];
+        }
+    }
+
+
+    private function buscaDadosMembro(array $client)
+    {
+        $usuarios = new UsuariosModel();
+        $build = $usuarios->find($client[0]['id_user']);
+        if ($build['tipo'] == 'pastor') {
+            $buildClient = new PastoresModel();
+            return $buildClient->find($build['id_perfil']);
+        }
+        if ($build['tipo'] == 'igreja') {
+            $buildClient = new IgrejasModel();
+            return $buildClient->find($build['id_perfil']);
+        }
+
+        if ($build['tipo'] == 'supervisor') {
+            $buildClient = new SupervisoresModel();
+            return $buildClient->find($build['id_perfil']);
+        }
+
+        if ($build['tipo'] == 'gerente') {
+            $buildClient = new GerentesModel();
+            return $buildClient->find($build['id_perfil']);
+        }
+
+        if ($build['tipo'] == 'superadmin') {
+            $buildClient = new AdminModel();
+            return $buildClient->find($build['id_perfil']);
         }
     }
 }

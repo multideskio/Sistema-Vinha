@@ -106,12 +106,13 @@ class Cielo extends ResourceController
         $nome      = $this->request->getPost('nome');
         $valor     = intval(limparString($this->request->getPost('valor')));
         $descricao = $this->request->getPost('tipo');
+        $desc      = $this->request->getPost('descPix');
 
         try {
             if (!intval(limparString($valor))) {
                 throw new Exception("O valor não foi informado.");
             }
-            $response = $this->pixGateway->pix($nome, $valor, $descricao);
+            $response = $this->pixGateway->pix($nome, $valor, $descricao, $desc);
             return $this->respond($response, 200);
         } catch (Exception $e) {
             return $this->fail([
@@ -124,7 +125,7 @@ class Cielo extends ResourceController
     public function checkPaymentStatus($paymentId)
     {
         try {
-            $response = $this->cieloBase->checkPaymentStatus($paymentId);
+            $response = $this->cieloBase->checkPaymentStatusPix($paymentId);
             return $this->respond($response, 200);
         } catch (Exception $e) {
             return $this->fail([

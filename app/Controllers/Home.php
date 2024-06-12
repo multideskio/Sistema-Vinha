@@ -4,9 +4,11 @@ namespace App\Controllers;
 
 use App\Gateways\Cielo\GatewayCielo;
 use App\Libraries\WhatsappLibraries;
+use App\Models\AjudaModel;
 use App\Models\ConfigMensagensModel;
 use App\Models\GerentesModel;
 use Exception;
+use CodeIgniter\I18n\Time;
 
 class Home extends BaseController
 {
@@ -23,6 +25,41 @@ class Home extends BaseController
     {
         return view('login/login', $this->data);
     }
+
+    public function busca_ajuda(){
+        $modelAjuda = new AjudaModel();
+        if($this->request->getGet('search')){
+            $rows = $modelAjuda->groupStart()
+            ->like('titulo', $this->request->getGet('search'))
+            ->orLike('tags', $this->request->getGet('search'))
+            ->orLike('conteudo',$this->request->getGet('search'))
+            ->groupEnd()
+            ->findAll();
+            $this->data['result'] = $rows; 
+        }else{
+
+            $this->data['result'] = $modelAjuda->findAll();
+        }
+
+        helper('text');
+        return view('ajuda/home', $this->data);
+
+    }
+
+    public function ajuda($slug){
+        $modelAjuda = new AjudaModel();
+        $row = $modelAjuda->where('slug', $slug)->findAll(1);
+        if(!count($row) == 1){
+            return redirect()->to(site_url('ajuda'));
+        }
+
+        $this->data['result'] = $row[0] ;
+        
+        return view('ajuda/post', $this->data);
+    
+    }
+
+
 
     public function sair()
     {

@@ -125,19 +125,31 @@
                     $('.noresult').hide(); // Oculta a mensagem de 'noresult' se houver dados
                 }
                 $.each(data.rows, function(index, row) {
-                    var newRow = `<tr>
-                    <td>${row.id}</td>
-                    <td>${row.nome}</td>
-                    <td>${row.descricao_lg ? row.descricao_lg : row.desc }</td>
-                    <td>${row.data_criado}</td>
-                    <td>${row.data_pag ? row.data_pag : ''}</td>
-                    <td>${row.valor}</td>
-                    <td>${row.status == 'Pago' ? '<span class="badge bg-success">'+row.status+'</span>' : '<span class="badge bg-danger">'+row.status+'</span>'}</td>
-                    <td>${row.forma_pg}</td>
+                    var status;
+                    if (row.status == 'Pago') {
+                        status = `<span class="badge bg-success">${row.status}</span>`;
+                    } else if (row.status == 'Cancelado') {
+                        status = `<span class="badge bg-danger">${row.status}</span>`;
+                    } else if (row.status == 'Reembolsado'){
+                        status = `<span class="badge bg-dark">${row.status}</span>`;
+                    } else {
+                        status = `<span class="badge bg-warning">${row.status}</span>`;
+                    }
+
+                    var newRow = `
+                    <tr>
+                        <td>${row.id}</td>
+                        <td>${row.nome}</td>
+                        <td>${row.descricao_lg ? row.descricao_lg : row.desc}</td>
+                        <td>${row.data_criado}</td>
+                        <td>${row.data_pag ? row.data_pag : ''}</td>
+                        <td>${row.valor}</td>
+                        <td>${status}</td>
+                        <td>${row.forma_pg}</td>
                     </tr>
-                    `;
+                `;
                     $('#tabela-dados').append(newRow);
-                })
+                });
 
                 $("#pager").html(data.pager);
             })

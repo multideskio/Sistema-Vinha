@@ -3,6 +3,7 @@
         //console.log(data);
 
         atualizarStatusPix(data.Payment.PaymentId);
+
         $("#qrCodeGer").removeAttr('src');
         $("#qrCodeGer").attr("src", "data:image/png;base64," + data.Payment.QrCodeBase64Image)
         $("#copiaColaPix").val(data.Payment.QrCodeString);
@@ -35,7 +36,7 @@
                 //console.log(data)
                 if (data.status !== 2) {
                     setTimeout(() => {
-                        atualizarStatus(code);
+                        atualizarStatusPix(code);
                     }, 10000);
                 } else {
                     if (data.status === 2) {
@@ -58,8 +59,6 @@
 
 <script>
     $(document).ready(function() {
-
-
         $('#formPix').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 // Executar ações antes de enviar o formulário (se necessário)
@@ -98,9 +97,12 @@
                 }
             }
         });
+    });
+</script>
 
 
-
+<script>
+    $(document).ready(function() {
         $('.formCredit').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 // Executar ações antes de enviar o formulário (se necessário)
@@ -129,9 +131,9 @@
                         confirmButtonClass: 'btn btn-primary w-xs mt-2',
                         buttonsStyling: false,
                     });
+
                     $('.formCredit')[0].reset();
                 } else {
-
                     Swal.fire({
                         title: "O pagamento não foi aprovado!",
                         text: `${responseText.Payment.ReturnMessage}`,
@@ -141,7 +143,6 @@
                     });
                 }
                 //exibirMensagem('success', 'Sucesso: ' + responseText);
-
             },
             error: function(xhr, status, error) {
                 // Verifica se a resposta é um JSON
@@ -160,7 +161,6 @@
         });
     });
 </script>
-
 
 <script>
     function exibirMensagem(type, error) {
