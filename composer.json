@@ -5,6 +5,7 @@
     "type": "project",
     "require": {
         "php": "^7.4 || ^8.0",
+        "cocur/slugify": "^4.5",
         "codeigniter4/framework": "^4.0",
         "codeigniter4/translations": "^4.4",
         "google/apiclient": "*"

@@ -20,6 +20,7 @@ $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'H
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
     $routes->resource('administracao'); //['filter' => 'logged']
     $routes->resource('emails', ['filter' => 'logged']);
+    $routes->resource('ajuda', ['filter' => 'logged']);
 
     
     $routes->get('transacoes/user', 'Transacoes::usuario', ['filter' => 'logged']);
@@ -82,6 +83,7 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('remessa',      'Admin::remessa');
 
     $routes->get('gateways',      'Admin::gateways');
+    $routes->get('ajuda',      'Admin::ajuda');
 });
 
 

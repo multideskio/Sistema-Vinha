@@ -97,6 +97,11 @@
                         <i class="ri-dashboard-2-line"></i> <span>Gateways</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="<?= site_url('admin/ajuda') ?>">
+                        <i class="ri-question-line"></i> <span>Ajuda</span>
+                    </a>
+                </li>
             </ul>
         </div>
         <!-- Sidebar -->

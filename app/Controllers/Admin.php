@@ -97,4 +97,10 @@ class Admin extends BaseController
 
         return view('admin/pages/gateways', $data);
     }
+
+    public function ajuda():string{
+        $data['titlePage'] = "Ajuda";
+
+        return view('admin/pages/ajuda', $data);
+    }
 }
