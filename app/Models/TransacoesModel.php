@@ -55,6 +55,23 @@ class TransacoesModel extends Model
     {
         helper('auxiliar');
 
+        $page = $input['page'] ?? false;
+
+        if ($page) {
+            $cache = \Config\Services::cache();
+
+            $search = $input['search'] ?? false;
+            $currentPage = $page;
+            $userId = session('data')['id_perfil'];
+            $cacheKey = "transacoes_{$userId}_{$search}_{$limit}_{$order}_{$currentPage}";
+
+            // Check if the cache exists
+            if ($cacheData = $cache->get($cacheKey)) {
+                return $cacheData;
+            }
+        }
+
+
         $data = array();
         $currentPageTotal = 0; // Soma dos valores da página atual
         $allPagesTotal = 0; // Soma dos valores de todas as páginas da consulta atual
@@ -64,21 +81,20 @@ class TransacoesModel extends Model
 
         $this->select("transacoes.*")
             ->select('usuarios.tipo AS tipo_user')
-            ->where('transacoes.id_cliente', session('data')['id_perfil'])
-            ->join('usuarios', 'usuarios.id_perfil = transacoes.id_cliente');
+            ->where('transacoes.id_user', session('data')['id'])
+            ->join('usuarios', 'usuarios.id = transacoes.id_user');
 
         $this->orderBy('transacoes.id', $order);
 
-        if($search){
+        if ($search) {
             $this->groupStart()
-            ->like('transacoes.status_text', $search)
-            ->orLike('transacoes.tipo_pagamento', $search)
-            ->orLike('transacoes.descricao', $search)
-            ->orLike('transacoes.descricao_longa', $search)
-            ->orLike('transacoes.id', $search)
-            ->groupEnd();
+                ->like('transacoes.status_text', $search)
+                ->orLike('transacoes.tipo_pagamento', $search)
+                ->orLike('transacoes.descricao', $search)
+                ->orLike('transacoes.descricao_longa', $search)
+                ->orLike('transacoes.id', $search)
+                ->groupEnd();
         }
-
 
         $transacoes = $this->paginate($limit);
 
@@ -152,12 +168,20 @@ class TransacoesModel extends Model
             $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
         }
 
-        return [
-            'rows'           => $data, // Resultados paginados
-            'pager'          => $this->pager->links('default', 'paginate'), // Links de paginação
-            'num'            => $numMessage,
-            'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal), // Soma dos valores da página atual
-            'allPagesTotal'  => decimalParaReaisBrasil($allPagesTotal[0]['valor']) // Soma dos valores de todas as páginas da consulta atual
+        $result = [
+            'rows' => $data,
+            'pager' => $this->pager->links('default', 'paginate'),
+            'num' => $numMessage,
+            'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
+            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal[0]['valor'])
         ];
+
+        if ($page) {
+            // Save the result to cache
+            $cache->save($cacheKey, $result, 3600); // Cache for 1 hour
+        }
+
+
+        return $result;
     }
 }
