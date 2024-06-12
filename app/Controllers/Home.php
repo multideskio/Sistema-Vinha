@@ -7,6 +7,7 @@ use App\Libraries\WhatsappLibraries;
 use App\Models\AjudaModel;
 use App\Models\ConfigMensagensModel;
 use App\Models\GerentesModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Exception;
 use CodeIgniter\I18n\Time;
 
@@ -66,11 +67,9 @@ class Home extends BaseController
         $modelAjuda = new AjudaModel();
         $row = $modelAjuda->where('slug', $slug)->findAll(1);
         if (!count($row) == 1) {
-            return redirect()->to(site_url('ajuda'));
+            throw PageNotFoundException::forPageNotFound();
         }
-
         $this->data['result'] = $row[0];
-
         return view('ajuda/post', $this->data);
     }
 

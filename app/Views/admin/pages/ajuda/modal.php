@@ -14,7 +14,7 @@
                     <input type="text" id="titulo" name="titulo" class="form-control" required placeholder="Primeiro nome">
                 </div>
                 <div class="mt-2">
-                    <label for="conteudo">Conteúdo</label>
+                    <b>Conteúdo</b>
                     <div class="snow-editor" id="editor" style="width: 100%; height: 200px;"></div>
                     <input type="hidden" name="conteudo" id="conteudo">
                 </div>

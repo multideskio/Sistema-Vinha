@@ -51,7 +51,7 @@
     <!-- form masks init -->
     <script src="/assets/js/pages/form-masks.init.js"></script>
     
-    <?= $this->include('admin/pages/js/forms.php') ?>
+    
 
     <?= $this->renderSection('js') ?>
     <script>

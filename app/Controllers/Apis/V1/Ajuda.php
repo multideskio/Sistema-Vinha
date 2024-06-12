@@ -25,7 +25,7 @@ class Ajuda extends ResourceController
     {
         //
 
-        return $this->respond($this->modelAjuda->findAll());
+        return $this->respond($this->modelAjuda->lista($this->request->getGet()));
     }
 
     /**
@@ -138,10 +138,9 @@ class Ajuda extends ResourceController
      */
     public function delete($id = null)
     {
-        //
         if ($id) {
             $this->modelAjuda->delete($id);
-            return $this->respondDeleted();
+            return $this->respond(['msg' => 'Conteúdo excluído com sucesso.']);
         } else {
             return $this->fail('Erro ID');
         }
