@@ -39,10 +39,8 @@
     <!-- App js -->
     <script src="/assets/js/app.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <!--datatable js-->
-    <script src="//cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+    
     <!-- Plugin adicionais -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Sweet Alerts js -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7"></script>
@@ -50,9 +48,6 @@
     <script src="/assets/libs/cleave.js/cleave.min.js"></script>
     <!-- form masks init -->
     <script src="/assets/js/pages/form-masks.init.js"></script>
-    
-    
-
     <?= $this->renderSection('js') ?>
     <script>
         function recursoindisponivel() {
@@ -64,7 +59,5 @@
             });
         }
     </script>
-
 </body>
-
 </html>

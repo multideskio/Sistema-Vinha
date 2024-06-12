@@ -667,7 +667,7 @@
                             <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                             <span class="align-middle">Perfil</span>
                         </a>
-                        <a href="/ajuda" class="dropdown-item" href="pages-faqs">
+                        <a href="/ajuda" target="_blank" class="dropdown-item" href="pages-faqs">
                             <i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Ajuda</span>
                         </a>
                         <div class="dropdown-divider"></div>
