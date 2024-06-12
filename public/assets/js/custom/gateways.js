@@ -1,6 +1,32 @@
 $(document).ready(function() {
     atualizarTabela();
+
+    // Inicialização do formulário AJAX
+    $('#formCad').ajaxForm({
+        beforeSubmit: function(formData, jqForm, options) {
+            // Ações antes de enviar o formulário, se necessário
+        },
+        success: function(responseText, statusText, xhr, $form) {
+            atualizarTabela();
+            $('#formCad')[0].reset();
+            Swal.fire({
+                title: 'Cadastrado!',
+                icon: 'success',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false,
+            });
+        },
+        error: function(xhr, status, error) {
+            if (xhr.responseJSON && xhr.responseJSON.messages) {
+                exibirMensagem('error', xhr.responseJSON);
+            } else {
+                exibirMensagem('error', { messages: { error: 'Erro desconhecido.' } });
+            }
+        }
+    });
 });
+
+
 
 function atualizarTabela() {
     $.getJSON(_baseUrl + "/api/v1/gateways/cielo")
