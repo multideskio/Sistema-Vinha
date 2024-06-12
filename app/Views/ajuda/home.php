@@ -6,7 +6,7 @@
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
     <?php
     use CodeIgniter\I18n\Time;
-    foreach ($result as $row) : ?>
+    foreach ($rows as $row) : ?>
         <div class="col list-blog">
             <div class="card shadow-sm h-100">
                 <div class="card-body">

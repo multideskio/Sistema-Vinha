@@ -19,6 +19,7 @@ class Home extends BaseController
     {
         $this->modelConfig = new \App\Models\AdminModel;
         $this->data['rowConfig'] = $this->modelConfig->cacheData();
+        $this->data['textResult'] = "";
     }
 
     public function index()
@@ -26,37 +27,51 @@ class Home extends BaseController
         return view('login/login', $this->data);
     }
 
-    public function busca_ajuda(){
+    public function busca_ajuda()
+    {
+        
         $modelAjuda = new AjudaModel();
-        if($this->request->getGet('search')){
+        if ($this->request->getGet('search')) {
             $rows = $modelAjuda->groupStart()
-            ->like('titulo', $this->request->getGet('search'))
-            ->orLike('tags', $this->request->getGet('search'))
-            ->orLike('conteudo',$this->request->getGet('search'))
-            ->groupEnd()
-            ->findAll();
-            $this->data['result'] = $rows; 
-        }else{
+                ->like('titulo', $this->request->getGet('search'))
+                ->orLike('tags', $this->request->getGet('search'))
+                ->orLike('conteudo', $this->request->getGet('search'))
+                ->groupEnd()
+                ->findAll();
 
-            $this->data['result'] = $modelAjuda->findAll();
+            $this->data['rows'] = $rows;
+
+            if (count($rows) == 1) {
+
+                $this->data['textResult'] = "<h1 class='text-primary mt-3'>1 resultado encontrado!</h1>";
+            } else if (count($rows) > 1) {
+
+                $tt = count($rows);
+
+                $this->data['textResult'] = "<h1 class='text-primary mt-3'>{$tt} resultados encontrados!</h1>";
+            } else {
+
+                $this->data['textResult'] = "<h1 class='text-danger mt-3'>Nenhum resultado encontrado!</h1>";
+            }
+        } else {
+            $this->data['rows'] = $modelAjuda->findAll();
         }
 
         helper('text');
         return view('ajuda/home', $this->data);
-
     }
 
-    public function ajuda($slug){
+    public function ajuda($slug)
+    {
         $modelAjuda = new AjudaModel();
         $row = $modelAjuda->where('slug', $slug)->findAll(1);
-        if(!count($row) == 1){
+        if (!count($row) == 1) {
             return redirect()->to(site_url('ajuda'));
         }
 
-        $this->data['result'] = $row[0] ;
-        
+        $this->data['result'] = $row[0];
+
         return view('ajuda/post', $this->data);
-    
     }
 
 
@@ -199,7 +214,7 @@ class Home extends BaseController
             $mensagem_final = str_replace(array_keys($data), array_values($data), $msg);
             // Exibe a mensagem final e verifica o número
             echo "<pre>";
-            
+
             $ret = $whatsapp->verifyNumber(['message' => $mensagem_final, 'image' => ''], $data['number'], 'image');
 
             print_r($ret);
