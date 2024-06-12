@@ -3,7 +3,6 @@
 namespace App\Controllers\Apis\V1;
 
 use App\Models\AjudaModel;
-use Cocur\Slugify\Slugify;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
@@ -58,7 +57,8 @@ class Ajuda extends ResourceController
      */
     public function create()
     {
-        $slugify = new Slugify();
+        helper('auxiliar');
+
         //
         $title     = $this->request->getPost('titulo');
         $conteudo  = $this->request->getPost('conteudo');
@@ -67,7 +67,7 @@ class Ajuda extends ResourceController
         $data = [
             "id_admin"  => session('data')['idAdm'],
             "id_user"   => session('data')['id'],
-            "slug"      => $slugify->slugify($title . "-" . time()),
+            "slug"      => createSlug($title."-".time(), '-', true),
             "titulo"    => $title,
             "conteudo"  => $conteudo,
             "tags"      => $tags

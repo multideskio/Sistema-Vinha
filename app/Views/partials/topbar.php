@@ -671,12 +671,6 @@
                             <i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Ajuda</span>
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="pages-profile">
-                            <i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Balanço : <b>$0.0</b></span>
-                        </a>
-                        <a class="dropdown-item" href="pages-profile-settings">
-                            <i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i><span class="align-middle">Configurações</span>
-                        </a>
                         <a class="dropdown-item" href="<?= base_url('sair') ?>">
                             <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Sair</span>
                         </a>

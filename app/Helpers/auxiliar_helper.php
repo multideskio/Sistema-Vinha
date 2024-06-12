@@ -299,3 +299,40 @@ if (!function_exists('formatDate')) {
         }
     }
 }
+
+
+if (!function_exists('createSlug')) {
+    function createSlug($string)
+    {
+        // Converter todos os caracteres para minúsculas
+        $string = strtolower($string);
+
+        // Remover acentuação
+        $unwanted_array = [
+            'á' => 'a', 'à' => 'a', 'ã' => 'a', 'â' => 'a', 'ä' => 'a',
+            'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+            'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+            'ó' => 'o', 'ò' => 'o', 'õ' => 'o', 'ô' => 'o', 'ö' => 'o',
+            'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
+            'ç' => 'c', 'ñ' => 'n',
+            'Á' => 'A', 'À' => 'A', 'Ã' => 'A', 'Â' => 'A', 'Ä' => 'A',
+            'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E',
+            'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I',
+            'Ó' => 'O', 'Ò' => 'O', 'Õ' => 'O', 'Ô' => 'O', 'Ö' => 'O',
+            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U',
+            'Ç' => 'C', 'Ñ' => 'N'
+        ];
+        $string = strtr($string, $unwanted_array);
+
+        // Substituir quaisquer caracteres que não sejam letras, números ou espaços por hífens
+        $string = preg_replace('/[^a-z0-9\s-]/', '', $string);
+
+        // Substituir espaços e múltiplos hífens por um único hífen
+        $string = preg_replace('/[\s-]+/', '-', $string);
+
+        // Remover hífens iniciais e finais
+        $string = trim($string, '-');
+
+        return $string;
+    }
+}
