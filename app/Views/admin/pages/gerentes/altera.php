@@ -512,12 +512,19 @@
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
                     console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-                    exibirMensagem('error', {
-                        messages: {
-                            error: 'Erro ao carregar os dados.'
-                        }
-                    });
+                    
+                    Swal.fire({
+                        title: 'Os dados não foram enconrados',
+                        icon: 'error',
+                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                        buttonsStyling: false,
+                    }).then(function(result) {
+                        history.back();
+                    });;
+                    
+                    
                     $('.loadResult').hide();
+
                 });
 
             // Tratamento de erro para a imagem
