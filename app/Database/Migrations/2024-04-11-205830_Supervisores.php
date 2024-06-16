@@ -86,6 +86,10 @@ class Supervisores extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 160
             ],
+            'website' => [
+                'type' => 'VARCHAR',
+                'constraint' => 60
+            ],
             'instagram' => [
                 'type' => 'VARCHAR',
                 'constraint' => 160

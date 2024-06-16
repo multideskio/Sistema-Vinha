@@ -87,7 +87,7 @@ class Gerentes extends Migration
             ],
             'website' => [
                 'type' => 'VARCHAR',
-                'constraint' => 160
+                'constraint' => 60
             ],
             'instagram' => [
                 'type' => 'VARCHAR',

@@ -58,7 +58,7 @@ class Admin extends BaseController
         $data['idSearch']  = null ;
         $data['titlePage'] = 'Supervisores';
         //
-        return view('admin/pages/supervisores', $data);
+        return view('admin/pages/supervisores/lista', $data);
     }
 
     public function supervisor($id): string
@@ -66,7 +66,7 @@ class Admin extends BaseController
         $data['idSearch']  = $id ;
         $data['titlePage'] = 'Alterando supervisores';
         //
-        return view('admin/pages/supervisores', $data);
+        return view('admin/pages/supervisores/altera', $data);
     }
 
     public function pastores(): string

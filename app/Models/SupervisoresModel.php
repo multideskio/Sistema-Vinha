@@ -33,8 +33,7 @@ class SupervisoresModel extends Model
         'celular',
         'facebook',
         'instagram',
-        'id_user',
-        'id_adm'
+        'website'
     ];
 
     protected bool $allowEmptyInserts = false;

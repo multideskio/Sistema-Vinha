@@ -41,6 +41,9 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->get('regioes/list', 'Regioes::list');
     $routes->resource('regioes', ['filter' => 'logged']);
 
+    $routes->post('supervisores/update/upload/(:num)', 'Supervisores::foto/$1');
+    $routes->put('supervisores/update/links/(:num)', 'Supervisores::links/$1');
+
     $routes->get('supervisores/list', 'Supervisores::list');
     $routes->resource('supervisores', ['filter' => 'logged']);
 

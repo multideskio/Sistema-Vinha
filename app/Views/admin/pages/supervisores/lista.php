@@ -32,7 +32,7 @@
                             <tr>
                                 <th></th>
                                 <th>id</th>
-                                <th width="90%">Nome completo</th>
+                                <th>Nome completo</th>
                                 <th>Gerente</th>
                                 <th>Região</th>
                                 <th>CPF</th>
@@ -68,7 +68,7 @@
         </div>
     </div>
 </div>
-<?= $this->include('admin/pages/supervisores/forms.php') ?>
+<?= $this->include('admin/pages/supervisores/modal.php') ?>
 
 <?= $this->endSection('page') ?>
 <?= $this->section('js') ?>

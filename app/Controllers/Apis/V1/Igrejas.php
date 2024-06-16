@@ -27,12 +27,12 @@ class Igrejas extends ResourceController
     {
         //
 
-        if($this->request->getGet("search") == "false"){
+        if ($this->request->getGet("search") == "false") {
             $data = $this->modelIgrejas->listSearch();
-        }else{
+        } else {
             $data = $this->modelIgrejas->listSearch($this->request->getGet());
         }
-        
+
         return $this->respond($data);
     }
 
@@ -44,8 +44,43 @@ class Igrejas extends ResourceController
     public function show($id = null)
     {
         //
+        $search = $this->modelIgrejas
+            ->select('igrejas.*')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+            ->join('usuarios', 'usuarios.id_perfil = igrejas.id')
+            ->where('usuarios.tipo', 'igreja')
+            ->find($id);
 
-        return $this->respond([]);
+        if ($search) {
+            $data = [
+                "id" => $search['id'],
+                "razaoSocial"  => $search['razao_social'],
+                "nomeFantazia" => $search['fantasia'],
+                "nomeTesoureiro" => $search['nome_tesoureiro'],
+                "sobrenomeTesoureiro" => $search['sobrenome_tesoureiro'],
+                "cpfTesoureiro" => $search['cpf_tesoureiro'],
+                "cnpj" => $search['cnpj'],
+                "foto" => $search['foto'],
+                "uf" => $search['uf'],
+                "cidade" => $search['cidade'],
+                "cep" => $search['cep'],
+                "complemento" => $search['complemento'],
+                "bairro" => $search['bairro'],
+                "data_dizimo" => $search['data_dizimo'],
+                "telefone" => $search['telefone'],
+                "celular" => $search['celular'],
+                "facebook" => $search['facebook'],
+                "instagram" => $search['instagram'],
+                "created_at" => $search['created_at'],
+                "website" => $search['website'],
+                "email" => $search['email'],
+                "sendWhatsapp" => $search['sendWhatsapp']
+            ];
+
+            return $this->respond($data);
+        } else {
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -128,7 +163,6 @@ class Igrejas extends ResourceController
 
             $this->modelIgrejas->transComplete();
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
-
         } catch (\Exception $e) {
             $this->modelIgrejas->transRollback(); // Rollback em caso de exceção
             return $this->fail($e->getMessage());

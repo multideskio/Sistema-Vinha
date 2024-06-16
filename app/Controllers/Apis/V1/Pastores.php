@@ -27,12 +27,12 @@ class Pastores extends ResourceController
     public function index()
     {
         //
-        if($this->request->getGet("search") == "false"){
+        if ($this->request->getGet("search") == "false") {
             $data = $this->modelPastores->listSearch();
-        }else{
+        } else {
             $data = $this->modelPastores->listSearch($this->request->getGet());
         }
-        
+
         return $this->respond($data);
     }
 
@@ -46,6 +46,43 @@ class Pastores extends ResourceController
     public function show($id = null)
     {
         //
+        try {
+            $search = $this->modelPastores
+                ->select('pastores.*')
+                ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+                ->join('usuarios', 'usuarios.id_perfil = pastores.id')
+                ->where('usuarios.tipo', 'pastor')
+                ->find($id);
+            if ($search) {
+                $data = [
+                    "id" => $search['id'],
+                    "nome" => $search['nome'],
+                    "sobrenome" => $search['sobrenome'],
+                    "cpf" => $search['cpf'],
+                    "foto" => $search['foto'],
+                    "uf" => $search['uf'],
+                    "cidade" => $search['cidade'],
+                    "cep" => $search['cep'],
+                    "complemento" => $search['complemento'],
+                    "bairro" => $search['bairro'],
+                    "data_dizimo" => $search['data_dizimo'],
+                    "telefone" => $search['telefone'],
+                    "celular" => $search['celular'],
+                    "facebook" => $search['facebook'],
+                    "instagram" => $search['instagram'],
+                    "created_at" => $search['created_at'],
+                    "website" => $search['website'],
+                    "email" => $search['email'],
+                    "sendWhatsapp" => $search['sendWhatsapp']
+                ];
+
+                return $this->respond($data);
+            } else {
+                return $this->failNotFound();
+            }
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
     }
 
     /**

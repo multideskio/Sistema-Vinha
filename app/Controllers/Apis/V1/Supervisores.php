@@ -3,6 +3,7 @@
 namespace App\Controllers\Apis\v1;
 
 use App\Libraries\UploadsLibraries;
+use App\Models\RegioesModel;
 use App\Models\UsuariosModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -29,20 +30,20 @@ class Supervisores extends ResourceController
     public function index()
     {
         //
-        if($this->request->getGet("search") == "false"){
+        if ($this->request->getGet("search") == "false") {
             $data = $this->modelSupervisores->listSearch();
-        }else{
+        } else {
             $data = $this->modelSupervisores->listSearch($this->request->getGet());
         }
-        
+
         return $this->respond($data);
     }
-    
-    public function list(){
-        
-        $data = $this->modelSupervisores->cacheData(); 
-        return $this->respond($data);
 
+    public function list()
+    {
+
+        $data = $this->modelSupervisores->cacheData();
+        return $this->respond($data);
     }
 
     /**
@@ -50,11 +51,53 @@ class Supervisores extends ResourceController
      *
      * @return ResponseInterface
      */
+
+
+
     public function show($id = null)
     {
         //
+        $search = $this->modelSupervisores
+            ->select('supervisores.*')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+            ->select('regioes.nome AS regiao')
+            ->select('gerentes.nome AS gerente, gerentes.sobrenome AS sobregerente')
+            ->join('usuarios', 'usuarios.id_perfil = supervisores.id')
+            ->join('regioes', 'regioes.id = supervisores.id_regiao')
+            ->join('gerentes', 'gerentes.id = supervisores.id_gerente')
+            ->where('usuarios.tipo', 'supervisor')
+            ->find($id);
 
-        return $this->respond([]);
+        if ($search) {
+            $data = [
+                "id" => $search['id'],
+                "nome" => $search['nome'],
+                "sobrenome" => $search['sobrenome'],
+                "idGerente" => $search['id_gerente'],
+                "idRegiao" => $search['id_regiao'],
+                "regiao" => $search['regiao'],
+                "gerente" => $search['gerente'] . " " . $search['sobregerente'],
+                "cpf" => $search['cpf'],
+                "foto" => $search['foto'],
+                "uf" => $search['uf'],
+                "cidade" => $search['cidade'],
+                "cep" => $search['cep'],
+                "complemento" => $search['complemento'],
+                "bairro" => $search['bairro'],
+                "data_dizimo" => $search['data_dizimo'],
+                "telefone" => $search['telefone'],
+                "celular" => $search['celular'],
+                "facebook" => $search['facebook'],
+                "instagram" => $search['instagram'],
+                "created_at" => $search['created_at'],
+                "website" => $search['website'],
+                "email" => $search['email'],
+                "sendWhatsapp" => $search['sendWhatsapp']
+            ];
+            return $this->respond($data);
+        } else {
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -75,7 +118,7 @@ class Supervisores extends ResourceController
     public function create()
     {
         //
-        
+
 
         $modelUser = new UsuariosModel();
 
@@ -137,7 +180,7 @@ class Supervisores extends ResourceController
 
             //return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
@@ -152,6 +195,46 @@ class Supervisores extends ResourceController
         //
     }
 
+    public function links($id = null)
+    {
+        $input = $this->request->getRawInput();
+
+        $data = [
+            'facebook'  => $input['linkFacebook'],
+            'instagram' => $input['linkInstagram'],
+            'website'   => $input['linkWebsite'],
+        ];
+
+        $status = $this->modelSupervisores->update($id, $data);
+
+        if ($status === false) {
+            return $this->fail($this->modelSupervisores->errors());
+        }
+
+        return $this->respondUpdated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+    }
+
+
+    public function foto($id = null)
+    {
+        $request = service('request');
+        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        try {
+            $uploadLibraries = new UploadsLibraries;
+            $upload = $uploadLibraries->uploadCI($file, $id, 'supervisores');
+            $data = [
+                'foto' => $upload['foto']
+            ];
+            $status = $this->modelSupervisores->update($id, $data);
+            if ($status === false) {
+                return $this->fail($this->modelSupervisores->errors());
+            }
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
     /**
      * Add or update a model resource, from "posted" properties
      *
@@ -160,6 +243,35 @@ class Supervisores extends ResourceController
     public function update($id = null)
     {
         //
+        try {
+            // Obtém os dados do FilePond do corpo da solicitação
+            $input = $this->request->getRawInput();
+
+            $data = [
+                "id_gerente" => $input['selectGerentes'],
+                "id_regiao" => $input['selectRegiao'],
+                "nome" => $input['nome'],
+                "sobrenome" => $input['sobrenome'],
+                "cpf" => preg_replace('/[^0-9]/', '', $input['cpf']),
+                "uf" => $input['uf'],
+                "cidade" => $input['cidade'],
+                "cep" => preg_replace('/[^0-9]/', '', $input['cep']),
+                "complemento" => $input['complemento'],
+                "bairro" => $input['bairro'],
+                "data_dizimo" => $input['dia'],
+                "telefone" => preg_replace('/[^0-9]/', '', $input['tel']),
+                "celular" => preg_replace('/[^0-9]/', '', $input['cel'])
+            ];
+
+            $status = $this->modelSupervisores->update($id, $data);
+            if ($status === false) {
+                return $this->fail($this->modelSupervisores->errors());
+            }
+
+            return $this->respondCreated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
     }
 
     /**

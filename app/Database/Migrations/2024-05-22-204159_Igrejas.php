@@ -101,6 +101,10 @@ class Igrejas extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 160
             ],
+            'website' => [
+                'type' => 'VARCHAR',
+                'constraint' => 60
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

@@ -9,17 +9,17 @@ $(document).ready(function () {
 
     FilePond.create(
         document.querySelector('.filepond-input-circle'), {
-            labelIdle: 'Clique para carregar a imagem',
-            imagePreviewHeight: 170,
-            imageCropAspectRatio: '1:1',
-            imageResizeTargetWidth: 200,
-            imageResizeTargetHeight: 200,
-            stylePanelLayout: 'compact circle',
-            styleLoadIndicatorPosition: 'center bottom',
-            styleProgressIndicatorPosition: 'right bottom',
-            styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom',
-        }
+        labelIdle: 'Clique para carregar a imagem',
+        imagePreviewHeight: 170,
+        imageCropAspectRatio: '1:1',
+        imageResizeTargetWidth: 200,
+        imageResizeTargetHeight: 200,
+        stylePanelLayout: 'compact circle',
+        styleLoadIndicatorPosition: 'center bottom',
+        styleProgressIndicatorPosition: 'right bottom',
+        styleButtonRemoveItemPosition: 'left bottom',
+        styleButtonProcessItemPosition: 'right bottom',
+    }
     );
 
     // Função para inicializar Cleave.js
@@ -129,10 +129,21 @@ function listRegioes() {
         data.rows.forEach(regiao => {
             $('#selectRegiao').append(`<option value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
         });
-        $('#selectGerentes').attr('required data-choices', true);
+        // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
+        $('#selectRegiao').attr('required', true).attr('data-choices', true);
         new Choices('#selectRegiao');
+    }).fail(() => {
+        Swal.fire({
+            title: 'Cadastre regiões antes de cadastrar um supervisor...',
+            icon: 'error',
+            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+            buttonsStyling: false,
+        }).then((result) => {
+            history.back();
+        });
     });
 }
+
 
 function listGerentes() {
     $('#selectGerentes').empty().removeAttr('required');
@@ -140,8 +151,18 @@ function listGerentes() {
         data.forEach(gerente => {
             $('#selectGerentes').append(`<option value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
         });
-        $('#selectGerentes').attr('required data-choices', true);
+        // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
+        $('#selectGerentes').attr('required', true).attr('data-choices', true);
         new Choices('#selectGerentes');
+    }).fail(() => {
+        Swal.fire({
+            title: 'Cadastre gerentes antes de cadastrar um supervisor...',
+            icon: 'error',
+            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+            buttonsStyling: false,
+        }).then((result) => {
+            history.back();
+        });
     });
 }
 
@@ -189,12 +210,12 @@ function atualizarTabela(search = false, page = 1) {
                         </td>
                         <td class="align-middle">
                             <div class="btn-group" role="group">
-                                <a href="${_baseUrl}admin/supervisor/${row.id}" class="btn btn-dark btn-sm">
-                                    <i class="ri-pencil-line"></i>
+                                <a href="${_baseUrl}admin/supervisor/${row.id}" class="btn btn-primary btn-sm">
+                                    <!-- <i class="ri-pencil-line"></i> --> <b>EDITAR</b>
                                 </a>
-                                <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">
+                                <!-- <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">
                                     <i class="ri-delete-bin-6-line"></i>
-                                </a>
+                                </a> -->
                             </div>
                         </td>
                     </tr>

@@ -51,6 +51,8 @@ class Gerentes extends ResourceController
     public function show($id = null)
     {
         //
+
+
         $search = $this->modelGerentes
             ->select('gerentes.*')
             ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
@@ -58,30 +60,32 @@ class Gerentes extends ResourceController
             ->where('usuarios.tipo', 'gerente')
             ->find($id);
 
-
-        $data = [
-            "id" => $search['id'],
-            "nome" => $search['nome'],
-            "sobrenome" => $search['sobrenome'],
-            "cpf" => $search['cpf'],
-            "foto" => $search['foto'],
-            "uf" => $search['uf'],
-            "cidade" => $search['cidade'],
-            "cep" => $search['cep'],
-            "complemento" => $search['complemento'],
-            "bairro" => $search['bairro'],
-            "data_dizimo" => $search['data_dizimo'],
-            "telefone" => $search['telefone'],
-            "celular" => $search['celular'],
-            "facebook" => $search['facebook'],
-            "instagram" => $search['instagram'],
-            "created_at" => $search['created_at'],
-            "website" => $search['website'],
-            "email" => $search['email'],
-            "sendWhatsapp" => $search['sendWhatsapp']
-        ];
-
-        return $this->respond($data);
+        if ($search) {
+            $data = [
+                "id" => $search['id'],
+                "nome" => $search['nome'],
+                "sobrenome" => $search['sobrenome'],
+                "cpf" => $search['cpf'],
+                "foto" => $search['foto'],
+                "uf" => $search['uf'],
+                "cidade" => $search['cidade'],
+                "cep" => $search['cep'],
+                "complemento" => $search['complemento'],
+                "bairro" => $search['bairro'],
+                "data_dizimo" => $search['data_dizimo'],
+                "telefone" => $search['telefone'],
+                "celular" => $search['celular'],
+                "facebook" => $search['facebook'],
+                "instagram" => $search['instagram'],
+                "created_at" => $search['created_at'],
+                "website" => $search['website'],
+                "email" => $search['email'],
+                "sendWhatsapp" => $search['sendWhatsapp']
+            ];
+            return $this->respond($data);
+        }else{
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -240,7 +244,6 @@ class Gerentes extends ResourceController
                 "nome" => $input['nome'],
                 "sobrenome" => $input['sobrenome'],
                 "cpf" => preg_replace('/[^0-9]/', '', $input['cpf']),
-                "email" => $input['email'],
                 "uf" => $input['uf'],
                 "cidade" => $input['cidade'],
                 "cep" => preg_replace('/[^0-9]/', '', $input['cep']),

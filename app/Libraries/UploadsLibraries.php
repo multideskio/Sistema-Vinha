@@ -122,7 +122,7 @@ class UploadsLibraries
 
             if (file_exists($uploadPath . $image_name . '.webp')) {
                 $update = [
-                    'foto' => '/assets/img/gerentes/' . $id . '/' . $image_name . '.webp'
+                    'foto' => "/assets/img/{$tipo}/{$id}/{$image_name}.webp"
                 ];
                 // Remove o arquivo PNG original
                 unlink($file_path);

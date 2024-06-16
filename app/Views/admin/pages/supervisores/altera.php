@@ -5,14 +5,14 @@
 <?= $this->endSection(); ?>
 <?= $this->section('page') ?>
 <div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de gerentes</p>
+    <p class="text-muted float-start">Gerenciamento de supervisores</p>
 </div>
 <div class="row">
     <div class="col-xxl-3">
         <div class="card">
             <div class="card-body p-4">
                 <div class="text-center">
-                    <?= form_open_multipart('api/v1/gerentes/update/upload/' . $idSearch, 'class="formUpload"') ?>
+                    <?= form_open_multipart('api/v1/supervisores/update/upload/' . $idSearch, 'class="formUpload"') ?>
                     <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
                         <img src="https://placehold.co/50/00000/FFF?text=V" id="fotoPerfil" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
                         <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
@@ -23,10 +23,12 @@
                                 </span>
                             </label>
                         </div>
+
                     </div>
+
                     </form>
                     <h5 class="fs-16 mb-1" id="viewNameUser">Carregando...</h5>
-                    <p class="text-muted mb-0">Gerente</p>
+                    <p class="text-muted mb-0">Supervisor</p>
                 </div>
             </div>
         </div>
@@ -38,7 +40,7 @@
                         <h5 class="card-title mb-0">Redes sociais</h5>
                     </div>
                 </div>
-                <?= form_open('api/v1/gerentes/update/links/' . $idSearch, 'class="formTexts"') ?>
+                <?= form_open('api/v1/supervisores/update/links/' . $idSearch, 'class="formTexts"') ?>
                 <div class="alert alert-success alertAlterado bg-success text-white" role="alert" style="display: none;">
                     <b>Alterado com sucesso</b>
                 </div>
@@ -82,11 +84,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#changePassword" role="tab">
-                            <i class="far fa-user"></i> Alterar senha
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#privacy" role="tab">
                             <i class="far fa-envelope"></i> Transações do usuário
                         </a>
@@ -96,19 +93,35 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/gerentes/' . $idSearch, 'class="formGeral"') ?>
+                        <?= form_open('api/v1/supervisores/' . $idSearch, 'class="formGeral"') ?>
                         <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="selectGerentes" class="form-label text-danger">Gerente</label>
+                                    <select name="selectGerentes" id="selectGerentes" class="form-select" required>
+                                        <option value="">Carregando...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="selectRegiao" class="form-label text-danger">Região</label>
+                                    <select name="selectRegiao" id="selectRegiao" class="form-select" required>
+                                        <option value="">Carregando...</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="nome" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome...">
+                                    <label for="nome" class="form-label text-danger">Nome</label>
+                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome..." required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="sobrenome" class="form-label">Sobre-nome</label>
-                                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome...">
+                                    <label for="sobrenome" class="form-label text-danger">Sobre-nome</label>
+                                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome..." required>
                                 </div>
                             </div>
                             <!--end col-->
@@ -119,27 +132,24 @@
                                 </div>
                             </div>
                             <!--end col-->
-                            <div class="col-lg-12">
-                                <small class="text-danger">Não é possivel atualizar o e-mail, o usuário deve criar uma nova conta com o novo e-mail</small>
-                            </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="cel" class="form-label">Celular</label>
-                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="(00) 0000-0000">
+                                    <label for="cel" class="form-label text-danger">Celular</label>
+                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="(00) 0000-0000" required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="tel" class="form-label">Telefone 2</label>
-                                    <input type="text" class="form-control telFixo" id="tel" name="tel" placeholder="(00) 0000-0000">
+                                    <input type="text" class="form-control telFixo" id="tel" name="tel" placeholder="(00) 0000-0000" autocomplete="on">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label><br>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com" readonly>
+                                    <label for="email" class="form-label text-danger">Email</label><br>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com" disabled autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
@@ -180,8 +190,8 @@
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="dizimo" class="form-label">Dia do dízimo</label>
-                                    <input type="number" max="31" class="form-control" id="dizimo" name="dia" placeholder="Dia dizimo">
+                                    <label for="dizimo" class="form-label text-danger">Dia do dízimo</label>
+                                    <input type="number" max="31" class="form-control" id="dizimo" name="dia" placeholder="Dia dizimo" required>
                                 </div>
                             </div>
                             <!--end col-->
@@ -195,158 +205,10 @@
                         <!--end row-->
                         </form>
                     </div>
-                    <!--end tab-pane-->
-                    <div class="tab-pane" id="changePassword" role="tabpanel">
-                        <form action="javascript:void(0);">
-                            <div class="row g-2">
-                                <div class="col-lg-4">
-                                    <div>
-                                        <label for="oldpasswordInput" class="form-label">Old Password*</label>
-                                        <input type="password" class="form-control" id="oldpasswordInput" placeholder="Enter current password">
-                                    </div>
-                                </div>
-                                <!--end col-->
-                                <div class="col-lg-4">
-                                    <div>
-                                        <label for="newpasswordInput" class="form-label">New Password*</label>
-                                        <input type="password" class="form-control" id="newpasswordInput" placeholder="Enter new password">
-                                    </div>
-                                </div>
-                                <!--end col-->
-                                <div class="col-lg-4">
-                                    <div>
-                                        <label for="confirmpasswordInput" class="form-label">Confirm Password*</label>
-                                        <input type="password" class="form-control" id="confirmpasswordInput" placeholder="Confirm password">
-                                    </div>
-                                </div>
-                                <!--end col-->
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <a href="javascript:void(0);" class="link-primary text-decoration-underline">Forgot Password ?</a>
-                                    </div>
-                                </div>
-                                <!--end col-->
-                                <div class="col-lg-12">
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-success">Change Password</button>
-                                    </div>
-                                </div>
-                                <!--end col-->
-                            </div>
-                            <!--end row-->
-                        </form>
-                    </div>
+
                     <!--end tab-pane-->
                     <div class="tab-pane" id="privacy" role="tabpanel">
-                        <div class="mb-4 pb-2">
-                            <h5 class="card-title text-decoration-underline mb-3">Security:</h5>
-                            <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0">
-                                <div class="flex-grow-1">
-                                    <h6 class="fs-14 mb-1">Two-factor Authentication</h6>
-                                    <p class="text-muted">Two-factor authentication is an enhanced security meansur. Once enabled, you'll be required to give two types of identification when you log into Google Authentication and SMS are Supported.</p>
-                                </div>
-                                <div class="flex-shrink-0 ms-sm-3">
-                                    <a href="javascript:void(0);" class="btn btn-sm btn-primary">Enable Two-facor Authentication</a>
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 mt-2">
-                                <div class="flex-grow-1">
-                                    <h6 class="fs-14 mb-1">Secondary Verification</h6>
-                                    <p class="text-muted">The first factor is a password and the second commonly includes a text with a code sent to your smartphone, or biometrics using your fingerprint, face, or retina.</p>
-                                </div>
-                                <div class="flex-shrink-0 ms-sm-3">
-                                    <a href="javascript:void(0);" class="btn btn-sm btn-primary">Set up secondary method</a>
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 mt-2">
-                                <div class="flex-grow-1">
-                                    <h6 class="fs-14 mb-1">Backup Codes</h6>
-                                    <p class="text-muted mb-sm-0">A backup code is automatically generated for you when you turn on two-factor authentication through your iOS or Android Twitter app. You can also generate a backup code on twitter.com.</p>
-                                </div>
-                                <div class="flex-shrink-0 ms-sm-3">
-                                    <a href="javascript:void(0);" class="btn btn-sm btn-primary">Generate backup codes</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <h5 class="card-title text-decoration-underline mb-3">Application Notifications:</h5>
-                            <ul class="list-unstyled mb-0">
-                                <li class="d-flex">
-                                    <div class="flex-grow-1">
-                                        <label for="directMessage" class="form-check-label fs-14">Direct messages</label>
-                                        <p class="text-muted">Messages from people you follow</p>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="directMessage" checked />
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex mt-2">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label fs-14" for="desktopNotification">
-                                            Show desktop notifications
-                                        </label>
-                                        <p class="text-muted">Choose the option you want as your default setting. Block a site: Next to "Not allowed to send notifications," click Add.</p>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="desktopNotification" checked />
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex mt-2">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label fs-14" for="emailNotification">
-                                            Show email notifications
-                                        </label>
-                                        <p class="text-muted"> Under Settings, choose Notifications. Under Select an account, choose the account to enable notifications for. </p>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="emailNotification" />
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex mt-2">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label fs-14" for="chatNotification">
-                                            Show chat notifications
-                                        </label>
-                                        <p class="text-muted">To prevent duplicate mobile notifications from the Gmail and Chat apps, in settings, turn off Chat notifications.</p>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="chatNotification" />
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="d-flex mt-2">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label fs-14" for="purchaesNotification">
-                                            Show purchase notifications
-                                        </label>
-                                        <p class="text-muted">Get real-time purchase alerts to protect yourself from fraudulent charges.</p>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="purchaesNotification" />
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h5 class="card-title text-decoration-underline mb-3">Delete This Account:</h5>
-                            <p class="text-muted">Go to the Data & Privacy section of your profile Account. Scroll to "Your data & privacy options." Delete your Profile Account. Follow the instructions to delete your account :</p>
-                            <div>
-                                <input type="password" class="form-control" id="passwordInput" placeholder="Enter your password" value="make@321654987" style="max-width: 265px;">
-                            </div>
-                            <div class="hstack gap-2 mt-3">
-                                <a href="javascript:void(0);" class="btn btn-soft-danger">Close & Delete This Account</a>
-                                <a href="javascript:void(0);" class="btn btn-light">Cancel</a>
-                            </div>
-                        </div>
+
                     </div>
                     <!--end tab-pane-->
                 </div>
@@ -471,13 +333,6 @@
             }
         });
 
-
-
-
-
-
-
-
     });
 
 
@@ -485,7 +340,7 @@
     function searchUpdate(id) {
         if (id) {
             // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
-            var url = _baseUrl + `api/v1/gerentes/${id}`;
+            var url = _baseUrl + `api/v1/supervisores/${id}`;
             $.getJSON(url)
                 .done(function(data, textStatus, jqXHR) {
                     if (data.foto) {
@@ -509,15 +364,29 @@
                     $("#complemento").val(data.complemento);
                     $("#dizimo").val(data.data_dizimo);
 
+                    $("#gerente").val(data.gerente);
+                    $("#regiao").val(data.regiao);
+                    listRegioes(data.idRegiao)
+                    listGerentes(data.idGerente)
+
                 }).fail(function(jqXHR, textStatus, errorThrown) {
+
                     $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+
                     console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-                    exibirMensagem('error', {
-                        messages: {
-                            error: 'Erro ao carregar os dados.'
-                        }
-                    });
+
                     $('.loadResult').hide();
+
+                    Swal.fire({
+                        title: 'Os dados não foram enconrados',
+                        icon: 'error',
+                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                        buttonsStyling: false,
+                    }).then(function(result) {
+                        history.back();
+                    });;
+
+
                 });
 
             // Tratamento de erro para a imagem
@@ -525,6 +394,62 @@
                 $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
             });
         }
+    }
+
+
+    function listRegioes(idAtual) {
+        $('#selectRegiao').empty().removeAttr('required');
+
+        $.getJSON(`${_baseUrl}api/v1/regioes`, {}, (data) => {
+            data.rows.forEach(regiao => {
+                if (idAtual === regiao.id) {
+                    $('#selectRegiao').append(`<option selected value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
+                } else {
+                    $('#selectRegiao').append(`<option value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
+                }
+            });
+
+            // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
+            $('#selectRegiao').attr('required', true).attr('data-choices', true);
+            new Choices('#selectRegiao');
+        }).fail(() => {
+            Swal.fire({
+                title: 'Cadastre regiões antes de cadastrar um supervisor...',
+                icon: 'error',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false,
+            }).then((result) => {
+                history.back();
+            });
+        });
+    }
+
+
+    function listGerentes(idAtual) {
+        $('#selectGerentes').empty().removeAttr('required');
+
+        $.getJSON(`${_baseUrl}api/v1/gerentes/list`, {}, (data) => {
+            data.forEach(gerente => {
+                if (idAtual === gerente.id) {
+                    $('#selectGerentes').append(`<option selected value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
+                } else {
+                    $('#selectGerentes').append(`<option value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
+                }
+            });
+
+            // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
+            $('#selectGerentes').attr('required', true).attr('data-choices', true);
+            new Choices('#selectGerentes');
+        }).fail(() => {
+            Swal.fire({
+                title: 'Cadastre gerentes antes de cadastrar um supervisor...',
+                icon: 'error',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false,
+            }).then((result) => {
+                history.back();
+            });
+        });
     }
 </script>
 
