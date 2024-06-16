@@ -42,8 +42,12 @@ class Supervisores extends ResourceController
     public function list()
     {
 
-        $data = $this->modelSupervisores->cacheData();
-        return $this->respond($data);
+        $data = $this->modelSupervisores->findAll();
+        if ($data) {
+            return $this->respond($data);
+        } else {
+            return $this->failNotFound();
+        }
     }
 
     /**

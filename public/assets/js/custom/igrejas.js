@@ -110,6 +110,15 @@ function populateSupervisorSelect() {
         });
         $('#selectSupervisor').attr('required', true).attr('data-choices', true);
         new Choices('#selectSupervisor');
+    }).fail(function() {
+        Swal.fire({
+            title: 'Cadastre supervisores antes...',
+            icon: 'error',
+            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+            buttonsStyling: false,
+        }).then(function(result) {
+            history.back();
+        });
     });
 }
 

@@ -543,7 +543,7 @@
 
         }).fail(function() {
             Swal.fire({
-                title: 'Erro ao carregar supervisores...',
+                title: 'Cadastre supervisores antes...',
                 icon: 'error',
                 confirmButtonClass: 'btn btn-primary w-xs mt-2',
                 buttonsStyling: false,
