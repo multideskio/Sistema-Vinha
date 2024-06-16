@@ -36,7 +36,7 @@
 
                     </form>
                     <h5 class="fs-16 mb-1" id="viewNameUser">Carregando...</h5>
-                    <p class="text-muted mb-0">Gerente/Confirmado</p>
+                    <p class="text-muted mb-0">Gerente</p>
                 </div>
             </div>
         </div>

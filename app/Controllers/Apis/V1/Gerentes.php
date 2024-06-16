@@ -55,6 +55,7 @@ class Gerentes extends ResourceController
             ->select('gerentes.*')
             ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
             ->join('usuarios', 'usuarios.id_perfil = gerentes.id')
+            ->where('usuarios.tipo', 'gerente')
             ->find($id);
 
 
