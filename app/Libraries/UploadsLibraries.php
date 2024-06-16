@@ -85,4 +85,52 @@ class UploadsLibraries
             return ['error' => $e->getMessage()];
         }
     }
+
+    public function uploadCI($file, int $id, string $tipo)
+    {
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            helper('filesystem');
+
+            // Define o diretório de upload
+            $uploadPath = FCPATH . "assets/img/{$tipo}/{$id}/";
+
+            //Se existe diretório, então apaga
+            if (is_dir($uploadPath)) {
+                delete_files($uploadPath, true);
+                rmdir($uploadPath);
+            }
+
+            // Cria o diretório se ele não existir
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Gera um nome de arquivo único para a imagem
+            $image_name = uniqid();
+
+            // Move o arquivo para o diretório de upload
+            $file_path = $uploadPath . $image_name . '.png';
+            $file->move($uploadPath, $image_name . '.png');
+
+            $image = \Config\Services::image();
+
+            // Redimensiona e converte a imagem para WebP
+            $image->withFile($file_path)
+                ->resize(150, 150, true, 'height')
+                ->convert(IMAGETYPE_WEBP)
+                ->save($uploadPath . $image_name . '.webp');
+
+            if (file_exists($uploadPath . $image_name . '.webp')) {
+                $update = [
+                    'foto' => '/assets/img/gerentes/' . $id . '/' . $image_name . '.webp'
+                ];
+                // Remove o arquivo PNG original
+                unlink($file_path);
+            }
+            return $update ;
+            
+        } else {
+            throw new \Exception("Nenhum arquivo de imagem foi encontrado no input.");
+        }
+    }
 }

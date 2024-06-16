@@ -67,7 +67,7 @@
         </div>
     </div>
 </div>
-<?= $this->include('admin/pages/gerentes/forms.php') ?>
+<?= $this->include('admin/pages/gerentes/modal.php') ?>
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
 <script src="/assets/libs/filepond/filepond.min.js"></script>

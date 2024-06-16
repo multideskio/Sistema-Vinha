@@ -41,7 +41,7 @@ class Admin extends BaseController
         $data['titlePage'] = 'Gerentes';
 
         //
-        return view('admin/pages/gerentes', $data);
+        return view('admin/pages/gerentes/lista', $data);
     }
     
     public function gerente($id): string
@@ -50,7 +50,7 @@ class Admin extends BaseController
         $data['titlePage'] = 'Alterando Gerente';
 
         //
-        return view('admin/pages/gerentesUpdate', $data);
+        return view('admin/pages/gerentes/altera', $data);
     }
 
     public function supervisores(): string

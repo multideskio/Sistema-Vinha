@@ -106,7 +106,7 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/gerentes/'. $idSearch, 'class="formGeral"') ?>
+                        <?= form_open('api/v1/gerentes/' . $idSearch, 'class="formGeral"') ?>
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-3">
@@ -125,35 +125,38 @@
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cpf" class="form-label">CPF</label>
-                                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00">
+                                    <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="000.000.000-00">
                                 </div>
                             </div>
                             <!--end col-->
+                            <div class="col-lg-12">
+                                <small class="text-danger">Não é possivel atualizar o e-mail, o usuário deve criar uma nova conta com o novo e-mail</small>
+                            </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cel" class="form-label">Celular</label>
-                                    <input type="text" class="form-control" id="cel" name="cel" placeholder="(00) 0000-0000">
+                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="(00) 0000-0000">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="tel" class="form-label">Telefone 2</label>
-                                    <input type="text" class="form-control" id="tel" name="tel" placeholder="(00) 0000-0000">
+                                    <input type="text" class="form-control telFixo" id="tel" name="tel" placeholder="(00) 0000-0000">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com">
+                                    <label for="email" class="form-label">Email</label><br>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com" readonly>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cep" class="form-label">CEP</label>
-                                    <input type="text" class="form-control" id="cep" name="cep" placeholder="00000-000">
+                                    <input type="text" class="form-control cep" id="cep" name="cep" placeholder="00000-000">
                                 </div>
                             </div>
                             <!--end col-->
@@ -366,17 +369,37 @@
 <?= $this->section('js') ?>
 <!-- profile-setting init js -->
 <script src="/assets/js/pages/profile-setting.init.js"></script>
-<script src="/assets/libs/filepond/filepond.min.js"></script>
-<script src="/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js"></script>
-<script src="/assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js"></script>
-<script src="/assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js"></script>
-<script src="/assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
-
-
-
 <script>
     $(document).ready(function() {
+
+        // Formatação de inputs com Cleave.js
+        var cleaveCpf = new Cleave('.cpf', {
+            numericOnly: true,
+            delimiters: ['.', '.', '-'],
+            blocks: [3, 3, 3, 2],
+            uppercase: true
+        });
+
+        var cleaveCep = new Cleave('.cep', {
+            numericOnly: true,
+            delimiters: ['-'],
+            blocks: [5, 3],
+            uppercase: true
+        });
+
+        var cleaveTelFixo = new Cleave('.telFixo', {
+            numericOnly: true,
+            delimiters: ['(', ') ', '-'],
+            blocks: [0, 2, 4, 4]
+        });
+
+        var cleaveCelular = new Cleave('.celular', {
+            numericOnly: true,
+            delimiters: ['+', ' (', ') ', ' ', '-'],
+            blocks: [0, 2, 2, 1, 4, 4]
+        });
+
         searchUpdate(_idSearch)
 
         $(".enviaLinks").on('change', function() {
@@ -476,28 +499,28 @@
             $.getJSON(url)
                 .done(function(data, textStatus, jqXHR) {
                     if (data.foto) {
-                        $("#fotoPerfil").attr('src', data.foto)
+                        $("#fotoPerfil").attr('src', data.foto);
                     }
-                    /*src="${gerente.foto}" onerror="this.onerror=null; this.src='https://placehold.co/50/${randomColor}/FFF?text=${gerente.nome.charAt(0)}';"*/
-                    $("#viewNameUser").html(data.nome)
-                    $("#facebook").val(data.facebook)
-                    $("#website").val(data.website)
-                    $("#instagram").val(data.instagram)
 
-                    $("#nome").val(data.nome)
-                    $("#sobrenome").val(data.sobrenome)
-                    $("#cpf").val(data.cpf)
-                    $("#cel").val(data.celular)
-                    $("#email").val(data.email)
-                    $("#tel").val(data.telefone)
-                    $("#cep").val(data.cep)
-                    $("#uf").val(data.uf)
-                    $("#cidade").val(data.cidade)
-                    $("#bairro").val(data.bairro)
-                    $("#complemento").val(data.complemento)
-                    $("#dizimo").val(data.data_dizimo)
+                    $("#viewNameUser").html(data.nome);
+                    $("#facebook").val(data.facebook);
+                    $("#website").val(data.website);
+                    $("#instagram").val(data.instagram);
+                    $("#nome").val(data.nome);
+                    $("#sobrenome").val(data.sobrenome);
+                    $("#cpf").val(data.cpf);
+                    $("#cel").val(data.celular);
+                    $("#email").val(data.email);
+                    $("#tel").val(data.telefone);
+                    $("#cep").val(data.cep);
+                    $("#uf").val(data.uf);
+                    $("#cidade").val(data.cidade);
+                    $("#bairro").val(data.bairro);
+                    $("#complemento").val(data.complemento);
+                    $("#dizimo").val(data.data_dizimo);
 
                 }).fail(function(jqXHR, textStatus, errorThrown) {
+                    $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
                     console.error("Erro ao carregar os dados:", textStatus, errorThrown);
                     exibirMensagem('error', {
                         messages: {
@@ -506,6 +529,11 @@
                     });
                     $('.loadResult').hide();
                 });
+
+            // Tratamento de erro para a imagem
+            $('#fotoPerfil').on('error', function() {
+                $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+            });
         }
     }
 </script>
