@@ -1,17 +1,20 @@
 <?= $this->extend('admin/template') ?>
+
 <?= $this->section('css'); ?>
 <!-- Sweet Alert css-->
 <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
 <!-- Filepond css -->
 <link rel="stylesheet" href="/assets/libs/filepond/filepond.min.css" type="text/css" />
 <link rel="stylesheet" href="/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css">
+
 <?= $this->endSection(); ?>
 <?= $this->section('page') ?>
 <div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de pastores</p>
+    <p class="text-muted float-start">Gerenciamento de igrejas</p>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarPastor">
-        <i class="ri-user-settings-line"></i> Cadastrar pastor
+    <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarIgreja">
+        <i class="ri-user-settings-line"></i> Cadastrar igreja
     </button>
 </div>
 
@@ -20,7 +23,8 @@
         <div class="card-body">
             <?= $this->include('admin/pages/includes/search.php') ?>
             <div class="table-responsive">
-                <div id="cardResult" style="display: none">
+                <!-- style="display: none" -->
+                <div id="cardResult">
                     <div class="alert alert-info" role="alert">
                         <strong>A região é herdada do supervisor</strong>
                     </div>
@@ -30,11 +34,14 @@
                             <tr>
                                 <th></th>
                                 <th>id</th>
-                                <th width="90%">Nome completo</th>
+                                <th>Razão social</th>
+                                <th>Fantasia</th>
+                                <th>Região</th>
                                 <th>Gerente</th>
                                 <th>Supervisor</th>
-                                <th>Região</th>
-                                <th>CPF</th>
+                                <th>UF</th>
+                                <th>cidade</th>
+                                <th>CNPJ</th>
                                 <th>E-mail</th>
                                 <th>Telefones</th>
                                 <th>Ações</th>
@@ -67,16 +74,15 @@
         </div>
     </div>
 </div>
-
-<?= $this->include('admin/pages/pastores/forms.php') ?>
-
+<?= $this->include('admin/pages/igrejas/modal.php') ?>
 <?= $this->endSection(); ?>
 <?= $this->section('js') ?>
+<!-- filepond js -->
 <script src="/assets/libs/filepond/filepond.min.js"></script>
 <script src="/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js"></script>
 <script src="/assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js"></script>
 <script src="/assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js"></script>
 <script src="/assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/pastores.min.js"></script>
+<script src="/assets/js/custom/igrejas.min.js"></script>
 <?= $this->endSection(); ?>

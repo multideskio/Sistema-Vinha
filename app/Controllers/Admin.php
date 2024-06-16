@@ -75,7 +75,7 @@ class Admin extends BaseController
         $data['titlePage'] = 'Pastores';
 
         //
-        return view('admin/pages/pastores', $data);
+        return view('admin/pages/pastores/lista', $data);
     }
 
     public function pastor($id): string
@@ -83,7 +83,7 @@ class Admin extends BaseController
         $data['idSearch']  = $id ;
         $data['titlePage'] = 'Alterando Pastor';
         //
-        return view('admin/pages/pastores', $data);
+        return view('admin/pages/pastores/altera', $data);
     }
 
     public function igrejas(): string
@@ -92,7 +92,7 @@ class Admin extends BaseController
         $data['titlePage'] = 'Igrejas';
 
         //
-        return view('admin/pages/igrejas', $data);
+        return view('admin/pages/igrejas/lista', $data);
     }
 
     public function igreja($id): string
@@ -100,7 +100,7 @@ class Admin extends BaseController
         $data['idSearch']  = $id ;
         $data['titlePage'] = 'Alterando Igreja';
         //
-        return view('admin/pages/igrejas', $data);
+        return view('admin/pages/igrejas/altera', $data);
     }
 
     /*public function usuarios(): string

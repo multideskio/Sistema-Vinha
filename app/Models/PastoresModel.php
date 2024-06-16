@@ -30,7 +30,8 @@ class PastoresModel extends Model
         'telefone',
         'celular',
         'facebook',
-        'instagram'
+        'instagram',
+        'website'
     ];
 
     protected bool $allowEmptyInserts = false;

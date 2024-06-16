@@ -200,12 +200,12 @@ function atualizarTabela(search = false, page = 1) {
         </td>
         <td class="align-middle">
             <div class="btn-group" role="group">
-                <a href="${_baseUrl}admin/igreja/${row.id}" class="btn btn-dark btn-sm">
-                    <i class="ri-pencil-line"></i>
+                <a href="${_baseUrl}admin/igreja/${row.id}" class="btn btn-primary btn-sm">
+                    <!-- <i class="ri-pencil-line"></i> --> EDITAR
                 </a>
-                <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">
+                <!-- <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">
                     <i class="ri-delete-bin-6-line"></i>
-                </a>
+                </a> -->
             </div>
         </td>
     </tr>

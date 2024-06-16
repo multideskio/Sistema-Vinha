@@ -33,6 +33,9 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->get('gerentes/list', 'Gerentes::list');
     $routes->resource('gerentes', ['filter' => 'logged']);
 
+    $routes->post('igrejas/update/upload/(:num)', 'Igrejas::foto/$1');
+    $routes->put('igrejas/update/links/(:num)', 'Igrejas::links/$1');
+
     $routes->get('igrejas/list', 'Igrejas::list');
     $routes->resource('igrejas', ['filter' => 'logged']);
 
@@ -47,6 +50,9 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->get('supervisores/list', 'Supervisores::list');
     $routes->resource('supervisores', ['filter' => 'logged']);
 
+
+    $routes->post('pastores/update/upload/(:num)', 'Pastores::foto/$1');
+    $routes->put('pastores/update/links/(:num)', 'Pastores::links/$1');
 
     $routes->resource('pastores', ['filter' => 'logged']);
 

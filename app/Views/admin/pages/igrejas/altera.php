@@ -5,14 +5,14 @@
 <?= $this->endSection(); ?>
 <?= $this->section('page') ?>
 <div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de supervisores</p>
+    <p class="text-muted float-start">Gerenciamento de igrejas</p>
 </div>
 <div class="row">
     <div class="col-xxl-3">
         <div class="card">
             <div class="card-body p-4">
                 <div class="text-center">
-                    <?= form_open_multipart('api/v1/supervisores/update/upload/' . $idSearch, 'class="formUpload"') ?>
+                    <?= form_open_multipart('api/v1/igrejas/update/upload/' . $idSearch, 'class="formUpload"') ?>
                     <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
                         <img src="https://placehold.co/50/00000/FFF?text=V" id="fotoPerfil" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
                         <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
@@ -28,7 +28,7 @@
 
                     </form>
                     <h5 class="fs-16 mb-1" id="viewNameUser">Carregando...</h5>
-                    <p class="text-muted mb-0">Supervisor</p>
+                    <p class="text-muted mb-0">IGREJA</p>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                         <h5 class="card-title mb-0">Redes sociais</h5>
                     </div>
                 </div>
-                <?= form_open('api/v1/supervisores/update/links/' . $idSearch, 'class="formTexts"') ?>
+                <?= form_open('api/v1/igrejas/update/links/' . $idSearch, 'class="formTexts"') ?>
                 <div class="alert alert-success alertAlterado bg-success text-white" role="alert" style="display: none;">
                     <b>Alterado com sucesso</b>
                 </div>
@@ -93,41 +93,56 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/supervisores/' . $idSearch, 'class="formGeral"') ?>
+                        <?= form_open('api/v1/igrejas/' . $idSearch, 'class="formGeral"') ?>
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-12">
                                 <div class="mb-3">
-                                    <label for="selectGerentes" class="form-label text-danger">Gerente</label>
-                                    <select name="selectGerentes" id="selectGerentes" class="form-select" required>
-                                        <option value="">Carregando...</option>
-                                    </select>
+                                    <label for="selectSupervisor" class="text-danger">Selecione um supervisor</label>
+                                    <select name="selectSupervisor" id="selectSupervisor" class="form-select" required></select>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label for="selectRegiao" class="form-label text-danger">Região</label>
-                                    <select name="selectRegiao" id="selectRegiao" class="form-select" required>
-                                        <option value="">Carregando...</option>
-                                    </select>
-                                </div>
-                            </div>
+
+
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="nome" class="form-label text-danger">Nome</label>
+                                    <label for="cnpj" class="form-label text-danger">CNPJ</label>
+                                    <input type="text" class="form-control cnpj" id="cnpj" name="cnpj" placeholder="CNPJ..." required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="razaosocial" class="form-label text-danger">Razão social</label>
+                                    <input type="text" class="form-control" id="razaosocial" name="razaosocial" placeholder="Razão social..." required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="fantasia" class="form-label text-danger">Nome fantasia</label>
+                                    <input type="text" class="form-control" id="fantasia" name="fantasia" placeholder="Nome fantasia..." required>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label text-danger">Nome tesoureiro</label>
                                     <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome..." required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="sobrenome" class="form-label text-danger">Sobre-nome</label>
+                                    <label for="sobrenome" class="form-label text-danger">Sobre-nome tesoureiro</label>
                                     <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome..." required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="cpf" class="form-label">CPF</label>
+                                    <label for="cpf" class="form-label">CPF tesoureiro</label>
                                     <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="000.000.000-00">
                                 </div>
                             </div>
@@ -195,6 +210,13 @@
                                 </div>
                             </div>
                             <!--end col-->
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="fundacao" class="form-label">Fundação</label>
+                                    <input type="date" max="31" class="form-control" id="fundacao" name="fundacao" placeholder="Fundação" required>
+                                </div>
+                            </div>
+                            <!--end col-->
                             <div class="col-lg-12">
                                 <div class="hstack gap-2 justify-content-end">
                                     <button type="submit" class="btn btn-primary">Alterar</button>
@@ -217,6 +239,96 @@
     </div>
     <!--end col-->
 </div>
+
+
+<div class="modal fade" id="dadosCnpj" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="dadosCnpjLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dadosCnpjLabel">Dados do CNPJ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>CNPJ Raiz</th>
+                            <td id="cnpj_raiz"></td>
+                        </tr>
+                        <tr>
+                            <th>Razão Social</th>
+                            <td id="razao_social"></td>
+                        </tr>
+                        <tr>
+                            <th>Capital Social</th>
+                            <td id="capital_social"></td>
+                        </tr>
+                        <tr>
+                            <th>Porte</th>
+                            <td id="porte"></td>
+                        </tr>
+                        <tr>
+                            <th>Natureza Jurídica</th>
+                            <td id="natureza_juridica"></td>
+                        </tr>
+                        <tr>
+                            <th>Qualificação do Responsável</th>
+                            <td id="qualificacao_responsavel"></td>
+                        </tr>
+                        <tr>
+                            <th>Simples Nacional</th>
+                            <td id="simples"></td>
+                        </tr>
+                        <tr>
+                            <th>Atividade Principal</th>
+                            <td id="atividade_principal"></td>
+                        </tr>
+                        <tr>
+                            <th>Endereço</th>
+                            <td id="endereco"></td>
+                        </tr>
+                        <tr>
+                            <th>Contato</th>
+                            <td id="contato"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Sócios</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>CPF/CNPJ Sócio</th>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Data de Entrada</th>
+                            <th>Qualificação</th>
+                            <th>País</th>
+                        </tr>
+                    </thead>
+                    <tbody id="socio_tbody">
+                    </tbody>
+                </table>
+
+                <h2>Atividades Secundárias</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody id="atividades_tbody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
 <!-- profile-setting init js -->
@@ -252,15 +364,19 @@
             blocks: [0, 2, 2, 1, 4, 4]
         });
 
+        /**formata CNPJ */
+        var cleave = new Cleave('.cnpj', {
+            numericOnly: true,
+            blocks: [2, 3, 3, 4, 2],
+            delimiters: ['.', '.', '/', '-'],
+            uppercase: true
+        });
+
         searchUpdate(_idSearch)
 
         $(".enviaLinks").on('change', function() {
             $('.formTexts').submit();
         });
-
-        /*var options = {
-            type: 'PUT'
-        }*/
 
         $('.formTexts').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
@@ -278,7 +394,6 @@
                 console.log(error)
             }
         });
-
 
         $('.formGeral').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
@@ -300,10 +415,6 @@
                 });
             }
         });
-
-
-
-
 
         $("#profile-img-file-input").on('change', function() {
             $('.formUpload').submit();
@@ -340,20 +451,29 @@
     function searchUpdate(id) {
         if (id) {
             // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
-            var url = _baseUrl + `api/v1/supervisores/${id}`;
+            var url = `${_baseUrl}api/v1/igrejas/${id}`;
             $.getJSON(url)
                 .done(function(data, textStatus, jqXHR) {
                     if (data.foto) {
                         $("#fotoPerfil").attr('src', data.foto);
                     }
 
-                    $("#viewNameUser").html(data.nome);
+                    $("#cnpj").val(data.cnpj);
+                    $("#razaosocial").val(data.razaoSocial);
+                    $("#fantasia").val(data.nomeFantazia);
+
+                    $("#nome").val(data.nomeTesoureiro);
+                    $("#sobrenome").val(data.sobrenomeTesoureiro);
+                    $("#cpf").val(data.cpfTesoureiro);
+
+                    $("#viewNameUser").html(data.razaoSocial);
+
                     $("#facebook").val(data.facebook);
                     $("#website").val(data.website);
                     $("#instagram").val(data.instagram);
-                    $("#nome").val(data.nome);
-                    $("#sobrenome").val(data.sobrenome);
-                    $("#cpf").val(data.cpf);
+
+                    $("#fundacao").val(data.fundacao)
+
                     $("#cel").val(data.celular);
                     $("#email").val(data.email);
                     $("#tel").val(data.telefone);
@@ -362,12 +482,14 @@
                     $("#cidade").val(data.cidade);
                     $("#bairro").val(data.bairro);
                     $("#complemento").val(data.complemento);
+
                     $("#dizimo").val(data.data_dizimo);
 
-                    $("#gerente").val(data.gerente);
-                    $("#regiao").val(data.regiao);
-                    listRegioes(data.idRegiao)
-                    listGerentes(data.idGerente)
+                    //$("#gerente").val(data.gerente);
+                    //$("#regiao").val(data.regiao);
+
+                    populateSupervisorSelect(data.idSupervisor)
+                    /*listGerentes(data.idGerente)*/
 
                 }).fail(function(jqXHR, textStatus, errorThrown) {
 
@@ -397,57 +519,35 @@
     }
 
 
-    function listRegioes(idAtual) {
-        $('#selectRegiao').empty().removeAttr('required');
+    function populateSupervisorSelect(idAtual) {
+        $('#selectSupervisor').empty().removeAttr('required');
 
-        $.getJSON(`${_baseUrl}api/v1/regioes`, {}, (data) => {
-            
-            data.rows.forEach(regiao => {
-                if (idAtual === regiao.id) {
-                    $('#selectRegiao').append(`<option selected value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
+        $.getJSON(_baseUrl + "api/v1/supervisores/list", function(data) {
+
+            data.forEach(function(supervisor) {
+                if (idAtual === supervisor.id) {
+                    var option = `<option selected value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
                 } else {
-                    $('#selectRegiao').append(`<option value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
+                    var option = `<option value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
                 }
+
+                $('#selectSupervisor').append(option);
             });
 
+            //console.log('Id atual '+ idAtual)
+            //console.log('IDs '+ supervisor.id)
             // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
-            $('#selectRegiao').attr('required', true).attr('data-choices', true);
-            new Choices('#selectRegiao');
-        }).fail(() => {
+            $('#selectSupervisor').attr('required', true).attr('data-choices', true);
+
+            new Choices('#selectSupervisor');
+
+        }).fail(function() {
             Swal.fire({
-                title: 'Cadastre regiões antes de cadastrar um supervisor...',
+                title: 'Erro ao carregar supervisores...',
                 icon: 'error',
                 confirmButtonClass: 'btn btn-primary w-xs mt-2',
                 buttonsStyling: false,
-            }).then((result) => {
-                history.back();
-            });
-        });
-    }
-
-
-    function listGerentes(idAtual) {
-        $('#selectGerentes').empty().removeAttr('required');
-
-        $.getJSON(`${_baseUrl}api/v1/gerentes/list`, {}, (data) => {
-            data.forEach(gerente => {
-                if (idAtual === gerente.id) {
-                    $('#selectGerentes').append(`<option selected value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
-                } else {
-                    $('#selectGerentes').append(`<option value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
-                }
-            });
-
-            // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
-            $('#selectGerentes').attr('required', true).attr('data-choices', true);
-            new Choices('#selectGerentes');
-        }).fail(() => {
-            Swal.fire({
-                title: 'Cadastre gerentes antes de cadastrar um supervisor...',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
-            }).then((result) => {
+            }).then(function(result) {
                 history.back();
             });
         });

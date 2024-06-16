@@ -5,14 +5,14 @@
 <?= $this->endSection(); ?>
 <?= $this->section('page') ?>
 <div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de supervisores</p>
+    <p class="text-muted float-start">Gerenciamento de pastores</p>
 </div>
 <div class="row">
     <div class="col-xxl-3">
         <div class="card">
             <div class="card-body p-4">
                 <div class="text-center">
-                    <?= form_open_multipart('api/v1/supervisores/update/upload/' . $idSearch, 'class="formUpload"') ?>
+                    <?= form_open_multipart('api/v1/pastores/update/upload/' . $idSearch, 'class="formUpload"') ?>
                     <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
                         <img src="https://placehold.co/50/00000/FFF?text=V" id="fotoPerfil" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
                         <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
@@ -28,7 +28,7 @@
 
                     </form>
                     <h5 class="fs-16 mb-1" id="viewNameUser">Carregando...</h5>
-                    <p class="text-muted mb-0">Supervisor</p>
+                    <p class="text-muted mb-0">Pastor</p>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                         <h5 class="card-title mb-0">Redes sociais</h5>
                     </div>
                 </div>
-                <?= form_open('api/v1/supervisores/update/links/' . $idSearch, 'class="formTexts"') ?>
+                <?= form_open('api/v1/pastores/update/links/' . $idSearch, 'class="formTexts"') ?>
                 <div class="alert alert-success alertAlterado bg-success text-white" role="alert" style="display: none;">
                     <b>Alterado com sucesso</b>
                 </div>
@@ -93,22 +93,12 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/supervisores/' . $idSearch, 'class="formGeral"') ?>
+                        <?= form_open('api/v1/pastores/' . $idSearch, 'class="formGeral"') ?>
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-12">
                                 <div class="mb-3">
-                                    <label for="selectGerentes" class="form-label text-danger">Gerente</label>
-                                    <select name="selectGerentes" id="selectGerentes" class="form-select" required>
-                                        <option value="">Carregando...</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label for="selectRegiao" class="form-label text-danger">Região</label>
-                                    <select name="selectRegiao" id="selectRegiao" class="form-select" required>
-                                        <option value="">Carregando...</option>
-                                    </select>
+                                    <label for="selectSupervisor" class="text-danger">Selecione um supervisor</label>
+                                    <select name="selectSupervisor" id="selectSupervisor" class="form-select" required></select>
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -258,10 +248,6 @@
             $('.formTexts').submit();
         });
 
-        /*var options = {
-            type: 'PUT'
-        }*/
-
         $('.formTexts').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 options.type = 'PUT'
@@ -278,7 +264,6 @@
                 console.log(error)
             }
         });
-
 
         $('.formGeral').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
@@ -300,10 +285,6 @@
                 });
             }
         });
-
-
-
-
 
         $("#profile-img-file-input").on('change', function() {
             $('.formUpload').submit();
@@ -340,7 +321,7 @@
     function searchUpdate(id) {
         if (id) {
             // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
-            var url = _baseUrl + `api/v1/supervisores/${id}`;
+            var url = _baseUrl + `api/v1/pastores/${id}`;
             $.getJSON(url)
                 .done(function(data, textStatus, jqXHR) {
                     if (data.foto) {
@@ -364,10 +345,11 @@
                     $("#complemento").val(data.complemento);
                     $("#dizimo").val(data.data_dizimo);
 
-                    $("#gerente").val(data.gerente);
-                    $("#regiao").val(data.regiao);
-                    listRegioes(data.idRegiao)
-                    listGerentes(data.idGerente)
+                    //$("#gerente").val(data.gerente);
+                    //$("#regiao").val(data.regiao);
+
+                    populateSupervisorSelect(data.idSupervisor)
+                    /*listGerentes(data.idGerente)*/
 
                 }).fail(function(jqXHR, textStatus, errorThrown) {
 
@@ -397,57 +379,35 @@
     }
 
 
-    function listRegioes(idAtual) {
-        $('#selectRegiao').empty().removeAttr('required');
+    function populateSupervisorSelect(idAtual) {
+        $('#selectSupervisor').empty().removeAttr('required');
 
-        $.getJSON(`${_baseUrl}api/v1/regioes`, {}, (data) => {
+        $.getJSON(_baseUrl + "api/v1/supervisores/list", function(data) {
             
-            data.rows.forEach(regiao => {
-                if (idAtual === regiao.id) {
-                    $('#selectRegiao').append(`<option selected value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
+            data.forEach(function(supervisor) {
+                if (idAtual === supervisor.id) {
+                    var option = `<option selected value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
                 } else {
-                    $('#selectRegiao').append(`<option value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
+                    var option = `<option value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
                 }
+
+                $('#selectSupervisor').append(option);
             });
 
+            //console.log('Id atual '+ idAtual)
+            //console.log('IDs '+ supervisor.id)
             // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
-            $('#selectRegiao').attr('required', true).attr('data-choices', true);
-            new Choices('#selectRegiao');
-        }).fail(() => {
+            $('#selectSupervisor').attr('required', true).attr('data-choices', true);
+            
+            new Choices('#selectSupervisor');
+
+        }).fail(function() {
             Swal.fire({
-                title: 'Cadastre regiões antes de cadastrar um supervisor...',
+                title: 'Erro ao carregar supervisores...',
                 icon: 'error',
                 confirmButtonClass: 'btn btn-primary w-xs mt-2',
                 buttonsStyling: false,
-            }).then((result) => {
-                history.back();
-            });
-        });
-    }
-
-
-    function listGerentes(idAtual) {
-        $('#selectGerentes').empty().removeAttr('required');
-
-        $.getJSON(`${_baseUrl}api/v1/gerentes/list`, {}, (data) => {
-            data.forEach(gerente => {
-                if (idAtual === gerente.id) {
-                    $('#selectGerentes').append(`<option selected value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
-                } else {
-                    $('#selectGerentes').append(`<option value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
-                }
-            });
-
-            // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
-            $('#selectGerentes').attr('required', true).attr('data-choices', true);
-            new Choices('#selectGerentes');
-        }).fail(() => {
-            Swal.fire({
-                title: 'Cadastre gerentes antes de cadastrar um supervisor...',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
-            }).then((result) => {
+            }).then(function(result) {
                 history.back();
             });
         });

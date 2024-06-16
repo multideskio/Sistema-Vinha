@@ -48,6 +48,7 @@ class Igrejas extends ResourceController
             ->select('igrejas.*')
             ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
             ->join('usuarios', 'usuarios.id_perfil = igrejas.id')
+            ->join('supervisores', 'supervisores.id = igrejas.id_supervisor')
             ->where('usuarios.tipo', 'igreja')
             ->find($id);
 
@@ -56,10 +57,12 @@ class Igrejas extends ResourceController
                 "id" => $search['id'],
                 "razaoSocial"  => $search['razao_social'],
                 "nomeFantazia" => $search['fantasia'],
+                "idSupervisor" => $search['id_supervisor'],
                 "nomeTesoureiro" => $search['nome_tesoureiro'],
                 "sobrenomeTesoureiro" => $search['sobrenome_tesoureiro'],
                 "cpfTesoureiro" => $search['cpf_tesoureiro'],
                 "cnpj" => $search['cnpj'],
+                "fundacao" => $search['fundacao'],
                 "foto" => $search['foto'],
                 "uf" => $search['uf'],
                 "cidade" => $search['cidade'],
@@ -179,6 +182,41 @@ class Igrejas extends ResourceController
         //
     }
 
+    public function links($id = null)
+    {
+        $input = $this->request->getRawInput();
+        $data = [
+            'facebook'  => $input['linkFacebook'],
+            'instagram' => $input['linkInstagram'],
+            'website'   => $input['linkWebsite'],
+        ];
+        $status = $this->modelIgrejas->update($id, $data);
+        if ($status === false) {
+            return $this->fail($this->modelIgrejas->errors());
+        }
+        return $this->respondUpdated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+    }
+
+    public function foto($id = null)
+    {
+        $request = service('request');
+        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        try {
+            $uploadLibraries = new UploadsLibraries;
+            $upload = $uploadLibraries->uploadCI($file, $id, 'igrejas');
+            $data = [
+                'foto' => $upload['foto']
+            ];
+            $status = $this->modelIgrejas->update($id, $data);
+            if ($status === false) {
+                return $this->fail($this->modelIgrejas->errors());
+            }
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
     /**
      * Add or update a model resource, from "posted" properties
      *
@@ -186,7 +224,37 @@ class Igrejas extends ResourceController
      */
     public function update($id = null)
     {
+
         //
+        try {
+            // Obtém os dados do FilePond do corpo da solicitação
+            $input = $this->request->getRawInput();
+            $data = [
+                "id_supervisor" => $input['selectSupervisor'],
+                "nome_tesoureiro" => $input['nome'],
+                "sobrenome_tesoureiro" => $input['sobrenome'],
+                "cpf_tesoureiro" => $input['cpf'],
+                "fundacao" => $input['fundacao'],
+                "razao_social" => $input['razaosocial'],
+                "fantasia" => $input['fantasia'],
+                "cnpj" => $input['cnpj'],
+                "uf" => $input['uf'],
+                "cidade" => $input['cidade'],
+                "cep" => $input['cep'],
+                "complemento" => $input['complemento'],
+                "bairro" => $input['bairro'],
+                "data_dizimo" => $input['dia'],
+                "telefone" => $input['tel'],
+                "celular" => $input['cel']
+            ];
+            $status = $this->modelIgrejas->update($id, $data);
+            if ($status === false) {
+                return $this->fail($this->modelIgrejas->errors());
+            }
+            return $this->respondCreated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
     }
 
     /**

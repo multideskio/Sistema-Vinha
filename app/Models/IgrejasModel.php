@@ -13,7 +13,7 @@ class IgrejasModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        "id_adm", "id_user", "id_supervisor", "nome_tesoureiro", "sobrenome_tesoureiro", "cpf_tesoureiro", "fundacao", "razao_social", "fantasia", "cnpj", "foto", "uf", "cidade", "cep", "complemento", "bairro", "data_dizimo", "telefone", "celular", "facebook", "instagram"
+        "id_adm", "id_user", "id_supervisor", "nome_tesoureiro", "sobrenome_tesoureiro", "cpf_tesoureiro", "fundacao", "razao_social", "fantasia", "cnpj", "foto", "uf", "cidade", "cep", "complemento", "bairro", "data_dizimo", "telefone", "celular", "facebook", "instagram", "website"
     ];
 
     protected bool $allowEmptyInserts = false;
