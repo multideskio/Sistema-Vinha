@@ -150,7 +150,7 @@ function atualizarTabela(search = '', page = 1) {
                             </td>
                             <td class="align-middle">
                                 <div class="btn-group" role="group">
-                                    <a href="#" onclick="recursoindisponivel()" class="btn btn-dark btn-sm">
+                                    <a href="${_baseUrl}admin/pastor/${row.id}" class="btn btn-dark btn-sm">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                     <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">

@@ -64,7 +64,7 @@ class UploadsLibraries
                     // Converte a imagem para WEBP e salva
                     $webp_path = $image_path . $image_name . '.webp';
                     if (!$image->withFile($file_path)
-                        ->resize(50, 50, true, 'height')
+                        ->resize(150, 150, true, 'height')
                         ->convert(IMAGETYPE_WEBP)
                         ->save($webp_path)) {
                         throw new \Exception("Falha ao converter a imagem para WEBP.");

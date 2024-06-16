@@ -29,7 +29,8 @@ class GerentesModel extends Model
         "facebook",
         "instagram",
         "id_user",
-        "id_adm"
+        "id_adm",
+        "website"
     ];
 
     protected bool $allowEmptyInserts = false;

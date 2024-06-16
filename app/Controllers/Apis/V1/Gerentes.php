@@ -38,7 +38,8 @@ class Gerentes extends ResourceController
         return $this->respond($data);
     }
 
-    public function list(){
+    public function list()
+    {
         return $this->respond($this->modelGerentes->findAll());
     }
 
@@ -50,8 +51,36 @@ class Gerentes extends ResourceController
     public function show($id = null)
     {
         //
+        $search = $this->modelGerentes
+            ->select('gerentes.*')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+            ->join('usuarios', 'usuarios.id_perfil = gerentes.id')
+            ->find($id);
 
-        return $this->respond([]);
+
+        $data = [
+            "id" => $search['id'],
+            "nome" => $search['nome'],
+            "sobrenome" => $search['sobrenome'],
+            "cpf" => $search['cpf'],
+            "foto" => $search['foto'],
+            "uf" => $search['uf'],
+            "cidade" => $search['cidade'],
+            "cep" => $search['cep'],
+            "complemento" => $search['complemento'],
+            "bairro" => $search['bairro'],
+            "data_dizimo" => $search['data_dizimo'],
+            "telefone" => $search['telefone'],
+            "celular" => $search['celular'],
+            "facebook" => $search['facebook'],
+            "instagram" => $search['instagram'],
+            "created_at" => $search['created_at'],
+            "website" => $search['website'],
+            "email" => $search['email'],
+            "sendWhatsapp" => $search['sendWhatsapp']
+        ];
+
+        return $this->respond($data);
     }
 
     /**
@@ -113,7 +142,7 @@ class Gerentes extends ResourceController
 
             $modelUser->cadUser('gerente', $dataUser);
 
-            
+
 
 
             if (!empty($input['filepond'])) {
@@ -132,9 +161,8 @@ class Gerentes extends ResourceController
                     throw new Exception('Erro ao salvar a imagem.');
                 }
             }
-        
+
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
-        
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
@@ -155,6 +183,89 @@ class Gerentes extends ResourceController
      *
      * @return ResponseInterface
      */
+
+    public function links($id = null){
+        $input = $this->request->getRawInput();
+
+        $data = [
+            'facebook'  => $input['linkFacebook'],
+            'instagram' => $input['linkInstagram'],
+            'website'   => $input['linkWebsite'],
+        ];
+
+        $status = $this->modelGerentes->update($id, $data);
+
+        if ($status === false) {
+            return $this->fail($this->modelGerentes->errors());
+        }
+
+        return $this->respondUpdated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+    }
+
+
+    public function foto($id = null)
+    {
+        $request = service('request');
+        
+        $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            
+            helper('filesystem');
+
+            // Define o diretório de upload
+            $uploadPath = FCPATH . 'assets/img/gerentes/' . $id . '/';
+
+            //Se existe diretório, então apaga
+            if (is_dir($uploadPath)) {
+                delete_files($uploadPath, true) ;
+                rmdir($uploadPath) ; 
+            }
+
+            // Cria o diretório se ele não existir
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Gera um nome de arquivo único para a imagem
+            $image_name = uniqid();
+
+            // Move o arquivo para o diretório de upload
+            $file_path = $uploadPath . $image_name . '.png';
+            $file->move($uploadPath, $image_name . '.png');
+
+            $image = \Config\Services::image();
+
+            // Redimensiona e converte a imagem para WebP
+            $image->withFile($file_path)
+                ->resize(150, 150, true, 'height')
+                ->convert(IMAGETYPE_WEBP)
+                ->save($uploadPath . $image_name . '.webp');
+
+            if (file_exists($uploadPath . $image_name . '.webp')) {
+                $update = [
+                    'foto' => '/assets/img/gerentes/' . $id . '/' . $image_name . '.webp'
+                ];
+                $status = $this->modelGerentes->update($id, $update);
+                if ($status === false) {
+                    return $this->fail($this->modelGerentes->errors());
+                }
+
+                // Remove o arquivo PNG original
+                unlink($file_path);
+
+                return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $image_name . '.webp']);
+            } else {
+                // Ocorreu um erro ao salvar a imagem
+                throw new Exception('Erro ao salvar a imagem.');
+            }
+        } else {
+            return $this->fail($file->getErrorString());
+        }
+    }
+
+
+
     public function update($id = null)
     {
         //
@@ -164,8 +275,6 @@ class Gerentes extends ResourceController
             $input = $this->request->getRawInput();
 
             $data = [
-                "id_adm"  => session('data')['idAdm'],
-                "id_user" =>  session('data')['id'],
                 "nome" => $input['nome'],
                 "sobrenome" => $input['sobrenome'],
                 "cpf" => preg_replace('/[^0-9]/', '', $input['cpf']),
@@ -183,52 +292,6 @@ class Gerentes extends ResourceController
             $status = $this->modelGerentes->update($id, $data);
             if ($status === false) {
                 return $this->fail($this->modelGerentes->errors());
-            }
-
-            if (isset($input['filepond'])) {
-                // Decodifica os dados JSON enviados pelo FilePond
-                $file = json_decode($input['filepond']);
-
-                // Verifica se os dados foram decodificados corretamente e se contêm uma imagem
-                if ($file && isset($file->data)) {
-                    // Decodifica a string base64 da imagem de volta para os dados binários da imagem
-                    $image_data = base64_decode($file->data);
-
-                    // Define o caminho onde você deseja salvar a imagem
-                    $image_path = FCPATH . 'assets/img/gerentes/' . $id . '/';
-
-                    // Cria o diretório se ele não existir
-                    if (!is_dir($image_path)) {
-                        mkdir($image_path, 0777, true);
-                    }
-
-                    // Gera um nome de arquivo único para a imagem
-                    $image_name = uniqid();
-
-                    // Salva a imagem no servidor
-                    $file_path = $image_path . $image_name . '.png';
-                    file_put_contents($file_path, $image_data);
-
-                    $image = \Config\Services::image();
-
-                    $image->withFile($file_path)
-                        ->resize(50, 50, true, 'height')
-                        ->convert(IMAGETYPE_WEBP)
-                        ->save(FCPATH . 'assets/img/gerentes/' . $id . '/' . $image_name . '.webp');
-
-                    if (file_exists($file_path)) {
-                        $update = [
-                            'foto' => '/assets/img/gerentes/' . $id . '/' . $image_name . '.webp'
-                        ];
-                        $status = $this->modelGerentes->update($id, $update);
-                        if ($status === false) {
-                            return $this->fail($this->modelGerentes->errors());
-                        }
-                    } else {
-                        // Ocorreu um erro ao salvar a imagem
-                        throw new Exception('Erro ao salvar a imagem.');
-                    }
-                }
             }
 
             return $this->respondCreated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);

@@ -8,8 +8,7 @@
 <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css">
 <!-- custom Css-->
 <link href="/assets/css/custom.min.css" rel="stylesheet" type="text/css">
-
 <!-- Variaveis -->
 <script>
-    var _baseUrl = "<?= site_url() ?>"
+    const _baseUrl = "<?= site_url() ?>"
 </script>

@@ -7,6 +7,9 @@
     <!-- Sweet Alert css-->
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <?= $this->renderSection('css') ?>
+    <script>
+        const _idSearch = "<?= $idSearch ?>"
+    </script>
 </head>
 <body>
     <!-- Begin page -->
@@ -43,7 +46,7 @@
     <!-- Plugin adicionais -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Sweet Alerts js -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7"></script>
+    <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
     <!-- cleave.js -->
     <script src="/assets/libs/cleave.js/cleave.min.js"></script>
     <!-- form masks init -->

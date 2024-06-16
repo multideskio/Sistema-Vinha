@@ -27,6 +27,9 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
 
     $routes->resource('transacoes', ['filter' => 'logged']);
 
+    $routes->post('gerentes/update/upload/(:num)', 'Gerentes::foto/$1');
+    $routes->put('gerentes/update/links/(:num)', 'Gerentes::links/$1');
+
     $routes->get('gerentes/list', 'Gerentes::list');
     $routes->resource('gerentes', ['filter' => 'logged']);
 
@@ -69,14 +72,21 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
 
 //Acesso de quem administra o sistema
 $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($routes) {
-    $routes->get('',             'Admin::index');
-    $routes->get('home',         'Admin::index');
-    $routes->get('regiao',       'Admin::regiao');
-    $routes->get('supervisores', 'Admin::supervisores');
-    $routes->get('gerentes',     'Admin::gerentes');
-    $routes->get('pastores',     'Admin::pastores');
-    $routes->get('igrejas',      'Admin::igrejas');
-    $routes->get('usuarios',     'Admin::usuarios');
+    $routes->get('',                    'Admin::index');
+    $routes->get('home',                'Admin::index');
+    $routes->get('regiao',              'Admin::regiao');
+
+    $routes->get('gerentes',           'Admin::gerentes');
+    $routes->get('gerente/(:num)',     'Admin::gerente/$1');
+    
+    $routes->get('supervisores',        'Admin::supervisores');
+    $routes->get('supervisor/(:num)', 'Admin::supervisor/$1');
+    $routes->get('pastores',            'Admin::pastores');
+    $routes->get('pastor/(:num)',     'Admin::pastor/$1');
+    $routes->get('igrejas',             'Admin::igrejas');
+    $routes->get('igreja/(:num)',      'Admin::igreja/$1');
+    
+    $routes->get('usuarios',        'Admin::usuarios');
 
     $routes->get('recebimento',  'Admin::recebimento');
     $routes->get('retorno',      'Admin::retorno');

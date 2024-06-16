@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // Inicialização de plugins FilePond
     FilePond.registerPlugin(
         // Codifica o arquivo como dados base64
@@ -13,17 +13,17 @@ $(document).ready(function() {
 
     FilePond.create(
         document.querySelector('.filepond-input-circle'), {
-            labelIdle: 'Clique para carregar a imagem',
-            imagePreviewHeight: 170,
-            imageCropAspectRatio: '1:1',
-            imageResizeTargetWidth: 200,
-            imageResizeTargetHeight: 200,
-            stylePanelLayout: 'compact circle',
-            styleLoadIndicatorPosition: 'center bottom',
-            styleProgressIndicatorPosition: 'right bottom',
-            styleButtonRemoveItemPosition: 'left bottom',
-            styleButtonProcessItemPosition: 'right bottom',
-        }
+        labelIdle: 'Clique para carregar a imagem',
+        imagePreviewHeight: 170,
+        imageCropAspectRatio: '1:1',
+        imageResizeTargetWidth: 200,
+        imageResizeTargetHeight: 200,
+        stylePanelLayout: 'compact circle',
+        styleLoadIndicatorPosition: 'center bottom',
+        styleProgressIndicatorPosition: 'right bottom',
+        styleButtonRemoveItemPosition: 'left bottom',
+        styleButtonProcessItemPosition: 'right bottom',
+    }
     );
 
     // Formatação de inputs com Cleave.js
@@ -57,13 +57,13 @@ $(document).ready(function() {
     atualizarTabela();
 
     // Clique no botão de pesquisa
-    $("#inSearchBtn").click(function(e) {
+    $("#inSearchBtn").click(function (e) {
         var search = $("#inSearch").val();
         atualizarTabela(search);
     });
 
     // Pressiona Enter no campo de pesquisa
-    $("#inSearch").keypress(function(e) {
+    $("#inSearch").keypress(function (e) {
         if (e.which === 13) {
             var search = $("#inSearch").val();
             atualizarTabela(search);
@@ -88,10 +88,10 @@ $(document).ready(function() {
 
     // Inicialização do formulário AJAX
     $('#formCad').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
+        beforeSubmit: function (formData, jqForm, options) {
             // Ações antes de enviar o formulário, se necessário
         },
-        success: function(responseText, statusText, xhr, $form) {
+        success: function (responseText, statusText, xhr, $form) {
             atualizarTabela();
             $('#formCad')[0].reset();
             Swal.fire({
@@ -101,7 +101,7 @@ $(document).ready(function() {
                 buttonsStyling: false,
             });
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             if (xhr.responseJSON && xhr.responseJSON.messages) {
                 exibirMensagem('error', xhr.responseJSON);
             } else {
@@ -154,7 +154,7 @@ function atualizarTabela(search = false, page = 1) {
 
     // Requisição AJAX para obter os dados
     $.getJSON(url)
-        .done(function(data, textStatus, jqXHR) {
+        .done(function (data, textStatus, jqXHR) {
             $("#numResults").html(data.num);
             $("#pager").html(data.pager);
 
@@ -167,7 +167,7 @@ function atualizarTabela(search = false, page = 1) {
             }
 
             // Itera sobre os dados recebidos e adiciona as linhas à tabela
-            $.each(data.rows, function(index, gerente) {
+            $.each(data.rows, function (index, gerente) {
                 var randomColor = Math.floor(Math.random() * 16777215).toString(16);
                 var newRow = `
                 <tr>
@@ -188,7 +188,7 @@ function atualizarTabela(search = false, page = 1) {
                     </td>
                     <td class="align-middle">
                         <div class="btn-group" role="group">
-                            <a href="javascript:;" onclick="recursoindisponivel()" class="btn btn-dark btn-sm sa-dark">
+                            <a href="${_baseUrl}admin/gerente/${gerente.id}" class="btn btn-dark btn-sm sa-dark">
                                 <i class="ri-pencil-line"></i>
                             </a>
                             <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">
@@ -203,7 +203,7 @@ function atualizarTabela(search = false, page = 1) {
 
             $('.loadResult').hide();
         })
-        .fail(function(jqXHR, textStatus, errorThrown) {
+        .fail(function (jqXHR, textStatus, errorThrown) {
             console.error("Erro ao carregar os dados:", textStatus, errorThrown);
             exibirMensagem('error', { messages: { error: 'Erro ao carregar os dados.' } });
             $('.loadResult').hide();
@@ -267,3 +267,5 @@ $(document).ready(function() {
         }
     });
 });*/
+
+

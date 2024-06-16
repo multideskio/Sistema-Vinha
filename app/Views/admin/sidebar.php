@@ -94,6 +94,11 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/gateways') ?>">
+                        <i class="ri-dashboard-2-line"></i> <span>Administradores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="<?= site_url('admin/gateways') ?>">
                         <i class="ri-dashboard-2-line"></i> <span>Gateways</span>
                     </a>
                 </li>
