@@ -389,17 +389,11 @@
             delimiters: ['+', ' (', ') ', ' ', '-'],
             blocks: [0, 2, 2, 1, 4, 4]
         });
-
         searchUpdate(_idSearch)
-
         $(".enviaLinks").on('change', function() {
             $('.formTexts').submit();
         });
-
-        /*var options = {
-            type: 'PUT'
-        }*/
-
+        
         $('.formTexts').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 options.type = 'PUT'
@@ -416,8 +410,6 @@
                 console.log(error)
             }
         });
-
-
         $('.formGeral').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 options.type = 'PUT'
@@ -438,15 +430,9 @@
                 });
             }
         });
-
-
-
-
-
         $("#profile-img-file-input").on('change', function() {
             $('.formUpload').submit();
         });
-
         $('.formUpload').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 console.log('Enviando...')
@@ -470,18 +456,7 @@
                 console.log(error)
             }
         });
-
-
-
-
-
-
-
-
     });
-
-
-
     function searchUpdate(id) {
         if (id) {
             // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
@@ -491,7 +466,6 @@
                     if (data.foto) {
                         $("#fotoPerfil").attr('src', data.foto);
                     }
-
                     $("#viewNameUser").html(data.nome);
                     $("#facebook").val(data.facebook);
                     $("#website").val(data.website);
@@ -508,11 +482,9 @@
                     $("#bairro").val(data.bairro);
                     $("#complemento").val(data.complemento);
                     $("#dizimo").val(data.data_dizimo);
-
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
-                    console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-                    
+                    //console.error("Erro ao carregar os dados:", textStatus, errorThrown);
                     Swal.fire({
                         title: 'Os dados não foram enconrados',
                         icon: 'error',
@@ -520,13 +492,9 @@
                         buttonsStyling: false,
                     }).then(function(result) {
                         history.back();
-                    });;
-                    
-                    
+                    });
                     $('.loadResult').hide();
-
                 });
-
             // Tratamento de erro para a imagem
             $('#fotoPerfil').on('error', function() {
                 $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
@@ -534,6 +502,4 @@
         }
     }
 </script>
-
-
 <?= $this->endSection() ?>
