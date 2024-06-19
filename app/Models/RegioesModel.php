@@ -98,7 +98,7 @@ class RegioesModel extends Model
     }
 
 
-    public function listSearch($input = false, $limit = 10, $order = 'DESC')
+    public function listSearch0($input = false, $limit = 10, $order = 'DESC')
     {
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
@@ -151,7 +151,7 @@ class RegioesModel extends Model
     }
 
 
-    public function listSearch0($input = false)
+    public function listSearch($input = false)
     {
         // Obtém a instância do serviço de temporização
         $benchmark = \Config\Services::timer();
