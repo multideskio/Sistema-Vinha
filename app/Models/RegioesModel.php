@@ -66,7 +66,7 @@ class RegioesModel extends Model
     protected function updateCache()
     {
         $cache = service('cache');
-        $cache->deleteM('regioes_*');
+        $cache->delete('regioes_*');
         //$cache->key(['regioes']);
     }
 
