@@ -145,7 +145,7 @@ class Cache extends BaseConfig
     public array $redis = [
         'host'     => '5.161.224.162',
         'password' => null,
-        'port'     => 6380,
+        'port'     => 6381,
         'timeout'  => 0,
         'database' => 0,
     ];
