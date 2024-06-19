@@ -101,7 +101,8 @@ class AdminModel extends Model
         if (!$cache->get('config_Cache')) {
             $builder = $this->select('id, cnpj, empresa, logo, email, cep, uf, cidade, bairro, complemento, telefone, celular')->find(1);
             // Save into the cache for 365 days
-            $cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(365));
+            //$cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(365));
+            $cache->save('config_Cache', $builder, 0);
         }else{
             $builder = $cache->get('config_Cache');
         }

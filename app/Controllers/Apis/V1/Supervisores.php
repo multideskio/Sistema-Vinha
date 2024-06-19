@@ -41,12 +41,16 @@ class Supervisores extends ResourceController
 
     public function list()
     {
-
-        $data = $this->modelSupervisores->findAll();
-        if ($data) {
-            return $this->respond($data);
+        $cache = \Config\Services::cache();
+        $cacheKey = "select_supervisores";
+        // Check if the cache exists
+        if ($cacheData = $cache->get($cacheKey)) {
+            return $this->respond($cacheData);
+            //echo "esta aqui";
         } else {
-            return $this->failNotFound();
+            $data = $this->modelSupervisores->findAll();
+            $cache->save($cacheKey, $data, 3600);
+            return $this->respond($data);
         }
     }
 

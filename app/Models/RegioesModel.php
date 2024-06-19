@@ -65,8 +65,14 @@ class RegioesModel extends Model
 
     protected function updateCache()
     {
-        $cache = \Config\Services::cache();
-        $cache->delete('regioes_Cache');
+        $cache = service('cache');
+        $cache->deleteM('regioes_*');
+        //$cache->key(['regioes']);
+    }
+
+    protected function limparCachePorPrefixo($prefixo)
+    {
+        
     }
 
 
@@ -91,7 +97,61 @@ class RegioesModel extends Model
         return $builder;
     }
 
-    public function listSearch($input = false)
+
+    public function listSearch($input = false, $limit = 10, $order = 'DESC')
+    {
+        // Define o termo de busca, se houver
+        $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? false;
+        
+        if ($page) {
+            $cache = \Config\Services::cache();
+            $currentPage = $page;
+            $cacheKey = "regioes_{$search}_{$limit}_{$order}_{$currentPage}";
+
+            // Check if the cache exists
+            if ($cacheData = $cache->get($cacheKey)) {
+                return $cacheData;
+            }
+        }else{
+            $cache = \Config\Services::cache();
+            $currentPage = $page;
+            $cacheKey = "regioes_{$search}_{$limit}_{$order}_1";
+
+            // Check if the cache exists
+            if ($cacheData = $cache->get($cacheKey)) {
+                return $cacheData;
+            }
+        }
+
+        // Construção da consulta
+        $this->where('id_adm', session('data')['idAdm']);
+        if ($search) {
+            $this->like('nome', $search)
+                ->orLike('descricao', $search)
+                ->orLike('id', $search);
+        }
+
+        $this->groupBy('id');
+
+        // Executa a consulta e paginação
+        $rows = $this->paginate($limit);
+        $pager = $this->pager->links('default', 'paginate');
+
+
+        // Prepara os dados para retorno
+        $data = [
+            'rows' => $rows,
+            'pager' => $pager
+        ];
+
+        $cache->save($cacheKey, $data, 3600); // Cache for 1 hour
+
+        return $data;
+    }
+
+
+    public function listSearch0($input = false)
     {
         // Obtém a instância do serviço de temporização
         $benchmark = \Config\Services::timer();

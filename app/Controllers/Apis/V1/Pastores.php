@@ -27,13 +27,9 @@ class Pastores extends ResourceController
     public function index()
     {
         //
-        if ($this->request->getGet("search") == "false") {
-            $data = $this->modelPastores->listSearch();
-        } else {
-            $data = $this->modelPastores->listSearch($this->request->getGet());
-        }
-
+        $data = $this->modelPastores->listSearch($this->request->getGet());
         return $this->respond($data);
+        
     }
 
     /**

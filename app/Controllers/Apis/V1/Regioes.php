@@ -23,13 +23,7 @@ class Regioes extends ResourceController
 
     public function index()
     {
-        
-        if ($this->request->getGet("search") == "false") {
-            $data = $this->modelRegioes->listSearch();
-        } else {
-            $data = $this->modelRegioes->listSearch($this->request->getGet());
-        }
-
+        $data = $this->modelRegioes->listSearch($this->request->getGet());
         return $this->respond($data);
     }
 

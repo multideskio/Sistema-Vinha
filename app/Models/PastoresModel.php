@@ -85,6 +85,29 @@ class PastoresModel extends Model
     {
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? false;
+
+        if ($page) {
+            $cache = \Config\Services::cache();
+            $currentPage = $page;
+            $cacheKey = "pastores_{$search}_{$limit}_{$order}_{$currentPage}";
+
+            // Check if the cache exists
+            if ($cacheData = $cache->get($cacheKey)) {
+                return $cacheData;
+            }
+        }else{
+            $cache = \Config\Services::cache();
+            $currentPage = $page;
+            $cacheKey = "pastores_{$search}_{$limit}_{$order}_1";
+
+            // Check if the cache exists
+            if ($cacheData = $cache->get($cacheKey)) {
+                return $cacheData;
+            }
+        }
+
+
         // Configuração inicial da query
         $this->orderBy('pastores.id', $order)
             ->where('usuarios.tipo', 'pastor')
@@ -125,10 +148,19 @@ class PastoresModel extends Model
         } else {
             $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
         }
-        return [
+
+        $result = [
             'rows'  => $pastores, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
             'num'   => $numMessage
         ];
+        
+        if ($page) {
+            // Save the result to cache
+            $cache->save($cacheKey, $result, 3600); // Cache for 1 hour
+        }
+
+
+        return $result;
     }
 }

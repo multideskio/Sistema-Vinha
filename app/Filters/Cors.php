@@ -19,7 +19,7 @@ class Cors implements FilterInterface
         $response = service('response');
 
         // Lista de origens permitidas
-        $allowedOrigins = ['http://localhost:8080','https://g.multidesk.io', 'https://multidesk.io'];
+        $allowedOrigins = ['http://localhost:8080','https://g.multidesk.io', 'https://multidesk.io', 'https://vinha.conect.app'];
         
         $origin = $request->getServer('HTTP_ORIGIN') ?? '';
 
