@@ -19,7 +19,7 @@ class Cors implements FilterInterface
         $response = service('response');
 
         // Lista de origens permitidas
-        $allowedOrigins = ['http://localhost:8080', 'https://vinhaonline.com'];
+        $allowedOrigins = ['http://localhost:8080', 'https://vinhaonline.com', 'https://vinha.conect.app'];
         
         $origin = $request->getServer('HTTP_ORIGIN') ?? '';
 
