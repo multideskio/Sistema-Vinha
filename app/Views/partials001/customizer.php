@@ -1,4 +1,4 @@
-<!--start back-to-top-->
+<?php /**<!--start back-to-top-->
 <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
     <i class="ri-arrow-up-line"></i>
 </button>
@@ -195,7 +195,7 @@
                 <div id="sidebar-visibility">
                     <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Visibility</h6>
                     <p class="text-muted">Choose show or Hidden sidebar.</p>
-                
+
                     <div class="row">
                         <div class="col-4">
                             <div class="form-check card-radio">
@@ -652,7 +652,7 @@
                             <label class="form-check-label p-0 avatar-sm h-auto" for="sidebarimg-01">
                                 <img src="/assets/images/sidebar/img-1.jpg" alt="" class="avatar-md w-auto object-fit-cover">
                             </label>
-                        </div>	
+                        </div>
 
                         <div class="form-check sidebar-setting card-radio">
                             <input class="form-check-input" type="radio" name="data-sidebar-image" id="sidebarimg-02" value="img-2">
@@ -678,7 +678,7 @@
                 <div id="preloader-menu">
                     <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Preloader</h6>
                     <p class="text-muted">Choose a preloader.</p>
-                    
+
                     <div class="row">
                         <div class="col-4">
                             <div class="form-check sidebar-setting card-radio">
@@ -736,7 +736,7 @@
                             <h5 class="fs-13 text-center mt-2">Disable</h5>
                         </div>
                     </div>
-                    
+
                 </div>
                 <!-- end preloader-menu -->
 
@@ -754,4 +754,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> */ ?>

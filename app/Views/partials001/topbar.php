@@ -32,7 +32,7 @@
                 </button>
 
                 <!-- App Search-->
-                <form class="app-search d-none d-md-block">
+                <?php /* <form class="app-search d-none d-md-block">
                     <div class="position-relative">
                         <input type="text" class="form-control" placeholder="Search..." autocomplete="off" id="search-options" value="">
                         <span class="mdi mdi-magnify search-widget-icon"></span>
@@ -112,14 +112,16 @@
                         </div>
 
                         <div class="text-center pt-3 pb-1">
-                            <a href="javascript:void(0)" class="btn btn-primary btn-sm">View All Results <i class="ri-arrow-right-line ms-1"></i></a>
+                            <a href="pages-search-results" class="btn btn-primary btn-sm">View All Results <i class="ri-arrow-right-line ms-1"></i></a>
                         </div>
                     </div>
-                </form>
+                </form> */ ?>
+
             </div>
 
             <div class="d-flex align-items-center">
 
+                <?php /* 
                 <div class="dropdown d-md-none topbar-head-dropdown header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="bx bx-search fs-22"></i>
@@ -135,12 +137,14 @@
                         </form>
                     </div>
                 </div>
+                */ ?>
+
 
                 <div class="dropdown ms-1 topbar-head-dropdown header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img id="header-lang-img" src="/assets/images/flags/us.svg" alt="Header Language" height="20" class="rounded">
+                        <img id="" src="/assets/images/flags/br.svg" alt="Header Language" height="20" class="rounded">
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end">
+                    <?php /* <div class="dropdown-menu dropdown-menu-end">
 
                         <!-- item-->
                         <a href="javascript:void(0);" class="dropdown-item notify-item language py-2" data-lang="en" title="English">
@@ -149,48 +153,16 @@
                         </a>
 
                         <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="sp" title="Spanish">
-                            <img src="/assets/images/flags/spain.svg" alt="user-image" class="me-2 rounded" height="18">
-                            <span class="align-middle">Española</span>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="br" title="Brazil">
+                            <img src="/assets/images/flags/br.svg" alt="user-image" class="me-2 rounded" height="18">
+                            <span class="align-middle">Brasil</span>
                         </a>
 
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="gr" title="German">
-                            <img src="/assets/images/flags/germany.svg" alt="user-image" class="me-2 rounded" height="18"> <span class="align-middle">Deutsche</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="it" title="Italian">
-                            <img src="/assets/images/flags/italy.svg" alt="user-image" class="me-2 rounded" height="18">
-                            <span class="align-middle">Italiana</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="ru" title="Russian">
-                            <img src="/assets/images/flags/russia.svg" alt="user-image" class="me-2 rounded" height="18">
-                            <span class="align-middle">русский</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="ch" title="Chinese">
-                            <img src="/assets/images/flags/china.svg" alt="user-image" class="me-2 rounded" height="18">
-                            <span class="align-middle">中国人</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="fr" title="French">
-                            <img src="/assets/images/flags/french.svg" alt="user-image" class="me-2 rounded" height="18">
-                            <span class="align-middle">français</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language" data-lang="ar" title="Arabic">
-                            <img src="/assets/images/flags/ae.svg" alt="user-image" class="me-2 rounded" height="18">
-                            <span class="align-middle">Arabic</span>
-                        </a>
-                    </div>
+                        
+                    </div>*/ ?>
                 </div>
 
+                <?php /*
                 <div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-category-alt fs-22'></i>
@@ -252,9 +224,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>*/ ?>
 
-                <div class="dropdown topbar-head-dropdown ms-1 header-item">
+
+<?php /*<div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-cart-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-shopping-bag fs-22'></i>
                         <span class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-info">5</span>
@@ -280,14 +253,14 @@
                                         </div>
                                     </div>
                                     <h5 class="mb-3">Your Cart is Empty!</h5>
-                                    <a href="javascript:void(0)" class="btn btn-success w-md mb-3">Shop Now</a>
+                                    <a href="apps-ecommerce-products" class="btn btn-success w-md mb-3">Shop Now</a>
                                 </div>
                                 <div class="d-block dropdown-item dropdown-item-cart text-wrap px-3 py-2">
                                     <div class="d-flex align-items-center">
                                         <img src="/assets/images/products/img-1.png" class="me-3 rounded-circle avatar-sm p-2 bg-light" alt="user-pic">
                                         <div class="flex-grow-1">
                                             <h6 class="mt-0 mb-1 fs-14">
-                                                <a href="javascript:void(0)" class="text-reset">Branded
+                                                <a href="apps-ecommerce-product-details" class="text-reset">Branded
                                                     T-Shirts</a>
                                             </h6>
                                             <p class="mb-0 fs-12 text-muted">
@@ -308,7 +281,7 @@
                                         <img src="/assets/images/products/img-2.png" class="me-3 rounded-circle avatar-sm p-2 bg-light" alt="user-pic">
                                         <div class="flex-grow-1">
                                             <h6 class="mt-0 mb-1 fs-14">
-                                                <a href="javascript:void(0)" class="text-reset">Bentwood Chair</a>
+                                                <a href="apps-ecommerce-product-details" class="text-reset">Bentwood Chair</a>
                                             </h6>
                                             <p class="mb-0 fs-12 text-muted">
                                                 Quantity: <span>5 x $18</span>
@@ -328,7 +301,7 @@
                                         <img src="/assets/images/products/img-3.png" class="me-3 rounded-circle avatar-sm p-2 bg-light" alt="user-pic">
                                         <div class="flex-grow-1">
                                             <h6 class="mt-0 mb-1 fs-14">
-                                                <a href="javascript:void(0)" class="text-reset">
+                                                <a href="apps-ecommerce-product-details" class="text-reset">
                                                     Borosil Paper Cup</a>
                                             </h6>
                                             <p class="mb-0 fs-12 text-muted">
@@ -349,7 +322,7 @@
                                         <img src="/assets/images/products/img-6.png" class="me-3 rounded-circle avatar-sm p-2 bg-light" alt="user-pic">
                                         <div class="flex-grow-1">
                                             <h6 class="mt-0 mb-1 fs-14">
-                                                <a href="javascript:void(0)" class="text-reset">Gray
+                                                <a href="apps-ecommerce-product-details" class="text-reset">Gray
                                                     Styled T-Shirt</a>
                                             </h6>
                                             <p class="mb-0 fs-12 text-muted">
@@ -370,7 +343,7 @@
                                         <img src="/assets/images/products/img-5.png" class="me-3 rounded-circle avatar-sm p-2 bg-light" alt="user-pic">
                                         <div class="flex-grow-1">
                                             <h6 class="mt-0 mb-1 fs-14">
-                                                <a href="javascript:void(0)" class="text-reset">Stillbird Helmet</a>
+                                                <a href="apps-ecommerce-product-details" class="text-reset">Stillbird Helmet</a>
                                             </h6>
                                             <p class="mb-0 fs-12 text-muted">
                                                 Quantity: <span>2 x $495</span>
@@ -394,7 +367,7 @@
                                 </div>
                             </div>
 
-                            <a href="javascript:void(0)" class="btn btn-success text-center w-100">
+                            <a href="apps-ecommerce-checkout" class="btn btn-success text-center w-100">
                                 Checkout
                             </a>
                         </div>
@@ -405,7 +378,7 @@
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-toggle="fullscreen">
                         <i class='bx bx-fullscreen fs-22'></i>
                     </button>
-                </div>
+                </div>*/?>
 
                 <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
@@ -680,25 +653,27 @@
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user" src="/assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="<?= (session('data')['foto']) ? session('data')['foto'] : placehold(null, null, session('data')['name'], false, "fff") ?>" alt="Header Avatar">
                             <span class="text-start ms-xl-2">
-                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna Adame</span>
-                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
+                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?= session('data')['name'] ?></span>
+                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Verificado</span>
                             </span>
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <h6 class="dropdown-header">Welcome Anna!</h6>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Taskboard</span></a>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
+                        <h6 class="dropdown-header">Bem vindo <?= explode(" ", session('data')['name'])[0];  ?>!</h6>
+                        <a class="dropdown-item" href="pages-profile">
+                            <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
+                            <span class="align-middle">Perfil</span>
+                        </a>
+                        <a href="/ajuda" target="_blank" class="dropdown-item" href="pages-faqs">
+                            <i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Ajuda</span>
+                        </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="javascript:void(0)"><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$5971.67</b></span></a>
-                        <a class="dropdown-item" href="javascript:void(0)"><span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
-                        <a class="dropdown-item" href="auth-lockscreen-basic"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
-                        <a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+                        <a class="dropdown-item" href="<?= base_url('sair') ?>">
+                            <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Sair</span>
+                        </a>
                     </div>
                 </div>
             </div>
