@@ -32,6 +32,12 @@ class EmailsLibraries
         $this->nomeRemetente = $configs['nome_remetente'];
     }
 
+    protected function data(): array{
+
+        
+
+        return [];
+    }
 
     public function envioTeste(string $email, string $assunto, string $message)
     {
