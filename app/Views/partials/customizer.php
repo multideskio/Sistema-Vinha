@@ -8,13 +8,13 @@
 <div id="preloader">
     <div id="status">
         <div class="spinner-border text-primary avatar-sm" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
 </div>
 
 <div class="customizer-setting d-none d-md-block">
-    <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
+    <div class="btn-info rounded-pill shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas"> 
         <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
     </div>
 </div>
@@ -22,15 +22,14 @@
 <!-- Theme Settings -->
 <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">
     <div class="d-flex align-items-center bg-primary bg-gradient p-3 offcanvas-header">
-        <h5 class="m-0 me-2 text-white">Theme Customizer</h5>
-
+        <h5 class="m-0 me-2 text-white">Personalizar painel</h5>
         <button type="button" class="btn-close btn-close-white ms-auto" id="customizerclose-btn" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body p-0">
         <div data-simplebar class="h-100">
             <div class="p-4">
-                <h6 class="mb-0 fw-semibold text-uppercase">Layout</h6>
-                <p class="text-muted">Choose your layout</p>
+                <h6 class="mb-0 fw-semibold text-uppercase">DISPOSIÇÃO</h6>
+                <p class="text-muted">Escolha seu layout</p>
 
                 <div class="row gy-3">
                     <div class="col-4">
@@ -104,7 +103,7 @@
                                 </span>
                             </label>
                         </div>
-                        <h5 class="fs-13 text-center mt-2">Two Column</h5>
+                        <h5 class="fs-13 text-center mt-2">Duas colunas</h5>
                     </div>
                     <!-- end col -->
 
@@ -130,13 +129,13 @@
                                 </span>
                             </label>
                         </div>
-                        <h5 class="fs-13 text-center mt-2">Semi Box</h5>
+                        <h5 class="fs-13 text-center mt-2">Semi Caixa</h5>
                     </div>
                     <!-- end col -->
                 </div>
 
-                <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Color Scheme</h6>
-                <p class="text-muted">Choose Light or Dark Scheme.</p>
+                <h6 class="mt-4 mb-0 fw-semibold text-uppercase">ESQUEMA DE CORES</h6>
+                <p class="text-muted">Escolha o esquema claro ou escuro.</p>
 
                 <div class="colorscheme-cardradio">
                     <div class="row">
@@ -162,7 +161,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Light</h5>
+                            <h5 class="fs-13 text-center mt-2">Claro</h5>
                         </div>
 
                         <div class="col-4">
@@ -187,14 +186,13 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Dark</h5>
+                            <h5 class="fs-13 text-center mt-2">Escuro</h5>
                         </div>
                     </div>
                 </div>
-
                 <div id="sidebar-visibility">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Visibility</h6>
-                    <p class="text-muted">Choose show or Hidden sidebar.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">VISIBILIDADE DA BARRA LATERAL</h6>
+                    <p class="text-muted">Escolha mostrar ou barra lateral oculta.</p>
                 
                     <div class="row">
                         <div class="col-4">
@@ -219,7 +217,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Show</h5>
+                            <h5 class="fs-13 text-center mt-2">Mostrar</h5>
                         </div>
                         <div class="col-4">
                             <div class="form-check card-radio">
@@ -235,14 +233,14 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Hidden</h5>
+                            <h5 class="fs-13 text-center mt-2">Esconder</h5>
                         </div>
                     </div>
                 </div>
 
                 <div id="layout-width">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Layout Width</h6>
-                    <p class="text-muted">Choose Fluid or Boxed layout.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">LARGURA DO LAYOUT</h6>
+                    <p class="text-muted">Escolha o layout fluído ou em caixa.</p>
 
                     <div class="row">
                         <div class="col-4">
@@ -267,7 +265,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Fluid</h5>
+                            <h5 class="fs-13 text-center mt-2">Fluido</h5>
                         </div>
                         <div class="col-4">
                             <div class="form-check card-radio">
@@ -291,25 +289,25 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Boxed</h5>
+                            <h5 class="fs-13 text-center mt-2">Encaixotado</h5>
                         </div>
                     </div>
                 </div>
 
                 <div id="layout-position">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Layout Position</h6>
-                    <p class="text-muted">Choose Fixed or Scrollable Layout Position.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">POSIÇÃO DO LAYOUT</h6>
+                    <p class="text-muted">Escolha Posição de layout fixa ou rolável.</p>
 
                     <div class="btn-group radio" role="group">
                         <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed">
-                        <label class="btn btn-light w-sm" for="layout-position-fixed">Fixed</label>
+                        <label class="btn btn-light w-sm" for="layout-position-fixed">Fixo</label>
 
                         <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable">
-                        <label class="btn btn-light w-sm ms-0" for="layout-position-scrollable">Scrollable</label>
+                        <label class="btn btn-light w-sm ms-0" for="layout-position-scrollable">Rolável</label>
                     </div>
                 </div>
-                <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Topbar Color</h6>
-                <p class="text-muted">Choose Light or Dark Topbar Color.</p>
+                <h6 class="mt-4 mb-0 fw-semibold text-uppercase">COR DA BARRA SUPERIOR</h6>
+                <p class="text-muted">Escolha a cor da barra superior clara ou escura.</p>
 
                 <div class="row">
                     <div class="col-4">
@@ -334,7 +332,7 @@
                                 </span>
                             </label>
                         </div>
-                        <h5 class="fs-13 text-center mt-2">Light</h5>
+                        <h5 class="fs-13 text-center mt-2">Claro</h5>
                     </div>
                     <div class="col-4">
                         <div class="form-check card-radio">
@@ -358,13 +356,13 @@
                                 </span>
                             </label>
                         </div>
-                        <h5 class="fs-13 text-center mt-2">Dark</h5>
+                        <h5 class="fs-13 text-center mt-2">Escuro</h5>
                     </div>
                 </div>
 
                 <div id="sidebar-size">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Size</h6>
-                    <p class="text-muted">Choose a size of Sidebar.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">TAMANHO DA BARRA LATERAL</h6>
+                    <p class="text-muted">Escolha um tamanho de barra lateral.</p>
 
                     <div class="row">
                         <div class="col-4">
@@ -389,7 +387,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Default</h5>
+                            <h5 class="fs-13 text-center mt-2">Padrão</h5>
                         </div>
 
                         <div class="col-4">
@@ -414,7 +412,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Compact</h5>
+                            <h5 class="fs-13 text-center mt-2">Compacto</h5>
                         </div>
 
                         <div class="col-4">
@@ -439,7 +437,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Small (Icon View)</h5>
+                            <h5 class="fs-13 text-center mt-2">Pequeno (visualização de ícone)</h5>
                         </div>
 
                         <div class="col-4">
@@ -464,14 +462,14 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Small Hover View</h5>
+                            <h5 class="fs-13 text-center mt-2">Visualização suspensa pequena</h5>
                         </div>
                     </div>
                 </div>
 
                 <div id="sidebar-view">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar View</h6>
-                    <p class="text-muted">Choose Default or Detached Sidebar view.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">VISUALIZAÇÃO DA BARRA LATERAL</h6>
+                    <p class="text-muted">Escolha a visualização da barra lateral padrão ou separada.</p>
 
                     <div class="row">
                         <div class="col-4">
@@ -496,7 +494,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Default</h5>
+                            <h5 class="fs-13 text-center mt-2">Padrão</h5>
                         </div>
                         <div class="col-4">
                             <div class="form-check sidebar-setting card-radio">
@@ -521,13 +519,13 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Detached</h5>
+                            <h5 class="fs-13 text-center mt-2">Desanexado</h5>
                         </div>
                     </div>
                 </div>
                 <div id="sidebar-color">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Color</h6>
-                    <p class="text-muted">Choose a color of Sidebar.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">COR DA BARRA LATERAL</h6>
+                    <p class="text-muted">Escolha uma cor da barra lateral.</p>
 
                     <div class="row">
                         <div class="col-4">
@@ -552,7 +550,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Light</h5>
+                            <h5 class="fs-13 text-center mt-2">Claro</h5>
                         </div>
                         <div class="col-4">
                             <div class="form-check sidebar-setting card-radio" data-bs-toggle="collapse" data-bs-target="#collapseBgGradient.show">
@@ -576,7 +574,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Dark</h5>
+                            <h5 class="fs-13 text-center mt-2">Escuro</h5>
                         </div>
                         <div class="col-4">
                             <button class="btn btn-link avatar-md w-100 p-0 overflow-hidden border collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBgGradient" aria-expanded="false" aria-controls="collapseBgGradient">
@@ -597,7 +595,7 @@
                                     </span>
                                 </span>
                             </button>
-                            <h5 class="fs-13 text-center mt-2">Gradient</h5>
+                            <h5 class="fs-13 text-center mt-2">Gradiente</h5>
                         </div>
                     </div>
                     <!-- end row -->
@@ -634,8 +632,8 @@
                 </div>
 
                 <div id="sidebar-img">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Images</h6>
-                    <p class="text-muted">Choose a image of Sidebar.</p>
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">IMAGENS DA BARRA LATERAL</h6>
+                    <p class="text-muted">Escolha uma imagem da barra lateral.</p>
 
                     <div class="d-flex gap-2 flex-wrap img-switch">
                         <div class="form-check sidebar-setting card-radio">
@@ -676,9 +674,8 @@
                 </div>
 
                 <div id="preloader-menu">
-                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Preloader</h6>
-                    <p class="text-muted">Choose a preloader.</p>
-                    
+                    <h6 class="mt-4 mb-0 fw-semibold text-uppercase">PRÉ-CARREGADOR</h6>
+                    <p class="text-muted">Escolha um pré-carregador.</p>
                     <div class="row">
                         <div class="col-4">
                             <div class="form-check sidebar-setting card-radio">
@@ -709,7 +706,7 @@
                                     <!-- </div> -->
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Enable</h5>
+                            <h5 class="fs-13 text-center mt-2">Habilitar</h5>
                         </div>
                         <div class="col-4">
                             <div class="form-check sidebar-setting card-radio">
@@ -733,7 +730,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <h5 class="fs-13 text-center mt-2">Disable</h5>
+                            <h5 class="fs-13 text-center mt-2">Desabilitar</h5>
                         </div>
                     </div>
                     
@@ -746,11 +743,8 @@
     </div>
     <div class="offcanvas-footer border-top p-3 text-center">
         <div class="row">
-            <div class="col-6">
-                <button type="button" class="btn btn-light w-100" id="reset-layout">Reset</button>
-            </div>
-            <div class="col-6">
-                <a href="https://1.envato.market/velzon-admin" target="_blank" class="btn btn-primary w-100">Buy Now</a>
+            <div class="col-12">
+                <button type="button" class="btn btn-danger w-100" id="reset-layout">Resetar layout</button>
             </div>
         </div>
     </div>

@@ -31,7 +31,7 @@ class Admin extends BaseController
         $data['idSearch']  = null ;
         $data['titlePage'] = 'Regiões';
         //
-        return view('admin/pages/regiao', $data);
+        return view('admin/pages/regiao/regiao', $data);
     }
 
     public function gerentes(): string

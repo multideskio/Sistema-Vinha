@@ -66,13 +66,7 @@ class RegioesModel extends Model
     protected function updateCache()
     {
         $cache = service('cache');
-        $cache->delete('regioes_*');
-        //$cache->key(['regioes']);
-    }
-
-    protected function limparCachePorPrefixo($prefixo)
-    {
-        
+        $cache->delete('regioes');
     }
 
 
@@ -98,104 +92,48 @@ class RegioesModel extends Model
     }
 
 
-    public function listSearch0($input = false, $limit = 10, $order = 'DESC')
-    {
-        // Define o termo de busca, se houver
-        $search = $input['search'] ?? false;
-        $page   = $input['page'] ?? false;
-        
-        if ($page) {
-            $cache = \Config\Services::cache();
-            $currentPage = $page;
-            $cacheKey = "regioes_{$search}_{$limit}_{$order}_{$currentPage}";
-
-            // Check if the cache exists
-            if ($cacheData = $cache->get($cacheKey)) {
-                return $cacheData;
-            }
-        }else{
-            $cache = \Config\Services::cache();
-            $currentPage = $page;
-            $cacheKey = "regioes_{$search}_{$limit}_{$order}_1";
-
-            // Check if the cache exists
-            if ($cacheData = $cache->get($cacheKey)) {
-                return $cacheData;
-            }
-        }
-
-        // Construção da consulta
-        $this->where('id_adm', session('data')['idAdm']);
-        if ($search) {
-            $this->like('nome', $search)
-                ->orLike('descricao', $search)
-                ->orLike('id', $search);
-        }
-
-        $this->groupBy('id');
-
-        // Executa a consulta e paginação
-        $rows = $this->paginate($limit);
-        $pager = $this->pager->links('default', 'paginate');
-
-
-        // Prepara os dados para retorno
-        $data = [
-            'rows' => $rows,
-            'pager' => $pager
-        ];
-
-        $cache->save($cacheKey, $data, 3600); // Cache for 1 hour
-
-        return $data;
-    }
-
-
     public function listSearch($input = false)
     {
-        // Obtém a instância do serviço de temporização
-        $benchmark = \Config\Services::timer();
 
-        // Variável para armazenar o tempo total das consultas
-        $totalQueryTime = 0;
-
-        // Define o evento para capturar o tempo de cada consulta
-        \CodeIgniter\Events\Events::on('DBQuery', function ($query) use (&$totalQueryTime) {
-            $totalQueryTime += $query->getDuration();
-        });
-
-        // Começa a contagem do tempo
-        $benchmark->start('query_timer');
+        $search = $input['search'] ?? false;
 
         // Construção da consulta
         $this->where('id_adm', session('data')['idAdm']);
-        if (isset($input['search'])) {
+
+        //Se tiver alguma busca
+        if ($search) {
             $this->like('nome', $input['search'])
                 ->orLike('descricao', $input['search'])
                 ->orLike('id', $input['search']);
+
+            // Executa a consulta e paginação
+            $rows  = $this->paginate(5);
+            $pager = $this->pager->links('default', 'paginate');
+
+            // Prepara os dados para retorno
+            $data = [
+                'rows' => $rows,
+                'pager' => $pager
+            ];
+        } else {
+            helper('auxiliar');
+            $cache = \Config\Services::cache();
+            if (!$cache->get('regioes')) {
+                // Executa a consulta e paginação
+                $rows  = $this->paginate(5);
+                $pager = $this->pager->links('default', 'paginate');
+
+                // Prepara os dados para retorno
+                $data = [
+                    'rows' => $rows,
+                    'pager' => $pager
+                ];
+                // Save into the cache for 365 days
+                $cache->save('regioes', $data, getCacheExpirationTimeInSeconds(365));
+            } else {
+                $data = $cache->get('regioes');
+            }
         }
-        $this->groupBy('id');
-
-        // Executa a consulta e paginação
-        $rows = $this->paginate(5);
-        $pager = $this->pager->links('default', 'paginate');
-
-        // Para a contagem do tempo
-        $benchmark->stop('query_timer');
-
-        // Obtém o tempo de execução total das consultas
-        $executionTimeInSeconds = $totalQueryTime;
-
-        // Converte o tempo de execução para milissegundos e formata
-        $executionTimeInMilliseconds = number_format($executionTimeInSeconds * 1000, 3) . ' ms';
-
-        // Prepara os dados para retorno
-        $data = [
-            'rows' => $rows,
-            'pager' => $pager,
-            'execution_time' => $executionTimeInMilliseconds
-        ];
-
         return $data;
     }
 }

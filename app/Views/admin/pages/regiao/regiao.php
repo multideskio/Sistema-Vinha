@@ -1,18 +1,11 @@
 <?= $this->extend('admin/template') ?>
-
-<?= $this->section('css'); ?>
-
-
-<?= $this->endSection(); ?>
-
 <?= $this->section('page') ?>
-
-<p class="text-muted mb-0">Gerenciamento de regiões</p>
+<h4 class="text-muted mb-0">Gerenciamento de regiões</h4>
 <div class="row mt-3 gx-1">
     <div class="col-lg-4">
         <div class="card h-100">
             <div class="card-body">
-                <h3>Cadastre uma nova região</h3>
+                <p>Cadastre uma nova região</p>
                 <?= form_open('api/v1/regioes', ["id" => "formCad"]) ?>
                 <input type="text" name="regiao" class="form-control mb-3" placeholder="Ex: Centro-Oeste" required minlength="3" maxlength="60" autocomplete="off">
                 <input type="hidden" name="id_adm" value="<?= session('data')['idAdm'] ?>">
@@ -22,11 +15,10 @@
             </div>
         </div>
     </div>
-
     <div class="col-lg-8">
         <div class="card h-100">
             <div class="card-body">
-                <h3>Lista de regiões</h3>
+                <p>Lista de regiões</p>
                 <?= $this->include('admin/pages/includes/search.php') ?>
                 <div class="table-responsive">
                     <div style="display: none" id="cardResult">
