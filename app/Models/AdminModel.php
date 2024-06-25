@@ -96,24 +96,16 @@ class AdminModel extends Model
     //Cache dados de config
     public function cacheData()
     {
-        
         helper('auxiliar');
-        
         $cache = \Config\Services::cache();
-        
-        if (!$cache->get('config')) {
-            
-            $builder = $this->find(1);
+        if (!$cache->get('config_Cache')) {
+            $builder = $this->select('id, cnpj, empresa, logo, email, cep, uf, cidade, bairro, complemento, telefone, celular')->find(1);
             // Save into the cache for 365 days
             //$cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(365));
-            $cache->save('config', $builder, 600);
-        
+            $cache->save('config_Cache', $builder, 600);
         }else{
-
             $builder = $cache->get('config_Cache');
         }
-
         return $builder;
-        
     }
 }
