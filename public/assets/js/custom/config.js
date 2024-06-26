@@ -195,7 +195,7 @@ function envioDeTeste() {
 
         $.ajax({
             type: "POST",
-            url: `${_baseUrl}/api/v1/email/teste`,
+            url: `${_baseUrl}api/v1/email/teste`,
             data: {
                 'email': email
             },
