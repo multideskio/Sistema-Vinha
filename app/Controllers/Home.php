@@ -306,4 +306,8 @@ class Home extends BaseController
 
         //return $newEmail->envioTeste('igrsysten@gmail.com', 'Teste de envio', $message);
     }
+
+    public function phpinfo(){
+        phpinfo();
+    }
 }

@@ -8,6 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
 $routes->get('sair', 'Home::sair');
 $routes->get('teste', 'Home::teste');
+$routes->get('phpinfo', 'Home::phpinfo');
 $routes->get('ajuda', 'Home::busca_ajuda');
 $routes->get('ajuda/(:any)', 'Home::ajuda/$1');
 
