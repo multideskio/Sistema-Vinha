@@ -115,17 +115,17 @@ class UploadsLibraries
             $image = \Config\Services::image();
 
             // Redimensiona e converte a imagem para WebP
-            $image->withFile($file_path)
+            /*$image->withFile($file_path)
                 ->resize(150, 150, true, 'height')
                 ->convert(IMAGETYPE_WEBP)
-                ->save($uploadPath . $image_name . '.webp');
+                ->save($uploadPath . $image_name . '.webp');*/
 
-            if (file_exists($uploadPath . $image_name . '.webp')) {
+            if (file_exists($file_path)) {
                 $update = [
-                    'foto' => "/assets/img/{$tipo}/{$id}/{$image_name}.webp"
+                    'foto' => "/assets/img/{$tipo}/{$id}/{$image_name}.png"
                 ];
                 // Remove o arquivo PNG original
-                unlink($file_path);
+                //unlink($file_path);
             }
             return $update ;
             
