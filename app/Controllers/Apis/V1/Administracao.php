@@ -173,7 +173,7 @@ class Administracao extends ResourceController
                 'smtp_pass'       => $input['smtpPASS'],
                 'smtp_port'       => $input['smtpPORT'],
                 'ativar_smtp'     => ($input['ativarSMTP']) ?? 0,
-                //'smtp_crypt'      => $input[''],
+                'smtp_crypt'      => $input['smtpCRYPT'] ?? 'SSL',
             ];
             
             $status = $this->modelAdmin->update($id, $data);

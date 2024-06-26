@@ -194,6 +194,17 @@
                             <label for="smtpPORT">SMTP Porta</label>
                             <input type="text" name="smtpPORT" id="smtpPORT" placeholder="587" class="form-control" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="smtpCRYPT">Protocolo</label>
+                            <select name="smtpCRYPT" id="smtpCRYPT" class="form-select" required>
+                                <option value="" selected>Escolha uma opção</option>
+                                <option value="ssl">SSL</option>
+                                <option value="tls">TLS</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 fw-bold">
+                            Protocolo atual: <span class="text-uppercase text-primary" id="protocoloSMTP"></span>
+                        </div>
                         <div class="col-lg-12 fs-6 mb-3">
                             <div class="form-check form-switch form-switch-success form-switch-lg">
                                 <input class="form-check-input" type="checkbox" role="switch" id="ativarSMTP" name="ativarSMTP" value="1">

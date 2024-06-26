@@ -124,6 +124,7 @@ function dataConfig() {
             $("#smtpLOGIN").val(data.smtp_user)
             $("#smtpPASS").val(data.smtp_pass)
             $("#smtpPORT").val(data.smtp_port)
+            $("#protocoloSMTP").html(data.smtp_crypt)
             setCheckboxState("#ativarSMTP", data.ativar_smtp == 1);
 
             //WhatsApp

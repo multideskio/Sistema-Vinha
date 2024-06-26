@@ -8,9 +8,7 @@ class Administracao extends Migration
 {
     public function up()
     {
-        //
         $db = db_connect();
-
         $db->disableForeignKeyChecks();
 
         $this->forge->addField([
@@ -21,7 +19,7 @@ class Administracao extends Migration
             ],
             'cnpj' => [
                 'type' => 'VARCHAR',
-                'constraint' => '21',
+                'constraint' => '14', // CNPJ geralmente tem 14 caracteres
                 'null' => true
             ],
             'empresa' => [
@@ -86,21 +84,21 @@ class Administracao extends Migration
             ],
             'url_api' => [
                 'type' => 'VARCHAR',
-                'constraint' => '60',
+                'constraint' => '255',
                 'null' => true,
-                'COMMENT' => 'Evolution API'
+                'comment' => 'Evolution API'
             ],
             'instance_api' => [
                 'type' => 'VARCHAR',
-                'constraint' => '60',
+                'constraint' => '255',
                 'null' => true,
-                'COMMENT' => 'Evolution API'
+                'comment' => 'Evolution API'
             ],
             'key_api' => [
                 'type' => 'VARCHAR',
-                'constraint' => '60',
+                'constraint' => '255',
                 'null' => true,
-                'COMMENT' => 'Evolution API'
+                'comment' => 'Evolution API'
             ],
             'smtp_host' => [
                 'type' => 'VARCHAR',
@@ -114,18 +112,18 @@ class Administracao extends Migration
             ],
             'smtp_pass' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => '60',
                 'null' => true
             ],
             'smtp_port' => [
-                'type' => 'VARCHAR',
+                'type' => 'SMALLINT',
                 'constraint' => '5',
                 'null' => true
             ],
             'smtp_crypt' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
-                'null' => true
+                'constraint' => '5',
+                'default' => 'tls'
             ],
             'google_client_id' => [
                 'type' => 'VARCHAR',
@@ -158,7 +156,6 @@ class Administracao extends Migration
 
     public function down()
     {
-        //
         $this->forge->dropTable('administracao', true);
     }
 }

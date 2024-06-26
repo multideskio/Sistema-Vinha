@@ -38,7 +38,8 @@ class AdminModel extends Model
         'smtp_host',
         'smtp_user',
         'smtp_pass',
-        'smtp_port'
+        'smtp_port',
+        'smtp_crypt'
     ];
 
     protected bool $allowEmptyInserts = true;
