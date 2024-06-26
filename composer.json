@@ -8,6 +8,7 @@
         "codeigniter4/framework": "^4.0",
         "codeigniter4/translations": "^4.4",
         "google/apiclient": "*",
+        "league/flysystem-aws-s3-v3": "^2.5",
         "predis/predis": "^2.2"
     },
     "require-dev": {
