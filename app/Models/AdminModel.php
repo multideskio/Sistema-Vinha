@@ -29,7 +29,16 @@ class AdminModel extends Model
         'nome_remetente',
         'url_api',
         'instance_api',
-        'key_api'
+        'key_api',
+        'ativar_wa',
+        'ativar_smtp',
+        'site',
+        'instagram',
+        'facebook',
+        'smtp_host',
+        'smtp_user',
+        'smtp_pass',
+        'smtp_port'
     ];
 
     protected bool $allowEmptyInserts = true;
@@ -62,7 +71,8 @@ class AdminModel extends Model
     {
         return esc($data);
     }
-    protected function updateCache(){
+    protected function updateCache()
+    {
         $cache = \Config\Services::cache();
         $cache->delete('config_Cache');
 
@@ -73,7 +83,7 @@ class AdminModel extends Model
     protected function limpaStrings(array $data)
     {
         helper('auxiliar');
-        
+
         if (array_key_exists('cnpj', $data['data'])) {
             $data['data']['cnpj'] = limparString($data['data']['cnpj']);
         }
@@ -89,7 +99,7 @@ class AdminModel extends Model
         if (array_key_exists('celular', $data['data'])) {
             $data['data']['celular'] = limparString($data['data']['celular']);
         }
-        
+
         return $data;
     }
 
@@ -103,7 +113,7 @@ class AdminModel extends Model
             // Save into the cache for 365 days
             //$cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(365));
             $cache->save('config_Cache', $builder, 600);
-        }else{
+        } else {
             $builder = $cache->get('config_Cache');
         }
         return $builder;

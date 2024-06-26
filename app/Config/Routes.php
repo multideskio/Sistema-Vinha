@@ -18,7 +18,16 @@ $routes->get('credito', 'Home::credito');
 $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'Home::teste');*/
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
+
+    $routes->post('administracao/update/upload/(:num)', 'Administracao::foto/$1',       ['filter' => 'logged']);
+    $routes->put('administracao/update/links/(:num)',   'Administracao::links/$1',      ['filter' => 'logged']);
+    $routes->put('administracao/update/info/(:num)',    'Administracao::updateInfo/$1', ['filter' => 'logged']);
+    $routes->put('administracao/update/smtp/(:num)',    'Administracao::updateSmtp/$1', ['filter' => 'logged']);
+    $routes->put('administracao/update/wa/(:num)',      'Administracao::updateWa/$1',   ['filter' => 'logged']);
+
     $routes->resource('administracao'); //['filter' => 'logged']
+
+    $routes->post('email/teste', 'Emails::teste');
     $routes->resource('emails', ['filter' => 'logged']);
     $routes->resource('ajuda', ['filter' => 'logged']);
 
@@ -103,6 +112,8 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
 
     $routes->get('gateways',      'Admin::gateways');
     $routes->get('ajuda',      'Admin::ajuda');
+
+    $routes->get('config', 'Admin::config');
 });
 
 

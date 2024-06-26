@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Apis\v1;
 
+use App\Libraries\UploadsLibraries;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
@@ -25,9 +26,7 @@ class Administracao extends ResourceController
     public function index()
     {
         //
-
         $result = $this->modelAdmin->cacheData();
-
         return $this->respond($result);
     }
 
@@ -40,7 +39,10 @@ class Administracao extends ResourceController
     {
         //
 
-        return $this->failNotFound();
+        $data = $this->modelAdmin->find($id);
+
+
+        return $this->respond($data);
     }
 
     /**
@@ -81,43 +83,119 @@ class Administracao extends ResourceController
      *
      * @return ResponseInterface
      */
-    public function update($id = null)
+
+    public function foto($id = null)
     {
-        //
+
+
+        $request = service('request');
+        $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        try {
+            $uploadLibraries = new UploadsLibraries;
+            $upload = $uploadLibraries->uploadCI($file, $id, 'admin_geral');
+            $data = [
+                'logo' => $upload['foto']
+            ];
+            $status = $this->modelAdmin->update($id, $data);
+
+            if ($status === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
+
+    public function links($id = null)
+    {
+        $input = $this->request->getRawInput();
+
+        $data = [
+            'facebook'  => $input['linkFacebook'],
+            'instagram' => $input['linkInstagram'],
+            'site'   => $input['linkWebsite'],
+        ];
+
+        $status = $this->modelAdmin->update($id, $data);
+
+        if ($status === false) {
+            return $this->fail($this->modelAdmin->errors());
+        }
+
+        return $this->respondUpdated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+    }
+
+    public function updateInfo($id = null)
+    {
         try {
             if (!$id) {
-                //TRADUZIR
                 throw new Exception('ID não informado');
             }
-
             $request = service('request');
-
-            $input = $request->getVar();
-
+            $input = $request->getRawInput();
             $data = [
-                'id' => $id,
-                'cnpj' => ($input->cnpj) ? $input->cnpj : null,
-                'empresa' => ($input->empresa) ? $input->empresa : null,
-                'logo' => ($input->logo) ? $input->logo : null,
-                'email' => ($input->email) ? $input->email : null,
-                'email_remetente' => ($input->email_remetente) ? $input->email_remetente : null,
-                'nome_remetente' => ($input->nome_remetente) ? $input->nome_remetente : null,
-                'cep' => ($input->cep) ? $input->cep : null,
-                'uf' => ($input->uf) ? $input->uf : null,
-                'cidade' => ($input->cidade) ? $input->cidade : null,
-                'bairro' => ($input->bairro )? $input->bairro : null,
-                'complemento' => ($input->complemento) ? $input->complemento : null,
-                'telefone' => ($input->telefone) ? $input->telefone : null,
-                'celular' => ($input->celular) ? $input->celular : null
+                'cnpj'        => $input['cnpj'],
+                'empresa'     => $input['empresa'],
+                'email'       => $input['email'],
+                'cep'         => $input['cep'],
+                'uf'          => $input['uf'],
+                'cidade'      => $input['cidade'],
+                'bairro'      => $input['bairro'],
+                'complemento' => $input['complemento'],
+                'telefone'    => $input['fixo'],
+                'celular'     => $input['celular']
             ];
-
-            $this->modelAdmin->save($data);
-
-            //TRADUZIR
+            $this->modelAdmin->update($id, $data);
             return $this->respond(['msg' => 'Atualizado com sucesso!']);
         } catch (\Exception $e) {
             return $this->fail(['error' => $e->getMessage()]);
         }
+    }
+
+    public function updateSmtp($id = null)
+    {
+        try {
+            
+            if (!$id) {
+                throw new Exception('ID não informado');
+            }
+
+            $request = service('request');
+            $input = $request->getRawInput();
+
+            $data = [
+                'email_remetente' => $input['emailRemetente'],
+                'nome_remetente'  => $input['nomeRemetente'],
+                'smtp_host'       => $input['smtpHOST'],
+                'smtp_user'       => $input['smtpLOGIN'],
+                'smtp_pass'       => $input['smtpPASS'],
+                'smtp_port'       => $input['smtpPORT'],
+                'ativar_smtp'     => ($input['ativarSMTP']) ?? 0,
+                //'smtp_crypt'      => $input[''],
+            ];
+            
+            $status = $this->modelAdmin->update($id, $data);
+
+            if ($status === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+            return $this->respond(['msg' => $data]);
+        
+        } catch (\Exception $e) {
+        
+            return $this->fail(['error' => $e->getMessage()]);
+        
+        }
+    }
+
+    public function updateWa($id = null)
+    {
+    }
+
+    public function update($id = null)
+    {
     }
 
     /**

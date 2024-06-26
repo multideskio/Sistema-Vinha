@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Gateways\Cielo\GatewayCielo;
+use App\Libraries\EmailsLibraries;
 use App\Libraries\WhatsappLibraries;
 use App\Models\AjudaModel;
 use App\Models\ConfigMensagensModel;
@@ -196,7 +197,7 @@ class Home extends BaseController
         return $this->response->setJSON(['status' => 'success', 'message' => 'Request logged']);
     }
 
-    public function teste()
+    public function teste000()
     {
         $whatsapp = new WhatsappLibraries;
         $modelMsg = new ConfigMensagensModel();
@@ -260,5 +261,49 @@ class Home extends BaseController
 
         //sleep(3);
         $cache->delete("gerentes_Cache");
+    }
+
+    public function teste555(){
+
+        $data = [
+            'nome' => "Paulo",
+            'token' => time()
+        ];
+        
+        $message = view('emails/confirma-email', $data);
+        
+
+        $config['protocol']   = 'smtp';
+        $config['SMTPHost']   = "smtp.gmail.com";
+        $config['SMTPUser']   = "multidesk.io@gmail.com";
+        $config['SMTPPass']   = "gevyilcevlokztgb";
+        $config['SMTPPort']   = "587";
+        $config['mailType']   = 'html';
+        $email = service('email');
+
+        $email->initialize($config);
+        
+        $email->setFrom('multidesk.io@gmail.com', 'Não responda');
+        $email->setTo('igrsysten@gmail.com');
+        $email->setSubject('Confirme sua conta');
+        $email->setMessage($message);
+        
+        $email->send();
+
+        return $message;
+    
+    }
+
+    public function teste(){
+        $newEmail = new EmailsLibraries;
+
+        $data = [
+            'nome' => "Paulo",
+            'token' => time()
+        ];
+        
+        $message = view('emails/confirma-email', $data);
+
+        //return $newEmail->envioTeste('igrsysten@gmail.com', 'Teste de envio', $message);
     }
 }

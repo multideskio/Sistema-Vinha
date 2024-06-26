@@ -143,4 +143,10 @@ class Admin extends BaseController
         $data['titlePage'] = "Ajuda";
         return view('admin/pages/ajuda', $data);
     }
+
+    public function config():string{
+        $data['idSearch']  = session('data')['idAdm'] ;
+        $data['titlePage'] = "Configurações gerais";
+        return view('admin/pages/admin/config', $data);
+    }
 }

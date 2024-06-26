@@ -2,6 +2,8 @@
 
 namespace App\Controllers\Apis\v1;
 
+use App\Libraries\EmailsLibraries;
+use App\Models\AdminModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
@@ -18,14 +20,13 @@ class Emails extends ResourceController
 
     public function __construct()
     {
-        $this->modelEmails = new \App\Models\EmailsModel ;
+        $this->modelEmails = new \App\Models\EmailsModel;
     }
     public function index()
     {
         //
         $msgs = $this->modelEmails->cacheData();
         return $this->respond($msgs);
-
     }
 
     /**
@@ -63,15 +64,15 @@ class Emails extends ResourceController
 
             $builder = $this->modelEmails->select('id')->where("tipo", $input->tipo)->findAll();
 
-            if(count($builder)){
+            if (count($builder)) {
                 $data = [
-                    "id"        => $builder[0]['id'], 
+                    "id"        => $builder[0]['id'],
                     "tipo"      => $input->tipo,
                     "mensagem"  => $input->mensagem,
                     "id_user"   => $input->id_user,
                     "id_adm"    => $input->id_adm
                 ];
-            }else{
+            } else {
                 $data = [
                     "tipo"      => $input->tipo,
                     "mensagem"  => $input->mensagem,
@@ -81,20 +82,16 @@ class Emails extends ResourceController
             }
 
             $id = $this->modelEmails->save($data);
-            
-            
+
+
             if ($id === false) {
                 return $this->fail($this->modelEmails->errors());
-
-                
             }
-            
+
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
-        
         } catch (\Exception $e) {
-        
+
             return $this->fail($e->getMessage());
-        
         }
     }
 
@@ -130,6 +127,25 @@ class Emails extends ResourceController
             return $this->respondDeleted(['msg' => lang("Sucesso.excluir")]);
         } else {
             return $this->fail(lang("Errors.excluir"));
+        }
+    }
+
+    public function teste()
+    {
+        try {
+            $email = new EmailsLibraries();
+            $request = service('request');
+            $input   = $request->getPost('email');
+
+            $modelConfigs = new AdminModel();
+
+            $data = $modelConfigs->select('logo')->find(session('data')['idAdm']);
+
+            $message = view('emails/teste', $data);
+            $email->testarEnvioEmail($input, 'Teste de envio', $message);
+            return $this->respond(['message' => 'Mensagem enviada com sucesso.']);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
         }
     }
 }
