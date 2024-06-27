@@ -177,10 +177,11 @@ class Home extends BaseController
 
     function teste00()
     {
-        $method = $this->request->getMethod();
-        $uri = $this->request->getUri();
-        $headers = $this->request->getHeaders();
-        $body = $this->request->getBody();
+        $request = service('request');
+        $method = $request->getMethod();
+        $uri = $request->getUri();
+        $headers = $request->getHeaders();
+        $body = $request->getBody();
 
         $logData = [
             'method' => $method,
@@ -197,102 +198,9 @@ class Home extends BaseController
         return $this->response->setJSON(['status' => 'success', 'message' => 'Request logged']);
     }
 
-    public function teste000()
-    {
-        $whatsapp = new WhatsappLibraries;
-        $modelMsg = new ConfigMensagensModel();
-        $rowMessage = $modelMsg->where(['id_adm' => session('data')['idAdm'], 'tipo' => 'novo_usuario', 'status' => true])->findAll(1);
-        if (count($rowMessage)) {
-            $data = [
-                '{nome}' => "Paulo Henrique",
-                '{sistema}' => "Boletos Vinha",
-                'number' => "5562981154120",
-                '{COD}' => "4120",
-            ];
-            $msg = $rowMessage[0]['mensagem'];
-            // Faz a substituição
-            $mensagem_final = str_replace(array_keys($data), array_values($data), $msg);
-            // Exibe a mensagem final e verifica o número
-            echo "<pre>";
-
-            $ret = $whatsapp->verifyNumber(['message' => $mensagem_final, 'image' => ''], $data['number'], 'image');
-
-            print_r($ret);
-        }
-    }
 
 
-    public function teste0()
-    {
-        $model = new GerentesModel();
 
-        // use the factory to create a Faker\Generator instance
-        $faker = \Faker\Factory::create();
-        $faker = \Faker\Factory::create('pt_BR');
-
-        $data = array();
-
-        $get = $this->request->getGet('num') ?? 3;
-
-        for ($i = 0; $i < $get; $i++) {
-
-            $data[] = [
-                'nome' => $faker->firstName(),
-                'sobrenome' => $faker->lastName(),
-                'cpf' => $faker->cpf(false), // Use o método cpf(false) para gerar CPFs formatados
-                'email' => $faker->email(),
-                'foto' => $faker->imageUrl(200, 200), // Supondo que 'foto' seja uma URL de imagem
-                'uf' => $faker->stateAbbr(),
-                'cidade' => $faker->city(),
-                'cep' => $faker->postcode(),
-                'complemento' => $faker->secondaryAddress(),
-                'bairro' => $faker->streetSuffix(),
-                'data_dizimo' => $faker->dateTimeThisCentury()->format('Y-m-d'),
-                'telefone' => $faker->phoneNumber(),
-                'celular' => $faker->phoneNumber(),
-                'facebook' => $faker->userName(),
-                'instagram' => $faker->userName(),
-            ];
-        }
-
-        $model->insertBatch($data);
-
-        $cache = \Config\Services::cache();
-
-        //sleep(3);
-        $cache->delete("gerentes_Cache");
-    }
-
-    public function teste555(){
-
-        $data = [
-            'nome' => "Paulo",
-            'token' => time()
-        ];
-        
-        $message = view('emails/confirma-email', $data);
-        
-
-        $config['protocol']   = 'smtp';
-        $config['SMTPHost']   = "smtp.gmail.com";
-        $config['SMTPUser']   = "multidesk.io@gmail.com";
-        $config['SMTPPass']   = "gevyilcevlokztgb";
-        $config['SMTPPort']   = "587";
-        $config['mailType']   = 'html';
-        $email = service('email');
-
-        $email->initialize($config);
-        
-        $email->setFrom('multidesk.io@gmail.com', 'Não responda');
-        $email->setTo('igrsysten@gmail.com');
-        $email->setSubject('Confirme sua conta');
-        $email->setMessage($message);
-        
-        $email->send();
-
-        return $message;
-    
-    }
 
     public function teste(){
         $newEmail = new EmailsLibraries;
