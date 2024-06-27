@@ -45,34 +45,34 @@ class UpdateAdminGeral extends Migration
             ],
             "s3_access_key_id" => [
                 'type' => 'VARCHAR',
-                'null' => true,
                 'constraint' => 255,
                 'AFTER' => 'celular'
             ],
             "s3_secret_access_key" => [
                 'type' => 'VARCHAR',
-                'null' => true,
                 'constraint' => 255,
                 'AFTER' => 'celular'
             ],
             "s3_region" => [
                 'type' => 'VARCHAR',
-                'null' => true,
                 'constraint' => 80,
                 'AFTER' => 'celular'
             ],
             "s3_endpoint" => [
                 'type' => 'VARCHAR',
-                'null' => true,
                 'constraint' => 255,
                 'AFTER' => 'celular'
             ],
             "s3_bucket_name" => [
                 'type' => 'VARCHAR',
-                'null' => true,
                 'constraint' => 80,
                 'AFTER' => 'celular'
-            ]
+            ],
+            "s3_cdn" => [
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+                'AFTER' => 'celular'
+            ],
         ];
         $this->forge->addColumn('administracao', $fields);
         $db->enableForeignKeyChecks();

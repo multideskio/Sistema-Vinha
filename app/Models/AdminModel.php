@@ -39,7 +39,13 @@ class AdminModel extends Model
         'smtp_user',
         'smtp_pass',
         'smtp_port',
-        'smtp_crypt'
+        'smtp_crypt',
+        's3_access_key_id',
+        's3_secret_access_key',
+        's3_region',
+        's3_endpoint',
+        's3_bucket_name',
+        's3_cdn'
     ];
 
     protected bool $allowEmptyInserts = true;

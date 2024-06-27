@@ -29,7 +29,7 @@ class Administracao extends Migration
             ],
             'logo' => [
                 'type' => 'VARCHAR',
-                'constraint' => '80',
+                'constraint' => '255',
                 'null' => true
             ],
             'email' => [

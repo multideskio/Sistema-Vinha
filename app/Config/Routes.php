@@ -25,6 +25,8 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->put('administracao/update/info/(:num)',    'Administracao::updateInfo/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/smtp/(:num)',    'Administracao::updateSmtp/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/wa/(:num)',      'Administracao::updateWa/$1',   ['filter' => 'logged']);
+    $routes->put('administracao/update/s3/(:num)',      'Administracao::updateS3/$1',   ['filter' => 'logged']);
+    $routes->get('administracao/teste/s3',              'Administracao::testeS3',   ['filter' => 'logged']);
 
     $routes->resource('administracao'); //['filter' => 'logged']
 

@@ -6,7 +6,9 @@ use App\Libraries\UploadsLibraries;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use Config\Flysystem;
 use Exception;
+use League\Flysystem\FilesystemAdapter;
 
 class Administracao extends ResourceController
 {
@@ -157,7 +159,7 @@ class Administracao extends ResourceController
     public function updateSmtp($id = null)
     {
         try {
-            
+
             if (!$id) {
                 throw new Exception('ID não informado');
             }
@@ -175,24 +177,64 @@ class Administracao extends ResourceController
                 'ativar_smtp'     => ($input['ativarSMTP']) ?? 0,
                 'smtp_crypt'      => $input['smtpCRYPT'] ?? 'SSL',
             ];
-            
+
             $status = $this->modelAdmin->update($id, $data);
 
             if ($status === false) {
                 return $this->fail($this->modelAdmin->errors());
             }
             return $this->respond(['msg' => $data]);
-        
         } catch (\Exception $e) {
-        
+
             return $this->fail(['error' => $e->getMessage()]);
-        
         }
     }
 
     public function updateWa($id = null)
     {
     }
+
+    public function updateS3($id = null)
+    {
+        try {
+
+            if (!$id) {
+                throw new Exception('ID não informado');
+            }
+
+            $request = service('request');
+            $input = $request->getRawInput();
+
+            $data = [
+                's3_access_key_id' => $input['s3Id'],
+                's3_secret_access_key' => $input['s3Key'],
+                's3_region' => $input['s3Regiao'],
+                //'s3_endpoint' => $input[''],
+                's3_bucket_name' => $input['s3Bucket'],
+                's3_cdn' => $input['s3Cdn']
+            ];
+
+            $status = $this->modelAdmin->update($id, $data);
+
+            if ($status === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+            return $this->respond(['msg' => $data]);
+        } catch (\Exception $e) {
+
+            return $this->fail(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function testeS3()
+    {
+        $uploadsLibraries = new UploadsLibraries();
+        $result = $uploadsLibraries->testeS3();
+
+        return $this->respond($result);
+    }
+
+
 
     public function update($id = null)
     {

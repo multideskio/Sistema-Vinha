@@ -132,6 +132,24 @@ function dataConfig() {
             $("#instanceAPI").val(data.instance_api)
             $("#keyAPI").val(data.key_api)
             setCheckboxState("#ativawa", data.ativar_wa == 1);
+
+            //s3
+            //$("#s3Regiao").val(data.s3_region)
+            $("#s3Bucket").val(data.s3_bucket_name)
+            $("#s3Id").val(data.s3_access_key_id)
+            $("#s3Key").val(data.s3_secret_access_key)
+            $("#s3Cdn").val(data.s3_cdn)
+
+            // Supondo que você recebeu a região retornada em uma variável chamada data.s3_region
+            let regiaoSelecionada = data.s3_region;
+
+            // Iterar sobre as opções do select e marcar a opção correspondente como selecionada
+            $("#s3Region option").each(function () {
+                if ($(this).val() === regiaoSelecionada) {
+                    $(this).prop("selected", true);
+                }
+            });
+
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
@@ -183,6 +201,41 @@ function formataCampos() {
 }
 
 function envioDeTeste() {
+    $("#testarS3").on('click', function () {
+        Swal.fire({
+            title: `Realizando teste`,
+            icon: 'info',
+            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+            buttonsStyling: false,
+        });
+
+        $.ajax({
+            url: `${_baseUrl}api/v1/administracao/teste/s3`,
+            method: 'GET',
+            dataType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+            let iconType = data.status === 'success' ? 'success' : 'error';
+            Swal.fire({
+                title: `Teste S3.`,
+                text: data.message,
+                icon: iconType,
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false
+            });
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Ocorreu um erro ao processar sua solicitação.',
+                icon: 'error',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false
+            });
+        }).always(function () {
+            // Executa após a requisição (seja sucesso ou falha)
+        });
+    });
+
+
     $("#testarEmail").on('click', function () {
         var email = $('#email').val();
         Swal.fire({

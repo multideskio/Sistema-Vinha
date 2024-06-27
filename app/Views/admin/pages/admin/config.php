@@ -93,10 +93,15 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#s3" role="tab">
+                            <i class="far fa-envelope"></i> Armazenamento de images
+                        </a>
+                    </li>
+                    <!-- <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#mensagens" role="tab">
                             <i class="far fa-envelope"></i> Mensagens WhatsApp
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
             <div class="card-body p-4">
@@ -247,6 +252,60 @@
                     </div>
                     <!--end tab-pane-->
 
+                    <div class="tab-pane" id="s3" role="tabpanel">
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <b>Para dar certo o armazenamento de imagens é necessário configurar essa integração com o sistema S3 da AWS</b><br>
+                            As configurações podem ser confusas, entre em contato com desenvolvedor caso precise de suporte.
+                            </form>
+                        </div>
+                        <?= form_open('api/v1/administracao/update/s3/' . $idSearch, ['class' => 'formGeral']) ?>
+                        <div class="mb-3">
+                            <label for="s3Regiao">Região</label>
+                            <select id="s3Region" name="s3Regiao" class="form-select">
+                                <option selected>Escolha uma região</option>
+                                <option value="us-east-1">US East (N. Virginia)</option>
+                                <option value="us-west-1">US West (N. California)</option>
+                                <option value="us-west-2">US West (Oregon)</option>
+                                <option value="eu-west-1">EU (Ireland)</option>
+                                <option value="eu-central-1">EU (Frankfurt)</option>
+                                <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                                <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                                <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                                <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+                                <option value="sa-east-1">South America (São Paulo)</option>
+                                <option value="ca-central-1">Canada (Central)</option>
+                                <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                                <option value="eu-west-2">EU (London)</option>
+                                <option value="eu-west-3">EU (Paris)</option>
+                                <option value="eu-north-1">EU (Stockholm)</option>
+                                <option value="me-south-1">Middle East (Bahrain)</option>
+                                <option value="af-south-1">Africa (Cape Town)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="s3Bucket">Bucket</label>
+                            <input type="text" name="s3Bucket" id="s3Bucket" placeholder="Ex: vinha" required class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="s3Id">ID da chave de acesso</label>
+                            <input type="text" name="s3Id" id="s3Id" placeholder="Fornecida ao criar as credenciais do bucket" required class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="s3Key">Chave de acesso secreta</label>
+                            <input type="text" name="s3Key" id="s3Key" placeholder="Fornecida ao criar as credenciais do bucket" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="s3Cdn">URL CDN (Caso utilize cloudfront)</label>
+                            <input type="url" name="s3Cdn" id="s3Cdn" placeholder="Ex: http://d2mlkbg44iajgz.cloudfront.net" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-info" type="submit">Atualizar S3</button>
+                            <button class="btn btn-dark" type="button" id="testarS3">Testar credenciais</button>
+                        </div>
+                        </form>
+                    </div>
+                    <!--end tab-pane-->
 
                     <div class="tab-pane" id="mensagens" role="tabpanel">
                         <div class="text-center">

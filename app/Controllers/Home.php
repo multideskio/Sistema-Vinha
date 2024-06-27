@@ -42,23 +42,17 @@ class Home extends BaseController
                 ->findAll();
 
             $this->data['rows'] = $rows;
-
             if (count($rows) == 1) {
-
                 $this->data['textResult'] = "<h1 class='text-primary mt-3'>1 resultado encontrado!</h1>";
             } else if (count($rows) > 1) {
-
                 $tt = count($rows);
-
                 $this->data['textResult'] = "<h1 class='text-primary mt-3'>{$tt} resultados encontrados!</h1>";
             } else {
-
                 $this->data['textResult'] = "<h1 class='text-danger mt-3'>Nenhum resultado encontrado!</h1>";
             }
         } else {
             $this->data['rows'] = $modelAjuda->findAll();
         }
-
         helper('text');
         return view('ajuda/home', $this->data);
     }
@@ -79,7 +73,6 @@ class Home extends BaseController
     public function sair()
     {
         session_destroy();
-
         return redirect()->to(site_url());
     }
 
@@ -164,8 +157,6 @@ class Home extends BaseController
             ]
         ];
 
-
-
         try {
             $response = $cielo->createCreditCardCharge($params);
             echo "Cobrança criada com sucesso: " . json_encode($response);
@@ -173,38 +164,8 @@ class Home extends BaseController
             echo "Erro ao criar cobrança: " . $e->getMessage();
         }
     }
-
-
-    function teste00()
-    {
-        $request = service('request');
-        $method = $request->getMethod();
-        $uri = $request->getUri();
-        $headers = $request->getHeaders();
-        $body = $request->getBody();
-
-        $logData = [
-            'method' => $method,
-            'uri' => $uri,
-            'headers' => $headers,
-            'body' => $body,
-        ];
-
-        $logFile = WRITEPATH . 'logs/requests.log';
-
-        // Escreve a requisição no arquivo de log
-        file_put_contents($logFile, json_encode($logData, JSON_PRETTY_PRINT) . PHP_EOL, FILE_APPEND);
-
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Request logged']);
-    }
-
-
-
-
-
     public function teste(){
         $newEmail = new EmailsLibraries;
-
         $data = [
             'nome' => "Paulo",
             'token' => time()

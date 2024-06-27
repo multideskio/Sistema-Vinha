@@ -2,27 +2,83 @@
 
 namespace App\Libraries;
 
+use App\Models\AdminModel;
+use Aws\S3\S3Client;
+use CodeIgniter\HTTP\Files\UploadedFile;
+use Exception;
+
 class UploadsLibraries
 {
+    protected $s3Client;
+    protected $cdnUrl;
+    protected $bucketName;
 
-    public function perfil($upload)
+    public function __construct()
     {
-        // Verifica se o upload foi bem-sucedido
-        if ($upload->isValid() && !$upload->hasMoved()) {
-            // Configurações de upload (você pode ajustar conforme necessário)
-            $upload->setDestination('/caminho/para/armazenar/os/arquivos/');
+        try {
+            $this->configureS3();
+        } catch (Exception $e) {
+            log_message('error', 'Erro ao configurar o S3: ' . $e->getMessage());
+            throw new Exception('Erro ao configurar o S3: ' . $e->getMessage());
+        }
+    }
 
-            // Move o arquivo para o destino
-            if ($upload->move()) {
-                // Sucesso, faça o que precisar com o arquivo
-                echo 'Upload bem-sucedido!';
-            } else {
-                // O upload falhou, obtenha os erros
-                $errors = $upload->getErrors();
-                print_r($errors);
+    private function configureS3()
+    {
+        $credentialsModel = new AdminModel();
+        $credentials = $credentialsModel->first();
+
+        if (!$credentials) {
+            throw new Exception("Credenciais não encontradas no banco de dados.");
+        }
+
+        $requiredKeys = ['s3_access_key_id', 's3_secret_access_key', 's3_region', 's3_bucket_name'];
+        foreach ($requiredKeys as $key) {
+            if (empty($credentials[$key])) {
+                throw new Exception("A chave {$key} não está definida nas credenciais.");
+            }
+        }
+
+        $this->s3Client = new S3Client([
+            'credentials' => [
+                'key'    => $credentials['s3_access_key_id'],
+                'secret' => $credentials['s3_secret_access_key'],
+            ],
+            'region'  => $credentials['s3_region'],
+            'version' => 'latest',
+        ]);
+
+        $this->bucketName = $credentials['s3_bucket_name'];
+        $this->cdnUrl = !empty($credentials['s3_cdn'])
+            ? rtrim($credentials['s3_cdn'], '/')
+            : "https://{$credentials['s3_bucket_name']}.s3.{$credentials['s3_region']}.amazonaws.com";
+    }
+
+    private function uploadToS3($key, $sourceFile, $contentType)
+    {
+        return $this->s3Client->putObject([
+            'Bucket'      => $this->bucketName,
+            'Key'         => $key,
+            'SourceFile'  => $sourceFile,
+            'ACL'         => 'public-read',
+            'ContentType' => $contentType,
+        ]);
+    }
+
+    public function perfil(UploadedFile $upload)
+    {
+        if ($upload->isValid() && !$upload->hasMoved()) {
+            $filename = $upload->getRandomName();
+            $tempPath = $upload->getTempName();
+
+            try {
+                $result = $this->uploadToS3('profile_pictures/' . $filename, $tempPath, $upload->getClientMimeType());
+                $cdnPath = $this->cdnUrl . '/profile_pictures/' . $filename;
+                echo 'Upload bem-sucedido! URL: ' . $cdnPath;
+            } catch (Exception $e) {
+                echo 'Erro ao fazer upload: ' . $e->getMessage();
             }
         } else {
-            // Não há arquivo ou ocorreu um erro durante o upload
             echo 'Nenhum arquivo enviado ou ocorreu um erro.';
         }
     }
@@ -31,106 +87,90 @@ class UploadsLibraries
     {
         try {
             if (isset($input['filepond'])) {
-                // Decodifica os dados JSON enviados pelo FilePond
                 $file = json_decode($input['filepond']);
 
-                // Verifica se os dados foram decodificados corretamente e se contêm uma imagem
                 if ($file && isset($file->data)) {
-                    // Decodifica a string base64 da imagem de volta para os dados binários da imagem
                     $image_data = base64_decode($file->data);
                     if ($image_data === false) {
-                        throw new \Exception("Falha ao decodificar os dados da imagem.");
+                        throw new Exception("Falha ao decodificar os dados da imagem.");
                     }
 
-                    // Define o caminho onde você deseja salvar a imagem
-                    $image_path = FCPATH . "assets/img/{$dir}/{$idBd}/";
+                    $image_name = uniqid() . '.webp';
+                    $path = "{$dir}/{$idBd}/{$image_name}";
 
-                    // Cria o diretório se ele não existir
-                    if (!is_dir($image_path) && !mkdir($image_path, 0777, true) && !is_dir($image_path)) {
-                        throw new \Exception("Falha ao criar o diretório: {$image_path}");
-                    }
+                    $result = $this->s3Client->putObject([
+                        'Bucket'      => $this->bucketName,
+                        'Key'         => $path,
+                        'Body'        => $image_data,
+                        'ACL'         => 'public-read',
+                        'ContentType' => 'image/webp',
+                    ]);
 
-                    // Gera um nome de arquivo único para a imagem
-                    $image_name = uniqid();
+                    $cdnPath = $this->cdnUrl . '/' . $path;
 
-                    // Salva a imagem no servidor
-                    $file_path = $image_path . $image_name . '.png';
-                    if (file_put_contents($file_path, $image_data) === false) {
-                        throw new \Exception("Falha ao salvar a imagem no caminho: {$file_path}");
-                    }
-
-                    $image = \Config\Services::image();
-
-                    // Converte a imagem para WEBP e salva
-                    $webp_path = $image_path . $image_name . '.webp';
-                    if (!$image->withFile($file_path)
-                        ->resize(150, 150, true, 'height')
-                        ->convert(IMAGETYPE_WEBP)
-                        ->save($webp_path)) {
-                        throw new \Exception("Falha ao converter a imagem para WEBP.");
-                    }
-
-                    // Remove o arquivo .png após a conversão
-                    if (!unlink($file_path)) {
-                        throw new \Exception("Falha ao remover o arquivo PNG temporário.");
-                    }
-
-                    return ['file' => $webp_path, 'newName' => "/assets/img/{$dir}/{$idBd}/{$image_name}.webp"];
+                    return ['file' => $cdnPath, 'newName' => $cdnPath];
                 }
             }
 
-            throw new \Exception("Nenhum arquivo de imagem foi encontrado no input.");
-        } catch (\Exception $e) {
-            // Retorna o erro encontrado para diagnóstico
+            throw new Exception("Nenhum arquivo de imagem foi encontrado no input.");
+        } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
     }
 
-    public function uploadCI($file, int $id, string $tipo)
+    public function uploadCI(UploadedFile $file, int $id, string $tipo)
     {
         if ($file && $file->isValid() && !$file->hasMoved()) {
-            helper('filesystem');
+            $path = "{$tipo}/{$id}/";
 
-            // Define o diretório de upload
-            $uploadPath = FCPATH . "assets/img/{$tipo}/{$id}/";
+            try {
+                $contents = $this->s3Client->listObjects([
+                    'Bucket' => $this->bucketName,
+                    'Prefix' => $path,
+                ]);
 
-            //Se existe diretório, então apaga
-            if (is_dir($uploadPath)) {
-                delete_files($uploadPath, true);
-                rmdir($uploadPath);
+                if (!empty($contents['Contents'])) {
+                    foreach ($contents['Contents'] as $object) {
+                        $this->s3Client->deleteObject([
+                            'Bucket' => $this->bucketName,
+                            'Key'    => $object['Key'],
+                        ]);
+                    }
+                }
+
+                $image_name = uniqid() . '.png';
+                $tempPath = $file->getTempName();
+
+                $result = $this->uploadToS3($path . $image_name, $tempPath, $file->getClientMimeType());
+
+                $cdnPath = $this->cdnUrl . '/' . $path . $image_name;
+
+                return ['foto' => $cdnPath];
+            } catch (Exception $e) {
+                throw new Exception("Erro ao fazer upload da imagem para o S3: " . $e->getMessage());
             }
-
-            // Cria o diretório se ele não existir
-            if (!is_dir($uploadPath)) {
-                mkdir($uploadPath, 0777, true);
-            }
-
-            // Gera um nome de arquivo único para a imagem
-            $image_name = uniqid();
-
-            // Move o arquivo para o diretório de upload
-            $file_path = $uploadPath . $image_name . '.png';
-            $file->move($uploadPath, $image_name . '.png');
-
-            $image = \Config\Services::image();
-
-            // Redimensiona e converte a imagem para WebP
-            /*$image->withFile($file_path)
-                ->resize(150, 150, true, 'height')
-                ->convert(IMAGETYPE_WEBP)
-                ->save($uploadPath . $image_name . '.webp');*/
-
-            if (file_exists($file_path)) {
-                $update = [
-                    'foto' => "/assets/img/{$tipo}/{$id}/{$image_name}.png"
-                ];
-                // Remove o arquivo PNG original
-                //unlink($file_path);
-            }
-            return $update ;
-            
         } else {
-            throw new \Exception("Nenhum arquivo de imagem foi encontrado no input.");
+            throw new Exception("Nenhum arquivo de imagem foi encontrado no input.");
+        }
+    }
+
+    public function testeS3()
+    {
+        try {
+            $contents = $this->s3Client->listObjects([
+                'Bucket' => $this->bucketName,
+                'Prefix' => '',
+                'MaxKeys' => 1
+            ]);
+
+            if ($contents !== false && isset($contents['Contents'])) {
+                return ['status' => 'success', 'message' => 'Conexão com S3 estabelecida com sucesso.'];
+            } else {
+                throw new Exception("Falha ao listar o conteúdo do bucket. Resposta inesperada.");
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Erro ao testar a conexão com o S3: ' . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Erro ao conectar com o S3: ' . $e->getMessage()];
         }
     }
 }
