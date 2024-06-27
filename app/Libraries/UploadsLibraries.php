@@ -19,7 +19,7 @@ class UploadsLibraries
             $this->configureS3();
         } catch (Exception $e) {
             log_message('error', 'Erro ao configurar o S3: ' . $e->getMessage());
-            throw new Exception('Erro ao configurar o S3: ' . $e->getMessage());
+            //throw new Exception('Erro ao configurar o S3: ' . $e->getMessage());
         }
     }
 
