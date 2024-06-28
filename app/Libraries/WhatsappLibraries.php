@@ -29,7 +29,7 @@ class WhatsappLibraries
             throw new Exception('Nenhuma configuração da api Multidesk encontrada.');
         }
 
-        $this->apiUrl = $dataSettings['apiUrl'];
+        $this->apiUrl = rtrim($dataSettings['apiUrl'], '/');
         $this->apikey = $dataSettings['apikey'];
         $this->instance = $dataSettings['instance'];
         $this->headers = [
