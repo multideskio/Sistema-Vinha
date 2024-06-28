@@ -44,17 +44,14 @@ function updateImage() {
         success: function (responseText, statusText, xhr, $form) {
             dataConfig();
             Swal.fire({
-                title: 'OK!',
                 text: 'Imagem atualizada com sucesso!',
                 icon: 'success'
             })
         },
         error: function (xhr, status, error) {
             Swal.fire({
-                title: 'Erro ao atualizar imagem',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
+                text: 'Erro ao atualizar imagem',
+                icon: 'error'
             });
             console.log(xhr)
             console.log(status)
@@ -71,17 +68,14 @@ function updateGeral() {
         success: function (responseText, statusText, xhr, $form) {
             dataConfig();
             Swal.fire({
-                title: 'OK!',
-                text: 'Atualizado com sucesso!',
+                text: 'Executado com sucesso!',
                 icon: 'success'
             })
         },
         error: function (xhr, status, error) {
             Swal.fire({
-                title: 'Erro ao atualizar...',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
+                text: 'Ocorreu um erro...',
+                icon: 'error'
             });
         }
     });
@@ -124,7 +118,16 @@ function dataConfig() {
             $("#smtpLOGIN").val(data.smtp_user)
             $("#smtpPASS").val(data.smtp_pass)
             $("#smtpPORT").val(data.smtp_port)
-            $("#protocoloSMTP").html(data.smtp_crypt)
+            
+            let smtpCRYPT = data.smtp_crypt;
+
+            $("#smtpCRYPT option").each(function () {
+                if ($(this).val() === smtpCRYPT) {
+                    $(this).prop("selected", true);
+                }
+            });
+
+
             setCheckboxState("#ativarSMTP", data.ativar_smtp == 1);
 
             //WhatsApp
@@ -156,10 +159,8 @@ function dataConfig() {
             console.error("Erro ao carregar os dados:", textStatus, errorThrown);
             $('.loadResult').hide();
             Swal.fire({
-                title: 'Os dados não foram enconrados',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
+                title: 'Os dados não foram encontrados',
+                icon: 'error'
             }).then(function (result) {
                 history.back();
             });
@@ -203,10 +204,8 @@ function formataCampos() {
 function envioDeTeste() {
     $("#testarS3").on('click', function () {
         Swal.fire({
-            title: `Realizando teste`,
-            icon: 'info',
-            confirmButtonClass: 'btn btn-primary w-xs mt-2',
-            buttonsStyling: false,
+            text: `Realizando teste`,
+            icon: 'info'
         });
 
         $.ajax({
@@ -224,11 +223,8 @@ function envioDeTeste() {
             });
         }).fail(function (jqXHR, textStatus, errorThrown) {
             Swal.fire({
-                title: 'Erro!',
                 text: 'Ocorreu um erro ao processar sua solicitação.',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false
+                icon: 'error'
             });
         }).always(function () {
             // Executa após a requisição (seja sucesso ou falha)
@@ -240,9 +236,7 @@ function envioDeTeste() {
         var email = $('#email').val();
         Swal.fire({
             title: `Estamos enviando um e-mail de teste para ${email}`,
-            icon: 'info',
-            confirmButtonClass: 'btn btn-primary w-xs mt-2',
-            buttonsStyling: false,
+            icon: 'info'
         })
 
         $.ajax({
@@ -254,7 +248,6 @@ function envioDeTeste() {
             dataType: "json",
             success: function (response) {
                 Swal.fire({
-                    title: 'OK!',
                     text: 'O E-mail foi enviado!',
                     icon: 'success'
                 })
@@ -263,11 +256,8 @@ function envioDeTeste() {
                 Swal.fire({
                     title: `O e-email não foi enviado.`,
                     text: `${error.responseJSON.messages.error}`,
-                    icon: 'error',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false
+                    icon: 'error'
                 })
-                //console.error("Erro ao enviar dados:", error.responseJSON.messages.error);
             }
         });
     })

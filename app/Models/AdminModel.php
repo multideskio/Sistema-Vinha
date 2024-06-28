@@ -81,7 +81,7 @@ class AdminModel extends Model
     protected function updateCache()
     {
         $cache = \Config\Services::cache();
-        $cache->delete('config_Cache');
+        $cache->delete('searchCacheDataConfig');
 
         /*$dbutil = \Config\Database::utils();
         $dbutil->optimizeTable('administracao');*/
@@ -114,15 +114,35 @@ class AdminModel extends Model
     public function cacheData()
     {
         helper('auxiliar');
+        
         $cache = \Config\Services::cache();
+
         if (!$cache->get('config_Cache')) {
-            $builder = $this->select('id, cnpj, empresa, logo, email, cep, uf, cidade, bairro, complemento, telefone, celular')->find(1);
-            // Save into the cache for 365 days
-            //$cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(365));
-            $cache->save('config_Cache', $builder, 600);
+            $builder = $this->first();
+            $cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(30));
         } else {
             $builder = $cache->get('config_Cache');
         }
+
         return $builder;
+    }
+
+    public function searchCacheData($id = 1){
+        helper('auxiliar');
+        $cache = \Config\Services::cache();
+        
+        //if (!$cache->get('searchCacheDataConfig')) {
+        
+            $data = $this->first();
+        //    $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
+        
+        //}else{
+            
+        //    $data = $cache->get('searchCacheDataConfig');
+        
+        //}
+        
+        return $data ;
+
     }
 }

@@ -7,7 +7,7 @@
             </div>
             <hr>
             <!-- -->
-            <?= form_open('api/v1/igrejas', ['id' => 'formCad'] ) ?>
+            <?= form_open('api/v1/igrejas', ['id' => 'formCad']) ?>
             <div class="modal-body">
                 <div class="alert alert-danger" role="alert">
                     <i class="ri-information-line ri-1x"></i> Ao preencher o CNPJ, alguns campos serão preenchidos automaticamente.
@@ -99,12 +99,12 @@
                         <input type="password" name="password" id="password" class="form-control" placeholder="123456" autocomplete="off" required>
                     </div>
                 </div>
-                <div class="mt-2">
+                <!-- <div class="mt-2">
                     <b>Foto</b>
                     <div class="avatar-xl mx-auto">
                         <input type="file" class="filepond filepond-input-circle" name="filepond" id="filepond" accept="image/png, image/jpeg, image/gif" />
                     </div>
-                </div>
+                </div>-->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>

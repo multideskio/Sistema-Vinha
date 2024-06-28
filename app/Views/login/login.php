@@ -1,5 +1,7 @@
 <?= $this->include('partials/main') ?>
-
+<?php
+$rowConfig = $data->searchCacheData(1);
+?>
 <head>
     <?php echo view('partials/title-meta', array('title' => lang('Paginas.login.titlePage', [$rowConfig['empresa']]))); ?>
     <?= $this->include('partials/head-css') ?>
@@ -24,7 +26,7 @@
                         <div class="text-center mt-sm-5 mb-2 text-white-50">
                             <div>
                                 <a href="/" class="d-inline-block auth-logo">
-                                    <img src="/assets/images/logo-light.png" alt="" height="20">
+                                    <img src="/assets/images/logo-light.png" alt="logo" height="35">
                                 </a>
                             </div>
                         </div>

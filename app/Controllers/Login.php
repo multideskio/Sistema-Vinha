@@ -5,12 +5,13 @@ namespace App\Controllers;
 class Login extends BaseController
 {
     protected $modelConfig;
-    protected $data;
+    protected $config;
 
     public function __construct()
     {
+
         $this->modelConfig = new \App\Models\AdminModel;
-        $this->data['rowConfig'] = $this->modelConfig->cacheData();
+        $this->config = $this->modelConfig->searchCacheData();
     }
 
     public function index()
@@ -19,11 +20,13 @@ class Login extends BaseController
     }
 
     public function novaconta(): string{
-        return view('login/nova', $this->data);
+        $data['rowConfig'] = $this->config ;
+        return view('login/nova', $data);
     }
 
     //Apenas avisa que a verificação foi realizada
     public function confirmacao(): string{
-        return view('login/confirmacao', $this->data);
+        $data['rowConfig'] = $this->config ;
+        return view('login/confirmacao', $data);
     }
 }

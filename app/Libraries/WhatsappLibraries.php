@@ -106,6 +106,7 @@ class WhatsappLibraries
             return false;
         }
     }
+
     public function sendMessageText($message, $number)
     {
         try {
@@ -128,6 +129,7 @@ class WhatsappLibraries
             }
 
             return true;
+            
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';

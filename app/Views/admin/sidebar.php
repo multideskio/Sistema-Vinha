@@ -72,13 +72,13 @@
                     <a class="nav-link menu-link" href="<?= site_url('admin/usuarios') ?>">
                         <i class="ri-group-line"></i> <span>Usuarios</span>
                     </a>
-                </li>-->
+                </li>
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Financeiro</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/recebimento') ?>">
                         <i class="ri-dashboard-2-line"></i> <span>Transações</span>
                     </a>
-                </li>
+                </li>-->
                 <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/retorno') ?>">
                         <i class="ri-dashboard-2-line"></i> <span>Retorno</span>
@@ -94,17 +94,17 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/config') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Plataforma</span>
+                        <i class="ri-settings-5-line"></i> <span>Plataforma</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/gateways') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Administradores</span>
+                        <i class="ri-settings-2-line"></i> <span>Gateways</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('admin/gateways') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Gateways</span>
+                    <a class="nav-link menu-link" href="<?= site_url('admin/admins') ?>">
+                        <i class="ri-shield-user-line"></i> <span>Administradores</span>
                     </a>
                 </li>
                 <li class="nav-item">

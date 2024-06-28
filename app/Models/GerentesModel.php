@@ -172,7 +172,10 @@ class GerentesModel extends Model
             'num'   => $numMessage
         ];
     }
-    public function listSearch1($input = false, $qtd = 15)
+
+
+    
+    /*public function listSearch1($input = false, $qtd = 15)
     {
         // Inicializa o modelo de Usuários
         $modelUsuarios = new UsuariosModel();
@@ -190,7 +193,7 @@ class GerentesModel extends Model
         $gerentesSearch = false;
 
         /** Ações de busca na tabela gerentes */
-        if ($search) {
+        /**if ($search) {
             // Busca por id, nome, sobrenome ou cpf que correspondam ao termo de busca
             $gerentesSearch = $this->like('id', $search)
                 ->orLike('nome', $search)
@@ -210,7 +213,7 @@ class GerentesModel extends Model
         }
 
         /** Lista dados da tabela gerentes */
-        foreach ($gerentes as $gerente) {
+        /**foreach ($gerentes as $gerente) {
             // Busca usuários com id_perfil igual ao id do gerente e tipo 'gerente'
             $searchUser = $modelUsuarios->where(['id_perfil' => $gerente['id'], 'tipo' => 'gerente'])->findAll();
 
@@ -257,5 +260,5 @@ class GerentesModel extends Model
             'rows' => $dataGerentes, // Dados dos gerentes
             'pager' => $this->pager->links('default', 'paginate') // Links de paginação
         ];
-    }
+    //}*/
 }

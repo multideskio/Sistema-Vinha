@@ -13,7 +13,7 @@ class Admin extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-        $this->data['rowConfig'] = $this->modelConfig->cacheData();
+      //  $this->data['rowConfig'] = $this->modelConfig->cacheData();
     }
 
     public function index(): string
@@ -21,6 +21,7 @@ class Admin extends BaseController
 
         $data['idSearch']  = null ;
         $data['titlePage'] = 'Dashboard';
+        
         //
         return view('admin/pages/home', $data);
     }
@@ -103,13 +104,15 @@ class Admin extends BaseController
         return view('admin/pages/igrejas/altera', $data);
     }
 
-    /*public function usuarios(): string
+    public function admins(): string
     {
-        $data['titlePage'] = 'Usuários';
+        $data['idSearch']  = null ;
+        $data['titlePage'] = 'Administradores';
         
         //
-        return view('admin/pages/usuarios', $data);
+        return view('admin/pages/admins/lista', $data);
     }
+    /*
 
     public function recebimento(): string
     {

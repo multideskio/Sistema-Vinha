@@ -19,7 +19,7 @@ return [
         'opcoes'    => 'Entrar com',
         'criar'     => [
             'texto' => 'Não tem uma conta?',
-            'link'  => 'Inscreva-se'
+            'link'  => 'Cria uma conta'
         ]
     ],
     'novaconta' => [

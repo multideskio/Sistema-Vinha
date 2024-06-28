@@ -3,12 +3,11 @@
 namespace App\Controllers\Apis\v1;
 
 use App\Libraries\UploadsLibraries;
+use App\Libraries\WhatsappLibraries;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
-use Config\Flysystem;
 use Exception;
-use League\Flysystem\FilesystemAdapter;
 
 class Administracao extends ResourceController
 {
@@ -40,10 +39,7 @@ class Administracao extends ResourceController
     public function show($id = null)
     {
         //
-
-        $data = $this->modelAdmin->find($id);
-
-
+        $data = $this->modelAdmin->searchCacheData($id);
         return $this->respond($data);
     }
 
@@ -192,6 +188,32 @@ class Administracao extends ResourceController
 
     public function updateWa($id = null)
     {
+        try {
+
+            if (!$id) {
+                throw new Exception('ID não informado');
+            }
+
+            $request = service('request');
+            $input = $request->getRawInput();
+
+            $data = [
+                'url_api' => $input['urlAPI'],
+                'instance_api' => $input['instanceAPI'],
+                'key_api' => $input['keyAPI'],
+                'ativar_wa' => ($input['ativawa']) ?? 0,
+            ];
+
+            $status = $this->modelAdmin->update($id, $data);
+
+            if ($status === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+            return $this->respond(['msg' => $data]);
+        } catch (\Exception $e) {
+
+            return $this->fail(['error' => $e->getMessage()]);
+        }
     }
 
     public function updateS3($id = null)
@@ -234,7 +256,24 @@ class Administracao extends ResourceController
         return $this->respond($result);
     }
 
+    public function testWhatsApp(){
+        $whatsapp = new WhatsappLibraries();
 
+        $input = $this->request->getRawInput();
+
+        $message['message'] = $input['message'];
+        $number             = $input['numberSend'];
+
+        $send = $whatsapp->sendMessageText($message, $number);
+
+        if($send){
+            return $this->respond(['msg' => 'Executado com sucesso. Verifique se recebeu a mensagem.']);
+        }else{
+            return $this->fail('Houve um erro na requisição. Tente novamente caso o erro persista, verifique com suporte se a instância está conectada.');
+        }
+
+        return $this->respond($input);
+    }
 
     public function update($id = null)
     {

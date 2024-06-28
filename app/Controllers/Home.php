@@ -20,18 +20,32 @@ class Home extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-        $this->data['rowConfig'] = $this->modelConfig->cacheData();
+        /*$this->data['rowConfig']  = $this->modelConfig->searchCacheData(1);
         $this->data['textResult'] = "";
+        $this->data['titlePage']  = "";*/
     }
 
     public function index()
     {
-        return view('login/login', $this->data);
+        $data['rowConfig']  = $this->modelConfig->searchCacheData(1);
+        $data['textResult'] = "";
+        $data['titlePage']  = "";
+
+        // Verifique os dados manualmente
+        error_log(print_r($data['rowConfig'], true));
+
+        // Comentar a linha que usa Kint para dump
+        // Kint::dump($data['rowConfig']);
+
+        return view('login/login', [
+            'data' => $this->modelConfig,
+            'titlePage' => ''
+        ]);
     }
 
     public function busca_ajuda()
     {
-        
+
         $modelAjuda = new AjudaModel();
         if ($this->request->getGet('search')) {
             $rows = $modelAjuda->groupStart()
@@ -164,19 +178,21 @@ class Home extends BaseController
             echo "Erro ao criar cobrança: " . $e->getMessage();
         }
     }
-    public function teste(){
+    public function teste()
+    {
         $newEmail = new EmailsLibraries;
         $data = [
             'nome' => "Paulo",
             'token' => time()
         ];
-        
+
         $message = view('emails/confirma-email', $data);
 
         //return $newEmail->envioTeste('igrsysten@gmail.com', 'Teste de envio', $message);
     }
 
-    public function phpinfo(){
+    public function phpinfo()
+    {
         phpinfo();
     }
 }

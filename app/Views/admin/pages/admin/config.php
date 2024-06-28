@@ -207,9 +207,6 @@
                                 <option value="tls">TLS</option>
                             </select>
                         </div>
-                        <div class="mb-3 fw-bold">
-                            Protocolo atual: <span class="text-uppercase text-primary" id="protocoloSMTP"></span>
-                        </div>
                         <div class="col-lg-12 fs-6 mb-3">
                             <div class="form-check form-switch form-switch-success form-switch-lg">
                                 <input class="form-check-input" type="checkbox" role="switch" id="ativarSMTP" name="ativarSMTP" value="1">
@@ -228,6 +225,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             <b>Suporte da API <a href="mailto:multidesk.io@gmail.com">multidesk.io@gmail.com</a></b>
                         </div>
+                        <?= form_open('api/v1/administracao/update/wa/' . $idSearch, ['class' => 'formGeral']) ?>
                         <div class="mb-3">
                             <label for="urlAPI">URL da API</label>
                             <input type="text" class="form-control" name="urlAPI" id="urlAPI" placeholder="https://api.conect.app" required>
@@ -248,7 +246,11 @@
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-info" type="submit">Atualizar API WhatsApp</button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#enviaTeste">
+                                <i class="ri-user-settings-line"></i> Testar envio no WhatsApp
+                            </button>
                         </div>
+                        </form>
                     </div>
                     <!--end tab-pane-->
 
@@ -289,11 +291,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="s3Id">ID da chave de acesso</label>
-                            <input type="text" name="s3Id" id="s3Id" placeholder="Fornecida ao criar as credenciais do bucket" required class="form-control">
+                            <input type="password" name="s3Id" id="s3Id" placeholder="Fornecida ao criar as credenciais do bucket" required class="form-control">
                         </div>
                         <div class="mb-3">
                             <label for="s3Key">Chave de acesso secreta</label>
-                            <input type="text" name="s3Key" id="s3Key" placeholder="Fornecida ao criar as credenciais do bucket" class="form-control">
+                            <input type="password" name="s3Key" id="s3Key" placeholder="Fornecida ao criar as credenciais do bucket" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label for="s3Cdn">URL CDN (Caso utilize cloudfront)</label>
@@ -516,6 +518,47 @@
     <!--end col-->
 </div>
 
+
+<!-- Modal Body -->
+<!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+<div class="modal fade" id="enviaTeste" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+
+        <div class="modal-content">
+        <?= form_open('api/v1/administracao/testwhatsapp', ['class' => 'formGeral']) ?>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    Teste WhatsApp
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="numberSend">Número para enviar o teste</label>
+                    <input type="text" name="numberSend" id="numberSend" class="form-control" placeholder="+55 (62) 9999-9999" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message">Mensagem</label>
+                    <textarea name="message" id="message" class="form-control" rows="5" maxlength="255" placeholder="Escreva sua mensagem de teste." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Enviar mensage</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: Place to the bottom of scripts -->
+<script>
+    const myModal = new bootstrap.Modal(
+        document.getElementById("enviaTeste"),
+        options,
+    );
+</script>
+
 <?= $this->endSection(); ?>
 
 <?= $this->section('js') ?>
@@ -525,5 +568,5 @@
 <script>
     const idEmp = "<?= session('data')['idAdm'] ?>";
 </script>
-<script src="/assets/js/custom/config.js"></script>
+<script src="/assets/js/custom/config.min.js"></script>
 <?= $this->endSection(); ?>

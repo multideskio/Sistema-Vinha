@@ -19,14 +19,17 @@ $routes->get('credito', 'Home::credito');
 $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'Home::teste');*/
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
-
+    
+    $routes->resource('administradores');
+    
+    $routes->put('administracao/testwhatsapp',          'Administracao::testWhatsApp',  ['filter' => 'logged']);
     $routes->post('administracao/update/upload/(:num)', 'Administracao::foto/$1',       ['filter' => 'logged']);
     $routes->put('administracao/update/links/(:num)',   'Administracao::links/$1',      ['filter' => 'logged']);
     $routes->put('administracao/update/info/(:num)',    'Administracao::updateInfo/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/smtp/(:num)',    'Administracao::updateSmtp/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/wa/(:num)',      'Administracao::updateWa/$1',   ['filter' => 'logged']);
     $routes->put('administracao/update/s3/(:num)',      'Administracao::updateS3/$1',   ['filter' => 'logged']);
-    $routes->get('administracao/teste/s3',              'Administracao::testeS3',   ['filter' => 'logged']);
+    $routes->get('administracao/teste/s3',              'Administracao::testeS3',       ['filter' => 'logged']);
 
     $routes->resource('administracao'); //['filter' => 'logged']
 
@@ -107,7 +110,7 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('igrejas',             'Admin::igrejas');
     $routes->get('igreja/(:num)',      'Admin::igreja/$1');
     
-    $routes->get('usuarios',        'Admin::usuarios');
+    $routes->get('admins',        'Admin::admins');
 
     $routes->get('recebimento',  'Admin::recebimento');
     $routes->get('retorno',      'Admin::retorno');
