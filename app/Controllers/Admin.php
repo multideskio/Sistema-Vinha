@@ -2,9 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\RegioesModel;
-use App\Models\UsuariosModel;
-
 class Admin extends BaseController
 {
     protected $modelConfig;

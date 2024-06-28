@@ -184,4 +184,113 @@ class TransacoesModel extends Model
 
         return $result;
     }
+
+
+    public function dashCredito($dateIn = null, $dateOut = null)
+    {
+        return $this->dashPaymentType('Credito', $dateIn, $dateOut);
+    }
+
+    public function dashDebito($dateIn = null, $dateOut = null)
+    {
+        return $this->dashPaymentType('Debito', $dateIn, $dateOut);
+    }
+
+    public function dashBoletos($dateIn = null, $dateOut = null)
+    {
+        return $this->dashPaymentType('Boleto', $dateIn, $dateOut);
+    }
+
+    public function dashPix($dateIn = null, $dateOut = null)
+    {
+        return $this->dashPaymentType('Pix', $dateIn, $dateOut);
+    }
+
+    private function dashPaymentType($type, $dateIn = null, $dateOut = null)
+    {
+        if ($dateIn && $dateOut) {
+            $this->where([
+                'data_pagamento >=' => $dateIn,
+                'data_pagamento <=' => $dateOut
+            ]);
+        } else {
+            $this->like('data_pagamento', date('Y-m'));
+        }
+
+        $this->where('status_text', 'Pago');
+        $this->where('tipo_pagamento', $type);
+        $this->selectSum('valor');
+        return $this->first();
+    }
+
+    public function dashMensal()
+    {
+        $this->like('data_pagamento', date('Y-m'));
+        $this->where('status_text', 'Pago');
+        $this->selectSum('valor');
+        return $this->first();
+    }
+
+    public function dashAnual()
+    {
+        $this->like('data_pagamento', date('Y'));
+        $this->where('status_text', 'Pago');
+        $this->selectSum('valor');
+        return $this->first();
+    }
+
+    public function dashTotal()
+    {
+        $this->where('status_text', 'Pago');
+        $this->selectSum('valor');
+        return $this->first();
+    }
+
+    public function dashCreditoAnterior()
+    {
+        return $this->dashPaymentTypeAnterior('Credito');
+    }
+
+    public function dashDebitoAnterior()
+    {
+        return $this->dashPaymentTypeAnterior('Debito');
+    }
+
+    public function dashBoletosAnterior()
+    {
+        return $this->dashPaymentTypeAnterior('Boleto');
+    }
+
+    public function dashPixAnterior()
+    {
+        return $this->dashPaymentTypeAnterior('Pix');
+    }
+
+    private function dashPaymentTypeAnterior($type)
+    {
+        $previousMonth = date('Y-m', strtotime('first day of last month'));
+        $this->like('data_pagamento', $previousMonth);
+        $this->where('status_text', 'Pago');
+        $this->where('tipo_pagamento', $type);
+        $this->selectSum('valor');
+        return $this->first();
+    }
+
+    public function dashMensalAnterior()
+    {
+        $previousMonth = date('Y-m', strtotime('first day of last month'));
+        $this->like('data_pagamento', $previousMonth);
+        $this->where('status_text', 'Pago');
+        $this->selectSum('valor');
+        return $this->first();
+    }
+
+    public function dashAnualAnterior()
+    {
+        $previousYear = date('Y', strtotime('first day of January last year'));
+        $this->like('data_pagamento', $previousYear);
+        $this->where('status_text', 'Pago');
+        $this->selectSum('valor');
+        return $this->first();
+    }
 }

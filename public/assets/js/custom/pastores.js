@@ -1,51 +1,6 @@
 $(document).ready(function () {
-    // Inicialização de plugins FilePond
-    FilePond.registerPlugin(
-        FilePondPluginFileEncode,
-        FilePondPluginFileValidateSize,
-        FilePondPluginImageExifOrientation,
-        FilePondPluginImagePreview
-    );
 
-    FilePond.create(document.querySelector('.filepond-input-circle'), {
-        labelIdle: 'Clique para carregar a imagem',
-        imagePreviewHeight: 170,
-        imageCropAspectRatio: '1:1',
-        imageResizeTargetWidth: 200,
-        imageResizeTargetHeight: 200,
-        stylePanelLayout: 'compact circle',
-        styleLoadIndicatorPosition: 'center bottom',
-        styleProgressIndicatorPosition: 'right bottom',
-        styleButtonRemoveItemPosition: 'left bottom',
-        styleButtonProcessItemPosition: 'right bottom',
-    });
-
-    // Inicialização de formatação de inputs com Cleave.js
-    initializeCleave('.cpf', {
-        numericOnly: true,
-        delimiters: ['.', '.', '-'],
-        blocks: [3, 3, 3, 2],
-        uppercase: true
-    });
-
-    initializeCleave('.cep', {
-        numericOnly: true,
-        delimiters: ['-'],
-        blocks: [5, 3],
-        uppercase: true
-    });
-
-    initializeCleave('.telFixo', {
-        numericOnly: true,
-        delimiters: ['(', ') ', '-'],
-        blocks: [0, 2, 4, 4]
-    });
-
-    initializeCleave('.celular', {
-        numericOnly: true,
-        delimiters: ['+', ' (', ') ', ' ', '-'],
-        blocks: [0, 2, 2, 1, 4, 4]
-    });
+    formataCampos();
 
     atualizarTabela();
     populateSupervisorSelect();
@@ -119,7 +74,6 @@ function atualizarTabela(search = '', page = 1) {
         .done(function (data) {
             $("#pager").html(data.pager);
             $("#numResults").html(data.num);
-
             if (data.rows.length === 0) {
                 $('#cardResult').hide();
                 $('.noresult').show();
@@ -167,6 +121,35 @@ function atualizarTabela(search = '', page = 1) {
         .fail(function (jqXHR, textStatus, errorThrown) {
             console.error("Erro ao carregar os dados:", textStatus, errorThrown);
         });
+}
+
+function formataCampos() {
+    // Inicialização de formatação de inputs com Cleave.js
+    initializeCleave('.cpf', {
+        numericOnly: true,
+        delimiters: ['.', '.', '-'],
+        blocks: [3, 3, 3, 2],
+        uppercase: true
+    });
+
+    initializeCleave('.cep', {
+        numericOnly: true,
+        delimiters: ['-'],
+        blocks: [5, 3],
+        uppercase: true
+    });
+
+    initializeCleave('.telFixo', {
+        numericOnly: true,
+        delimiters: ['(', ') ', '-'],
+        blocks: [0, 2, 4, 4]
+    });
+
+    initializeCleave('.celular', {
+        numericOnly: true,
+        delimiters: ['+', ' (', ') ', ' ', '-'],
+        blocks: [0, 2, 2, 1, 4, 4]
+    });
 }
 
 // Função para exibir mensagens

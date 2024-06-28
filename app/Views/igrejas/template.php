@@ -1,4 +1,5 @@
 <?= $this->include('partials/main') ?>
+
 <head>
     <?php echo view('partials/title-meta', array('title' => 'Vinha Ministérios')); ?>
     <?= $this->include('partials/head-css') ?>
@@ -8,6 +9,7 @@
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <?= $this->renderSection('css') ?>
 </head>
+
 <body>
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -40,7 +42,7 @@
     <script src="/assets/js/app.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    
+
     <!-- Plugin adicionais -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
 
@@ -49,7 +51,7 @@
 
     <!-- cleave.js -->
     <script src="/assets/libs/cleave.js/cleave.min.js"></script>
-    
+
     <!-- form masks init -->
     <script src="/assets/js/pages/form-masks.init.js"></script>
 
@@ -64,6 +66,28 @@
                 buttonsStyling: false,
             });
         }
+
+        $(document).ready(function() {
+            $('img').each(function() {
+                var img = $(this);
+                img.on('error', function() {
+                    // Verifique se a imagem de substituição também está acessível
+                    var placeholderImg = new Image();
+                    placeholderImg.src = 'https://placehold.co/50/00000/FFF?text=V';
+                    placeholderImg.onload = function() {
+                        img.attr('src', placeholderImg.src);
+                    };
+                    placeholderImg.onerror = function() {
+                        console.error('Placeholder image could not be loaded.');
+                    };
+                });
+
+                // Forçar disparo do evento de erro para imagens já quebradas
+                if (img[0].complete && img[0].naturalHeight === 0) {
+                    img.trigger('error');
+                }
+            });
+        });
     </script>
 
 </body>

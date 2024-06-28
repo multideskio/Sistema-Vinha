@@ -90,7 +90,7 @@ class Home extends BaseController
         return redirect()->to(site_url());
     }
 
-    public function pix()
+    /*public function pix()
     {
         $cielo = new GatewayCielo();
         $params = [
@@ -189,7 +189,9 @@ class Home extends BaseController
         $message = view('emails/confirma-email', $data);
 
         //return $newEmail->envioTeste('igrsysten@gmail.com', 'Teste de envio', $message);
-    }
+    }*/
+
+    
 
     public function phpinfo()
     {

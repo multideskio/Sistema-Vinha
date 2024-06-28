@@ -78,5 +78,5 @@
 <script src="/assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js"></script>
 <script src="/assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/pastores.min.js"></script>
+<script src="/assets/js/custom/pastores.js"></script> 
 <?= $this->endSection(); ?>

@@ -37,8 +37,9 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->resource('emails', ['filter' => 'logged']);
     $routes->resource('ajuda', ['filter' => 'logged']);
 
-    
+
     $routes->get('transacoes/user', 'Transacoes::usuario', ['filter' => 'logged']);
+    $routes->get('transacoes/dashboard', 'Transacoes::dashboardAdmin', ['filter' => 'logged']);
 
     $routes->resource('transacoes', ['filter' => 'logged']);
 
