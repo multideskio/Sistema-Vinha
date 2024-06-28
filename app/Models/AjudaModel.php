@@ -99,4 +99,19 @@ class AjudaModel extends Model
             'num'            => $numMessage,
         ];
     }
+
+    public function posts(){
+        helper('auxiliar');
+        
+        $cache = \Config\Services::cache();
+
+        if (!$cache->get('config_Cache')) {
+            $builder = $this->first();
+            $cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(30));
+        } else {
+            $builder = $cache->get('config_Cache');
+        }
+
+        return $builder;
+    }
 }

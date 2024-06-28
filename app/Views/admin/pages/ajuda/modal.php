@@ -11,7 +11,7 @@
             <div class="modal-body ">
                 <div class="row gx-1">
                     <label for="titulo">Titulo</label>
-                    <input type="text" id="titulo" name="titulo" class="form-control" required placeholder="Primeiro nome">
+                    <input type="text" id="titulo" name="titulo" class="form-control" required placeholder="Titulo">
                 </div>
                 <div class="mt-2">
                     <b>Conteúdo</b>

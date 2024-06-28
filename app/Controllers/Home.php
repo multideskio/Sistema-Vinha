@@ -20,9 +20,9 @@ class Home extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-        /*$this->data['rowConfig']  = $this->modelConfig->searchCacheData(1);
+        $this->data['rowConfig']  = $this->modelConfig->searchCacheData(1);
         $this->data['textResult'] = "";
-        $this->data['titlePage']  = "";*/
+        $this->data['titlePage']  = "";
     }
 
     public function index()
@@ -71,16 +71,30 @@ class Home extends BaseController
         return view('ajuda/home', $this->data);
     }
 
+
+    
+
+
     public function ajuda($slug)
     {
         $modelAjuda = new AjudaModel();
-        $row = $modelAjuda->where('slug', $slug)->findAll(1);
+        helper('auxiliar');
+        $cache = \Config\Services::cache();
+        if (!$cache->get($slug)) {
+            $row = $modelAjuda->where('slug', $slug)->first();
+            $cache->save($slug, $row, getCacheExpirationTimeInSeconds(30));
+        } else {
+            $row = $cache->get($slug);
+        }
         if (!count($row) == 1) {
             throw PageNotFoundException::forPageNotFound();
         }
-        $this->data['result'] = $row[0];
+        $this->data['result'] = $row;
         return view('ajuda/post', $this->data);
     }
+
+
+
 
 
 
