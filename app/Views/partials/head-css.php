@@ -12,3 +12,15 @@
 <script>
     const _baseUrl = "<?= site_url() ?>"
 </script>
+
+<style>
+    .pwa-install-notification {
+        position: fixed;
+        top: 20px;
+        /* Ajuste conforme necessário */
+        right: 20px;
+        /* Ajuste conforme necessário */
+        z-index: 1000;
+        /* Garante que a notificação esteja acima de outros elementos */
+    }
+</style>
