@@ -1,19 +1,39 @@
+const CACHE_NAME = 'VINHA-cache-v1';
+const OFFLINE_URL = '/offline.html'; // Caminho para sua página offline
+
 self.addEventListener('install', event => {
-    console.log('Service Worker instalado.');
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
+            return cache.addAll([
+                //'/',
+                //'/index.html',
+                OFFLINE_URL
+                //'/assets/css/style.css', // Exemplo: Adicione outros recursos que deseja armazenar em cache
+                //'/assets/js/app.js'
+            ]);
+        })
+    );
 });
 
 self.addEventListener('activate', event => {
-    console.log('Service Worker ativado.');
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.filter(cacheName => {
+                    return cacheName.startsWith('VINHA-cache-') && cacheName !== CACHE_NAME;
+                }).map(cacheName => {
+                    return caches.delete(cacheName);
+                })
+            );
+        })
+    );
 });
 
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.open('VINHA-cache').then(cache => {
-            return cache.match(event.request).then(response => {
-                return response || fetch(event.request).then(fetchResponse => {
-                    cache.put(event.request, fetchResponse.clone());
-                    return fetchResponse;
-                });
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request).catch(() => {
+                return caches.match(OFFLINE_URL);
             });
         })
     );
