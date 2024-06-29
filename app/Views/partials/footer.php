@@ -12,3 +12,15 @@
         </div>
     </div>
 </footer>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('<?= base_url('service-worker.js') ?>')
+            .then(registration => {
+                console.log('ServiceWorker registrado com sucesso: ', registration.scope);
+            })
+            .catch(error => {
+                console.log('Falha ao registrar o ServiceWorker: ', error);
+            });
+    }
+</script>
