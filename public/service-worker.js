@@ -6,10 +6,6 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll([
                 OFFLINE_URL
-                //'/', // Reativado
-                //'/index.html',
-                //'/assets/css/style.css',
-                //'/assets/js/app.js'
             ]);
         })
     );
@@ -34,7 +30,7 @@ self.addEventListener('fetch', event => {
 });
 
 
-self.addEventListener('push', event => {
+/*self.addEventListener('push', event => {
     const options = {
         body: 'Você tem uma nova notificação do VINHA!',
         icon: '/assets/pwa/android-chrome-192x192.png',
@@ -44,13 +40,13 @@ self.addEventListener('push', event => {
     event.waitUntil(
         self.registration.showNotification('Notificação do VINHA', options)
     );
-});
+});*/
 
 // Exemplo de como integrar com métodos de pagamento e registrar transações
-self.addEventListener('paymentrequest', event => {
+/*self.addEventListener('paymentrequest', event => {
     // Lógica para lidar com solicitações de pagamento
 });
 
 function logTransaction(transactionData) {
     // Lógica para registrar transações em um banco de dados ou serviço externo
-}
+}*/
