@@ -98,6 +98,7 @@ $rowConfig = $data->searchCacheData(1);
                             </div>
                             <!-- end card body -->
                         </div>
+                        <button class="install">TESTE</button>
                         <!-- end card -->
                         <div class="mt-4 text-center">
                             <!--  //site_url('login/nova-conta')  -->
