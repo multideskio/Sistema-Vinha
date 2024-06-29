@@ -6,6 +6,11 @@
 <script src="/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
 <script src="/assets/js/plugins.js"></script>
 
+<div id="pwa-install-banner">
+    Instale nosso aplicativo PWA!
+    <button id="install-button">Instalar</button>
+</div>
+
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -18,34 +23,36 @@
     }
 
     let deferredPrompt;
-    const installButton = document.querySelector('.install');
 
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent the mini-infobar from appearing on mobile
+        // Previne o mini-infobar de aparecer no mobile
         e.preventDefault();
-        // Stash the event so it can be triggered later.
+        // Guarda o evento para ser acionado mais tarde
         deferredPrompt = e;
-        // Update UI notify the user they can install the PWA
-        installButton.style.display = 'block';
 
-        installButton.addEventListener('click', () => {
-            // Hide the app provided install promotion
-            installButton.style.display = 'none';
-            // Show the install prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                } else {
-                    console.log('User dismissed the install prompt');
-                }
-                deferredPrompt = null;
-            });
-        });
+        // Exibe o banner de instalação após 10 segundos
+        setTimeout(() => {
+            document.getElementById('pwa-install-banner').style.display = 'block';
+        }, 10000);
     });
 
-    window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
+    document.getElementById('install-button').addEventListener('click', async () => {
+        if (deferredPrompt) {
+            // Mostra o prompt de instalação
+            deferredPrompt.prompt();
+            // Espera pelo usuário responder ao prompt
+            const {
+                outcome
+            } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('Usuário aceitou a instalação');
+            } else {
+                console.log('Usuário recusou a instalação');
+            }
+            // Resetar deferredPrompt para null
+            deferredPrompt = null;
+        }
+        // Esconde o banner após a interação
+        document.getElementById('pwa-install-banner').style.display = 'none';
     });
 </script>

@@ -64,14 +64,6 @@
                                             Please enter email
                                         </div>
                                     </div>
-
-
-
-
-                                    
-                                    
-                                    
-                                    
                                     <div class="mb-3">
                                         <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control" id="useremail" placeholder="Enter email address" required>

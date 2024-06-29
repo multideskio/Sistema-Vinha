@@ -14,15 +14,24 @@
 </script>
 
 <style>
-    button.install {
+    #pwa-install-banner {
+        display: none;
         position: fixed;
-        bottom: 10px;
-        right: 10px;
-        padding: 10px 20px;
-        background-color: #000000;
-        color: #ffffff;
+        top: 0;
+        width: 100%;
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        padding: 1em;
+        z-index: 1000;
+    }
+
+    #pwa-install-banner button {
+        background-color: #fff;
+        color: #4CAF50;
         border: none;
-        border-radius: 5px;
+        padding: 0.5em 1em;
+        margin-left: 1em;
         cursor: pointer;
     }
 </style>

@@ -2,24 +2,18 @@
 <?php
 $rowConfig = $data->searchCacheData(1);
 ?>
-
 <head>
     <?php echo view('partials/title-meta', array('title' => lang('Paginas.login.titlePage', [$rowConfig['empresa']]))); ?>
     <?= $this->include('partials/head-css') ?>
-
     <style>
         @media only screen and (max-width: 768px) {
-
             /* Inserir estilos específicos para dispositivos móveis aqui */
             .mobileMarginTop {
                 margin-top: 60px;
             }
-
         }
     </style>
-
 </head>
-
 <body>
     <div class="auth-page-wrapper pt-5">
         <!-- auth page bg -->
@@ -98,7 +92,6 @@ $rowConfig = $data->searchCacheData(1);
                             </div>
                             <!-- end card body -->
                         </div>
-                        <button class="install">TESTE</button>
                         <!-- end card -->
                         <div class="mt-4 text-center">
                             <!--  //site_url('login/nova-conta')  -->
@@ -140,7 +133,6 @@ $rowConfig = $data->searchCacheData(1);
     </div>
     <!-- end auth-page-wrapper -->
     <?= $this->include('partials/vendor-scripts') ?>
-
     <!-- particles js -->
     <script src="/assets/libs/particles.js/particles.js"></script>
     <!-- particles app js -->
@@ -148,5 +140,4 @@ $rowConfig = $data->searchCacheData(1);
     <!-- password-addon init -->
     <script src="/assets/js/pages/password-addon.init.js"></script>
 </body>
-
 </html>
