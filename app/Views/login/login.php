@@ -111,6 +111,7 @@ $rowConfig = $data->searchCacheData(1);
                                     document.write(new Date().getFullYear())
                                 </script>
                                 Desenvolvido com <i class="mdi mdi-heart text-danger"></i> por Multidesk.io
+                                <br>
                                 <a href="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0"><img src="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0.svg" alt="wakatime"></a>
                             </p>
                         </div>

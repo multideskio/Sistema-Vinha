@@ -6,15 +6,44 @@
     "theme_color": "#644cc1",
     "background_color": "#ffffff",
     "display": "standalone",
+    "dir": "ltr",
+    "short_name": "VINHA",
+    "orientation": "any",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "/assets/pwa/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "/assets/pwa/android-chrome-512x512.png",
             "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "features": [
+        "Cross Platform",
+        "fast",
+        "simple",
+        "Security",
+        "Notifications",
+        "Payment Integration",
+        "Transaction History",
+        "Cross-Platform Compatibility"
+    ],
+    "categories": [
+        "utilities"
+    ],
+    "screenshots": [
+        {
+            "src": "/assets/pwa/screenshot-desktop.png",
+            "sizes": "1280x800",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/assets/pwa/screenshot-mobile.png",
+            "sizes": "380x640",
             "type": "image/png"
         }
     ]
