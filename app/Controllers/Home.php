@@ -2,15 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Gateways\Cielo\GatewayCielo;
-use App\Libraries\EmailsLibraries;
-use App\Libraries\WhatsappLibraries;
 use App\Models\AjudaModel;
-use App\Models\ConfigMensagensModel;
-use App\Models\GerentesModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
-use Exception;
-use CodeIgniter\I18n\Time;
 
 class Home extends BaseController
 {
@@ -30,9 +23,6 @@ class Home extends BaseController
         $data['rowConfig']  = $this->modelConfig->searchCacheData(1);
         $data['textResult'] = "";
         $data['titlePage']  = "";
-
-        // Verifique os dados manualmente
-        error_log(print_r($data['rowConfig'], true));
 
         // Comentar a linha que usa Kint para dump
         // Kint::dump($data['rowConfig']);
