@@ -254,13 +254,12 @@
 
         searchUpdate(_idSearch)
 
-        $(".enviaLinks").on('change', function() {
-            $('.formTexts').submit();
+        $(".enviaLinks").on('change', () => {
+            $('.formTexts').submit()
         });
-
-        /*var options = {
-            type: 'PUT'
-        }*/
+        $("#profile-img-file-input").on('change', () => {
+            $('.formUpload').submit()
+        });
 
         $('.formTexts').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
@@ -279,34 +278,22 @@
             }
         });
 
-
         $('.formGeral').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 options.type = 'PUT'
             },
             success: function(responseText, statusText, xhr, $form) {
                 Swal.fire({
-                    title: 'OK!',
                     text: 'Atualizado com sucesso!',
                     icon: 'success'
                 })
             },
             error: function(xhr, status, error) {
                 Swal.fire({
-                    title: 'Erro ao atualizar...',
-                    icon: 'error',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false,
+                    text: 'Erro ao atualizar...',
+                    icon: 'error'
                 });
             }
-        });
-
-
-
-
-
-        $("#profile-img-file-input").on('change', function() {
-            $('.formUpload').submit();
         });
 
         $('.formUpload').ajaxForm({
@@ -315,38 +302,28 @@
             },
             success: function(responseText, statusText, xhr, $form) {
                 Swal.fire({
-                    title: 'OK!',
                     text: 'Imagem atualizada com sucesso!',
                     icon: 'success'
                 })
             },
             error: function(xhr, status, error) {
                 Swal.fire({
-                    title: 'Erro ao atualizar imagem',
-                    icon: 'error',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false,
+                    text: 'Erro ao atualizar imagem',
+                    icon: 'error'
                 });
-                console.log(xhr)
-                console.log(status)
-                console.log(error)
             }
         });
-
     });
-
-
 
     function searchUpdate(id) {
         if (id) {
             // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
-            var url = _baseUrl + `api/v1/supervisores/${id}`;
+            var url = `${_baseUrl}api/v1/supervisores/${id}`;
             $.getJSON(url)
                 .done(function(data, textStatus, jqXHR) {
                     if (data.foto) {
                         $("#fotoPerfil").attr('src', data.foto);
                     }
-
                     $("#viewNameUser").html(data.nome);
                     $("#facebook").val(data.facebook);
                     $("#website").val(data.website);
@@ -370,28 +347,26 @@
                     listGerentes(data.idGerente)
 
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-
                     $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
-
                     console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-
                     $('.loadResult').hide();
-
                     Swal.fire({
-                        title: 'Os dados não foram enconrados',
-                        icon: 'error',
-                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                        buttonsStyling: false,
+                        text: 'Os dados não foram enconrados',
+                        icon: 'error'
                     }).then(function(result) {
                         history.back();
-                    });;
-
-
+                    });
                 });
-
             // Tratamento de erro para a imagem
             $('#fotoPerfil').on('error', function() {
                 $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+            });
+        } else {
+            Swal.fire({
+                text: 'Os dados não foram encontrados',
+                icon: 'error'
+            }).then(function(result) {
+                history.back();
             });
         }
     }
@@ -399,9 +374,7 @@
 
     function listRegioes(idAtual) {
         $('#selectRegiao').empty().removeAttr('required');
-
         $.getJSON(`${_baseUrl}api/v1/regioes`, {}, (data) => {
-            
             data.rows.forEach(regiao => {
                 if (idAtual === regiao.id) {
                     $('#selectRegiao').append(`<option selected value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
@@ -409,16 +382,13 @@
                     $('#selectRegiao').append(`<option value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
                 }
             });
-
             // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
             $('#selectRegiao').attr('required', true).attr('data-choices', true);
             new Choices('#selectRegiao');
         }).fail(() => {
             Swal.fire({
-                title: 'Cadastre regiões antes de cadastrar um supervisor...',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
+                text: 'Cadastre regiões antes de cadastrar um supervisor...',
+                icon: 'error'
             }).then((result) => {
                 history.back();
             });
@@ -437,22 +407,17 @@
                     $('#selectGerentes').append(`<option value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
                 }
             });
-
             // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
             $('#selectGerentes').attr('required', true).attr('data-choices', true);
             new Choices('#selectGerentes');
         }).fail(() => {
             Swal.fire({
-                title: 'Cadastre gerentes antes de cadastrar um supervisor...',
-                icon: 'error',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
+                text: 'Cadastre gerentes antes de cadastrar um supervisor...',
+                icon: 'error'
             }).then((result) => {
                 history.back();
             });
         });
     }
 </script>
-
-
 <?= $this->endSection() ?>

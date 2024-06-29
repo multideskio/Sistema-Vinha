@@ -15,6 +15,7 @@ class Gerente extends BaseController
     public function index()
     {
         //
-        echo "Gerente";
+        $data['titlePage'] = "Dashboard";
+        return view('gerentes/pages/home', $data);
     }
 }

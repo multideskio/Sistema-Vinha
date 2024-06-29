@@ -149,4 +149,11 @@ class Admin extends BaseController
         $data['titlePage'] = "Configurações gerais";
         return view('admin/pages/admin/config', $data);
     }
+
+    public function perfil():string{
+        $data['idSearch']  = session('data')['idAdm'] ;
+        $data['titlePage'] = "Meu perfil";
+        $data['tipo']      = session('data')['tipo'];
+        return view('admin/pages/user/perfil', $data);
+    }
 }

@@ -1,27 +1,4 @@
 $(document).ready(function () {
-    // Inicialização de plugins FilePond
-    FilePond.registerPlugin(
-        FilePondPluginFileEncode,
-        FilePondPluginFileValidateSize,
-        FilePondPluginImageExifOrientation,
-        FilePondPluginImagePreview
-    );
-
-    FilePond.create(
-        document.querySelector('.filepond-input-circle'), {
-        labelIdle: 'Clique para carregar a imagem',
-        imagePreviewHeight: 170,
-        imageCropAspectRatio: '1:1',
-        imageResizeTargetWidth: 200,
-        imageResizeTargetHeight: 200,
-        stylePanelLayout: 'compact circle',
-        styleLoadIndicatorPosition: 'center bottom',
-        styleProgressIndicatorPosition: 'right bottom',
-        styleButtonRemoveItemPosition: 'left bottom',
-        styleButtonProcessItemPosition: 'right bottom',
-    }
-    );
-
     // Função para inicializar Cleave.js
     const initCleave = (selector, options) => new Cleave(selector, options);
 

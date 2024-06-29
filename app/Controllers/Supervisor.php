@@ -15,6 +15,7 @@ class Supervisor extends BaseController
     public function index()
     {
         //
-        echo "Supervisor";
+        $data['titlePage'] = "Dashboard";
+        return view('supervisores/pages/home', $data);
     }
 }

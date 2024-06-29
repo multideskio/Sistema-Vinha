@@ -1,27 +1,19 @@
 <?= $this->include('partials/main') ?>
-
 <head>
-
     <?php echo view('partials/title-meta', array('title'=>'Success Message')); ?>
-
     <?= $this->include('partials/head-css') ?>
-
 </head>
-
 <body>
-
     <div class="auth-page-wrapper pt-5">
         <!-- auth page bg -->
         <div class="auth-one-bg-position auth-one-bg" id="auth-particles">
             <div class="bg-overlay"></div>
-
             <div class="shape">
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1440 120">
                     <path d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"></path>
                 </svg>
             </div>
         </div>
-
         <!-- auth page content -->
         <div class="auth-page-content">
             <div class="container">
@@ -38,7 +30,6 @@
                     </div>
                 </div>
                 <!-- end row -->
-
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 col-xl-5">
                         <div class="card mt-4">
@@ -67,7 +58,6 @@
             <!-- end container -->
         </div>
         <!-- end auth page content -->
-
         <!-- footer -->
         <footer class="footer">
             <div class="container">
@@ -85,9 +75,7 @@
         <!-- end Footer -->
     </div>
     <!-- end auth-page-wrapper -->
-
     <?= $this->include('partials/vendor-scripts') ?>
-
     <!-- particles js -->
     <script src="/assets/libs/particles.js/particles.js"></script>
     <!-- particles app js -->
@@ -95,5 +83,4 @@
     <!-- password-addon init -->
     <script src="/assets/js/pages/password-addon.init.js"></script>
 </body>
-
 </html>

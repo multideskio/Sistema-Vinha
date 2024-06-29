@@ -227,7 +227,7 @@
                 </div>*/ ?>
 
 
-<?php /*<div class="dropdown topbar-head-dropdown ms-1 header-item">
+                <?php /*<div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-cart-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-shopping-bag fs-22'></i>
                         <span class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-info">5</span>
@@ -378,7 +378,7 @@
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" data-toggle="fullscreen">
                         <i class='bx bx-fullscreen fs-22'></i>
                     </button>
-                </div>*/?>
+                </div>
 
                 <div class="ms-1 header-item d-none d-sm-flex">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
@@ -647,8 +647,9 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
-                </div>
+                </div>*/ ?>
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -667,10 +668,14 @@
                             <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                             <span class="align-middle">Perfil</span>
                         </a>
-                        <a href="/ajuda" target="_blank" class="dropdown-item" href="pages-faqs">
+                        <a href="<?= site_url('ajuda') ?>" class="dropdown-item" href="pages-faqs" target="_blank">
                             <i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Ajuda</span>
                         </a>
                         <div class="dropdown-divider"></div>
+                        <!-- <a class="dropdown-item" href="pages-profile-settings">
+                            <i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i><span class="align-middle">Configurações</span>
+                        </a>
+-->
                         <a class="dropdown-item" href="<?= base_url('sair') ?>">
                             <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Sair</span>
                         </a>

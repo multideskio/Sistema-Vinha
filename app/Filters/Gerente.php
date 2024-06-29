@@ -31,16 +31,22 @@ class Gerente implements FilterInterface
         // Verifique se o usuário está conectado
         $loggedSession = session('data');
 
-        if ($loggedSession['nivel'] != 2) {
-            if ($loggedSession['nivel'] == 3) {
-                return redirect()->redirect('/supervisao');
+        if (!empty($loggedSession['nivel'])) {
+            
+            if ($loggedSession['nivel'] != 2) {
+                if ($loggedSession['nivel'] == 3) {
+                    return redirect()->redirect('/supervisao');
+                }
+                if ($loggedSession['nivel'] == 4) {
+                    return redirect()->redirect('/igreja');
+                }
+                if ($loggedSession['nivel'] == 1) {
+                    return redirect()->redirect('/admin');
+                }
             }
-            if ($loggedSession['nivel'] == 4) {
-                return redirect()->redirect('/igreja');
-            }
-            if ($loggedSession['nivel'] == 1) {
-                return redirect()->redirect('/admin');
-            }
+
+        }else{
+            return redirect()->redirect('/');
         }
     }
 
