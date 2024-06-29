@@ -1,52 +1,28 @@
-const CACHE_NAME = 'VINHA-cache-v1';
+const CACHE_NAME = 'vinha-cache';
 const OFFLINE_URL = '/offline.html';
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
+        caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll([
-                OFFLINE_URL
+                '/',
+                '/index.php',
+                '/offline.html',
+                '/assets/pwa/android-chrome-192x192.png',
+                '/assets/pwa/android-chrome-512x512.png',
+                '/assets/pwa/screenshot-desktop.png',
+                '/assets/pwa/screenshot-mobile.png'
             ]);
         })
     );
 });
 
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.filter(cacheName => {
-                    return cacheName.startsWith('VINHA-cache-') && cacheName !== CACHE_NAME;
-                }).map(cacheName => caches.delete(cacheName))
-            );
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            return caches.match(event.request).then((response) => {
+                return response || caches.match(OFFLINE_URL);
+            });
         })
     );
 });
-
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        fetch(event.request).catch(() => caches.match(OFFLINE_URL))
-    );
-});
-
-
-/*self.addEventListener('push', event => {
-    const options = {
-        body: 'Você tem uma nova notificação do VINHA!',
-        icon: '/assets/pwa/android-chrome-192x192.png',
-        badge: '/assets/pwa/android-chrome-192x192.png'
-    };
-
-    event.waitUntil(
-        self.registration.showNotification('Notificação do VINHA', options)
-    );
-});*/
-
-// Exemplo de como integrar com métodos de pagamento e registrar transações
-/*self.addEventListener('paymentrequest', event => {
-    // Lógica para lidar com solicitações de pagamento
-});
-
-function logTransaction(transactionData) {
-    // Lógica para registrar transações em um banco de dados ou serviço externo
-}*/
