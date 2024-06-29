@@ -5,8 +5,8 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll([
-                OFFLINE_URL,
-                '/', // Reativado
+                OFFLINE_URL
+                //'/', // Reativado
                 //'/index.html',
                 //'/assets/css/style.css',
                 //'/assets/js/app.js'

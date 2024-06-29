@@ -9,6 +9,7 @@
         "codeigniter4/framework": "^4.0",
         "codeigniter4/translations": "^4.4",
         "google/apiclient": "*",
+        "minishlink/web-push": "^7.0",
         "predis/predis": "^2.2"
     },
     "require-dev": {
