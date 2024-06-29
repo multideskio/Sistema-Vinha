@@ -1,15 +1,15 @@
 const CACHE_NAME = 'VINHA-cache-v1';
-const OFFLINE_URL = '/offline.html'; // Caminho para sua página offline
+const OFFLINE_URL = '/offline.html';
 
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll([
-                //'/',
-                //'/index.html',
-                OFFLINE_URL
-                //'/assets/css/style.css', // Exemplo: Adicione outros recursos que deseja armazenar em cache
-                //'/assets/js/app.js'
+                OFFLINE_URL,
+                '/', // Reativado
+                '/index.html',
+                '/assets/css/style.css',
+                '/assets/js/app.js'
             ]);
         })
     );
@@ -21,9 +21,7 @@ self.addEventListener('activate', event => {
             return Promise.all(
                 cacheNames.filter(cacheName => {
                     return cacheName.startsWith('VINHA-cache-') && cacheName !== CACHE_NAME;
-                }).map(cacheName => {
-                    return caches.delete(cacheName);
-                })
+                }).map(cacheName => caches.delete(cacheName))
             );
         })
     );
@@ -32,14 +30,11 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(response => {
-            return response || fetch(event.request).catch(() => {
-                return caches.match(OFFLINE_URL);
-            });
+            return response || fetch(event.request).catch(() => caches.match(OFFLINE_URL));
         })
     );
 });
 
-// Exemplo de como lidar com notificações
 self.addEventListener('push', event => {
     const options = {
         body: 'Você tem uma nova notificação do VINHA!',
@@ -52,12 +47,11 @@ self.addEventListener('push', event => {
     );
 });
 
-// Exemplo de como integrar com métodos de pagamento
+// Exemplo de como integrar com métodos de pagamento e registrar transações
 self.addEventListener('paymentrequest', event => {
     // Lógica para lidar com solicitações de pagamento
 });
 
-// Exemplo de como manter um histórico de transações
 function logTransaction(transactionData) {
     // Lógica para registrar transações em um banco de dados ou serviço externo
 }

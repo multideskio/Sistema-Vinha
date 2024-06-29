@@ -6,6 +6,10 @@
     "theme_color": "#644cc1",
     "background_color": "#ffffff",
     "display": "standalone",
+    "display_override": [
+        "fullscreen",
+        "minimal-ui"
+    ],
     "dir": "ltr",
     "short_name": "VINHA",
     "orientation": "any",
@@ -23,16 +27,17 @@
     ],
     "features": [
         "Cross Platform",
-        "fast",
-        "simple",
+        "Fast",
+        "Simple",
         "Security",
         "Notifications",
         "Payment Integration",
-        "Transaction History",
-        "Cross-Platform Compatibility"
+        "Transaction History"
     ],
     "categories": [
-        "utilities"
+        "utilities",
+        "productivity",
+        "finance"
     ],
     "screenshots": [
         {
