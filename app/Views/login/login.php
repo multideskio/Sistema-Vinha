@@ -2,9 +2,22 @@
 <?php
 $rowConfig = $data->searchCacheData(1);
 ?>
+
 <head>
     <?php echo view('partials/title-meta', array('title' => lang('Paginas.login.titlePage', [$rowConfig['empresa']]))); ?>
     <?= $this->include('partials/head-css') ?>
+
+    <style>
+        @media only screen and (max-width: 768px) {
+
+            /* Inserir estilos específicos para dispositivos móveis aqui */
+            .mobileMarginTop {
+                margin-top: 60px;
+            }
+
+        }
+    </style>
+
 </head>
 
 <body>
@@ -21,7 +34,7 @@ $rowConfig = $data->searchCacheData(1);
         <!-- auth page content -->
         <div class="auth-page-content">
             <div class="container">
-                <div class="row">
+                <div class="row mobileMarginTop">
                     <div class="col-lg-12">
                         <div class="text-center mt-sm-5 mb-2 text-white-50">
                             <div>
@@ -47,7 +60,7 @@ $rowConfig = $data->searchCacheData(1);
                                             <b><?= session()->getFlashdata('error'); ?></b>
                                         </div>
                                     <?php endif; ?>
-                                    <?= form_open("api/v1/authenticate?redirect=".(isset($_GET['redirect']) ? $_GET['redirect'] : null ) ) ?>
+                                    <?= form_open("api/v1/authenticate?redirect=" . (isset($_GET['redirect']) ? $_GET['redirect'] : null)) ?>
                                     <div class="mb-3">
                                         <label for="username" class="form-label"><?= lang('Paginas.login.usuario.label') ?></label>
                                         <input type="email" class="form-control" id="username" placeholder="<?= lang('Paginas.login.usuario.placeholder') ?>" name="email" required>
@@ -111,9 +124,12 @@ $rowConfig = $data->searchCacheData(1);
                                     document.write(new Date().getFullYear())
                                 </script>
                                 Desenvolvido com <i class="mdi mdi-heart text-danger"></i> por Multidesk.io
-                                <br>
-                                <a href="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0"><img src="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0.svg" alt="wakatime"></a>
                             </p>
+                            <div class="p-3 m-3">
+                                <a href="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0">
+                                    <img src="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0.svg" alt="wakatime">
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

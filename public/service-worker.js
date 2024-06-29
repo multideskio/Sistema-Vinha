@@ -7,9 +7,9 @@ self.addEventListener('install', event => {
             return cache.addAll([
                 OFFLINE_URL,
                 '/', // Reativado
-                '/index.html',
-                '/assets/css/style.css',
-                '/assets/js/app.js'
+                //'/index.html',
+                //'/assets/css/style.css',
+                //'/assets/js/app.js'
             ]);
         })
     );
@@ -29,11 +29,10 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request).catch(() => caches.match(OFFLINE_URL));
-        })
+        fetch(event.request).catch(() => caches.match(OFFLINE_URL))
     );
 });
+
 
 self.addEventListener('push', event => {
     const options = {
