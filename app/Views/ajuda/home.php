@@ -7,7 +7,7 @@
     <?php
     use CodeIgniter\I18n\Time;
     foreach ($rows as $row) : ?>
-        <div class="col list-blog">
+        <div class="col list-blog"> 
             <div class="card shadow-sm h-100">
                 <div class="card-body">
                     <h4><?= $row['titulo'] ?></h4>
