@@ -20,10 +20,11 @@ $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'H
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
     
-    $routes->post('administradores/update/upload/(:num)', 'administradores::foto/$1');
-    $routes->put('administradores/update/links/(:num)', 'administradores::links/$1');
+    $routes->post('administradores/update/upload/(:num)', 'Administradores::foto/$1');
+    $routes->put('administradores/update/links/(:num)', 'Administradores::links/$1');
     $routes->resource('administradores');
     
+
     $routes->put('administracao/testwhatsapp',          'Administracao::testWhatsApp',  ['filter' => 'logged']);
     $routes->post('administracao/update/upload/(:num)', 'Administracao::foto/$1',       ['filter' => 'logged']);
     $routes->put('administracao/update/links/(:num)',   'Administracao::links/$1',      ['filter' => 'logged']);
