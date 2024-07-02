@@ -20,6 +20,8 @@ $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'H
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
     
+    $routes->post('administradores/update/upload/(:num)', 'administradores::foto/$1');
+    $routes->put('administradores/update/links/(:num)', 'administradores::links/$1');
     $routes->resource('administradores');
     
     $routes->put('administracao/testwhatsapp',          'Administracao::testWhatsApp',  ['filter' => 'logged']);
@@ -30,7 +32,6 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->put('administracao/update/wa/(:num)',      'Administracao::updateWa/$1',   ['filter' => 'logged']);
     $routes->put('administracao/update/s3/(:num)',      'Administracao::updateS3/$1',   ['filter' => 'logged']);
     $routes->get('administracao/teste/s3',              'Administracao::testeS3',       ['filter' => 'logged']);
-
     $routes->resource('administracao'); //['filter' => 'logged']
 
     $routes->post('email/teste', 'Emails::teste');
@@ -45,7 +46,6 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
 
     $routes->post('gerentes/update/upload/(:num)', 'Gerentes::foto/$1');
     $routes->put('gerentes/update/links/(:num)', 'Gerentes::links/$1');
-
     $routes->get('gerentes/list', 'Gerentes::list');
     $routes->resource('gerentes', ['filter' => 'logged']);
 
@@ -112,6 +112,7 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('igreja/(:num)',      'Admin::igreja/$1');
     
     $routes->get('admins',        'Admin::admins');
+    $routes->get('admin/(:num)',  'Admin::admin/$1');
 
     $routes->get('recebimento',  'Admin::recebimento');
     $routes->get('retorno',      'Admin::retorno');

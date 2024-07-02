@@ -109,6 +109,15 @@ class Admin extends BaseController
         //
         return view('admin/pages/admins/lista', $data);
     }
+
+    public function admin($id): string
+    {
+        $data['idSearch']  = $id ;
+        $data['titlePage'] = 'Administradores';
+        
+        //
+        return view('admin/pages/admins/altera', $data);
+    }
     /*
 
     public function recebimento(): string

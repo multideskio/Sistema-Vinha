@@ -74,13 +74,18 @@ class IgrejasModel extends Model
         return $data;
     }
 
+    public function listSearch0(){
+        return $this->findAll();
+    }
+
     public function listSearch($input = false, $limit = 10, $order = 'DESC'): array
     {
-        // Define o termo de busca, se houver
+        // Definir o termo de busca, se houver
         $search = $input['search'] ?? false;
 
+        // Configurar a query
         $this->orderBy('igrejas.id', $order)
-            ->where('usuarios.tipo', 'igreja')
+            //->where('usuarios.tipo', 'igreja')
             ->select('igrejas.*')
             ->select('supervisores.nome AS nome_supervisor, supervisores.sobrenome AS sobre_supervisor')
             ->select('gerentes.nome AS nome_gerente, gerentes.sobrenome AS sobre_gerente')
@@ -91,7 +96,7 @@ class IgrejasModel extends Model
             ->join('gerentes', 'gerentes.id = supervisores.id_gerente')
             ->join('regioes', 'regioes.id = supervisores.id_regiao');
 
-        // Adiciona condições de busca se o termo estiver presente
+        // Adicionar condições de busca se o termo estiver presente
         if ($search) {
             $this->groupStart()
                 ->like('igrejas.razao_social', $search)
@@ -108,15 +113,21 @@ class IgrejasModel extends Model
                 ->groupEnd();
         }
 
-        // Paginação dos resultados
+        // Contar o total de resultados
+        $totalResults = $this->countAllResults(false); // false para não resetar a query
+
+        // Obter os resultados paginados
         $igrejas = $this->paginate($limit);
-        $totalResults = $this->countAllResults();
-        $currentPage = $this->pager->getCurrentPage();
+        $pager = $this->pager;
+
+        // Cálculo de paginação
+        $currentPage = $pager->getCurrentPage();
         $start = ($currentPage - 1) * $limit + 1;
         $end = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($igrejas);
+
         if ($search) {
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
@@ -129,7 +140,7 @@ class IgrejasModel extends Model
 
         return [
             'rows'  => $igrejas, // Resultados paginados
-            'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
+            'pager' => $pager->links('default', 'paginate'), // Links de paginação
             'num'   => $numMessage
         ];
     }

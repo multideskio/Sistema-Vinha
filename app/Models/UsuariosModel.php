@@ -949,16 +949,16 @@ class UsuariosModel extends Model
         return redirect()->to(site_url('admin'));
     }
 
-    public function cadUser(string $tipo, array $input)
+    public function cadUser(string $tipo, array $input): bool
     {
         try {
-            if ($tipo == 'admin' || $tipo == 'gerente' || $tipo == 'supervisor' || $tipo == 'pastor' || $tipo == 'igreja') {
-                $nivel = ($tipo == 'admin') ? 1 : (($tipo == 'gerente') ? 2 : (($tipo == 'supervisor') ? 3 : 4));
+            if ($tipo == 'superadmin' || $tipo == 'gerente' || $tipo == 'supervisor' || $tipo == 'pastor' || $tipo == 'igreja') {
+                $nivel = ($tipo == 'superadmin') ? 1 : (($tipo == 'gerente') ? 2 : (($tipo == 'supervisor') ? 3 : 4));
                 $data = [
                     'tipo'        => $tipo,
                     'id_perfil'   => $input['id_perfil'],
                     'email'       => $input['email'],
-                    'password'    => isset($input['password']) ? $input['password'] : '123456',
+                    'password'    => $input['password'],
                     'nivel'       => $nivel,
                     'id_adm'      => $input['id_adm']
                 ];

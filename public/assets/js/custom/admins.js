@@ -63,8 +63,9 @@ function search() {
     });
 }
 
-function cadastro(){
-    $('#form').ajaxForm({
+function cadastro() {
+    console.log('Function create init')
+    $('#form0').ajaxForm({
         beforeSubmit: function (formData, jqForm, options) {
             // Ações antes de enviar o formulário, se necessário
         },
@@ -72,17 +73,25 @@ function cadastro(){
             atualizarTabela();
             $('#form')[0].reset();
             Swal.fire({
-                title: 'Cadastrado!',
-                icon: 'success',
-                confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                buttonsStyling: false,
+                text: 'Cadastrado!',
+                icon: 'success'
             });
         },
         error: function (xhr, status, error) {
             if (xhr.responseJSON && xhr.responseJSON.messages) {
-                exibirMensagem('error', xhr.responseJSON);
+                //exibirMensagem('error', xhr.responseJSON);
+                Swal.fire({
+                    title: 'Ocorreu um erro',
+                    text: xhr.responseJSON.messages.error,
+                    icon: 'error'
+                });
             } else {
-                exibirMensagem('error', { messages: { error: 'Erro desconhecido.' } });
+                //exibirMensagem('error', { messages: { error: 'Erro desconhecido.' } });
+                Swal.fire({
+                    title: 'Ocorreu um erro',
+                    text: 'Erro desconhecido...',
+                    icon: 'error'
+                });
             }
         }
     });
@@ -90,7 +99,8 @@ function cadastro(){
 
 // Função para atualizar a tabela
 function atualizarTabela(search = false, page = 1) {
-    $('#tabela-dados').empty(); // Limpa o conteúdo da tabela antes de atualizar
+    $('.noresult').hide();
+	$('#perfilCards').empty();
 
     $('#cardResult').hide();
     $('.loadResult').show();
@@ -118,40 +128,30 @@ function atualizarTabela(search = false, page = 1) {
                 $('#cardResult').show();
             }
 
-            // Itera sobre os dados recebidos e adiciona as linhas à tabela
-            $.each(data.rows, function (index, gerente) {
+            data.rows.forEach(row => {
                 var randomColor = Math.floor(Math.random() * 16777215).toString(16);
-                var newRow = `
-                <tr>
-                    <td>
-                        <div class="image-container" style="width: 50px; height: 50px; overflow: hidden; border-radius: 50%;">
-                            <img src="${gerente.foto}" onerror="this.onerror=null; this.src='https://placehold.co/50/${randomColor}/FFF?text=${gerente.nome.charAt(0)}';" style="width: 100%; height: 100%; object-fit: cover;" class="rounded-circle">
-                        </div>
-                    </td>
-                    <td class="align-middle">#${gerente.id}</td>
-                    <td class="align-middle">${gerente.nome} ${gerente.sobrenome}</td>
-                    <td class="align-middle">${gerente.cpf}</td>
-                    <td class="align-middle">
-                        <a href="mailto:${gerente.email}"><b>${gerente.email}</b></a>
-                    </td>
-                    <td class="align-middle">
-                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="Tel Celular" href="tel:${gerente.celular}"><span class="badge bg-dark rounded-pill">${gerente.celular}</span></a>
-                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="Tel fixo" href="tel:${gerente.telefone}"><span class="badge bg-success rounded-pill">${gerente.telefone}</span></a>
-                    </td>
-                    <td class="align-middle">
-                        <div class="btn-group" role="group">
-                            <a href="${_baseUrl}admin/admin/${gerente.id}" class="btn btn-primary btn-sm sa-dark">
-                                <!-- <i class="ri-pencil-line"></i> --> <b>EDITAR</b>
-                            </a>
-                            <!-- <a href="#" onclick="recursoindisponivel()" class="btn btn-danger btn-sm sa-warning">
-                                <i class="ri-delete-bin-6-line"></i>
-                            </a> -->
-                        </div>
-                    </td>
-                </tr>
-                `;
-                $('#tabela-dados').append(newRow);
-            });
+                $('#perfilCards').append(`
+                    <div class="col-xl-3">
+                    <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                    <div class="mx-auto avatar-md mb-3">
+                    <img src="${row.foto}" onerror="this.onerror=null; this.src='https://placehold.co/50/${randomColor}/FFF?text=${row.nome.charAt(0)}';" class="img-fluid rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <h5 class="card-title mb-1">#${row.id} - ${row.nome} ${row.sobrenome}</h5>
+                    <hr>
+                    <div class="text-start">
+                    <p class="text-muted mb-2"><strong>CPF:</strong> ${row.cpf}</p>
+                    <p class="text-muted mb-2"><strong>Email:</strong> ${row.email}</p>
+                    <p class="text-muted mb-2"><strong>Celular:</strong> ${row.celular}</p>
+                    <p class="text-muted mb-0"><strong>Telefone:</strong> ${row.telefone}</p>
+                    </div>
+                    </div>
+                    <a href="${_baseUrl}admin/admin/${row.id}" class="btn text-white bg-primary card-footer">
+                    <i class="ri-pencil-line"></i> EDITAR
+                    </a>
+                    </div>
+                    </div>`);
+            })
 
             $('.loadResult').hide();
         })
@@ -167,4 +167,5 @@ $(document).ready(function () {
     formata();
     atualizarTabela();
     search();
+    cadastro();
 });

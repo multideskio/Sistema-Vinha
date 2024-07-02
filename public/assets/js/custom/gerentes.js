@@ -144,7 +144,7 @@ function atualizarTabela(search = false, page = 1) {
                                 <p class="text-muted mb-0"><strong>Telefone:</strong> ${gerente.telefone}</p>
                             </div>
                         </div>
-                        <a href="${_baseUrl}admin/gerente/${gerente.id}" class="btn btn-primary btn-sm text-white bg-primary card-footer">
+                        <a href="${_baseUrl}admin/gerente/${gerente.id}" class="btn text-white bg-primary card-footer">
                             <i class="ri-pencil-line"></i> EDITAR
                         </a>
                     </div>

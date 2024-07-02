@@ -146,28 +146,8 @@ class Gerentes extends ResourceController
             ];
 
             $modelUser->cadUser('gerente', $dataUser);
-
-
-
-
-            if (!empty($input['filepond'])) {
-                $librariesUpload = new UploadsLibraries();
-                $upload = $librariesUpload->filePond('gerentes', $id, $input);
-                if (file_exists($upload['file'])) {
-                    $update = [
-                        'foto' => $upload['newName']
-                    ];
-                    $status = $this->modelGerentes->update($id, $update);
-                    if ($status === false) {
-                        return $this->fail($this->modelGerentes->errors());
-                    }
-                } else {
-                    // Ocorreu um erro ao salvar a imagem
-                    throw new Exception('Erro ao salvar a imagem.');
-                }
-            }
-
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
+            
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }

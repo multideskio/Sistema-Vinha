@@ -2,10 +2,13 @@
 
 namespace App\Controllers\Apis\V1;
 
+use App\Libraries\UploadsLibraries;
 use App\Models\AdministradoresModel;
+use App\Models\UsuariosModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use Exception;
 
 class Administradores extends ResourceController
 {
@@ -27,10 +30,9 @@ class Administradores extends ResourceController
     public function index()
     {
         //
-        
+
         $data = $this->modelAdmin->listSearch($this->request->getGet());
         return $this->respond($data);
-        
     }
 
     /**
@@ -43,6 +45,39 @@ class Administradores extends ResourceController
     public function show($id = null)
     {
         //
+        $search = $this->modelAdmin
+            ->select('administradores.*')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp, usuarios.confirmado')
+            ->join('usuarios', 'usuarios.id_perfil = administradores.id')
+            ->where('usuarios.tipo', 'superadmin')
+            ->find($id);
+
+        if ($search) {
+            $data = [
+                "id" => intval($search['id']),
+                "nome" => $search['nome'],
+                "sobrenome" => $search['sobrenome'],
+                "cpf" => $search['cpf'],
+                "foto" => $search['foto'],
+                "uf" => $search['uf'],
+                "cidade" => $search['cidade'],
+                "cep" => $search['cep'],
+                "complemento" => $search['complemento'],
+                "bairro" => $search['bairro'],
+                "telefone" => $search['telefone'],
+                "celular" => $search['celular'],
+                "facebook" => $search['facebook'],
+                "instagram" => $search['instagram'],
+                "created_at" => $search['created_at'],
+                "website" => $search['website'],
+                "email" => $search['email'],
+                "sendWhatsapp" => intval($search['sendWhatsapp']),
+                "confirmado" => intval($search['confirmado'])
+            ];
+            return $this->respond($data);
+        } else {
+            return $this->failNotFound();
+        }
     }
 
     /**
@@ -63,6 +98,62 @@ class Administradores extends ResourceController
     public function create()
     {
         //
+        $modelUser = new UsuariosModel();
+
+        try {
+            $this->modelAdmin->transStart(); // Iniciar transação
+
+            // Obtém os dados do FilePond do corpo da solicitação
+            $input = $this->request->getVar();
+
+            if ($modelUser->where('email', $input['email'])->countAllResults()) {
+                throw new Exception("Esse email já está cadastrado no sistema.", 1);
+            };
+
+            $data = [
+                "id_adm"       => session('data')['idAdm'],
+                "id_user"      => session('data')['id'],
+                "nome"         => $input['nome'],
+                "sobrenome"    => $input['sobrenome'],
+                "cpf"          => $input['cpf'],
+                "uf"           => $input['uf'],
+                "cidade"       => $input['cidade'],
+                "cep"          => $input['cep'],
+                "complemento"  => $input['complemento'],
+                "bairro"       => $input['bairro'],
+                "telefone"     => $input['tel'],
+                "celular"      => $input['cel']
+            ];
+
+            $id = $this->modelAdmin->insert($data);
+
+            if ($id === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+
+            $dataUser = [
+                'id_perfil' => $id,
+                'email' => $input['email'],
+                'password' => (isset($input['password'])) ? $input['password'] : '123456',
+                'id_adm' => session('data')['id']
+            ];
+
+            $user = $modelUser->cadUser('superadmin', $dataUser);
+
+            if ($user === false) {
+                return $modelUser->fail($this->modelAdmin->errors());
+            }
+
+            $this->modelAdmin->transComplete();
+            
+            return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
+        
+        } catch (\Exception $e) {
+            
+            $this->modelAdmin->transRollback();
+
+            return $this->fail($e->getMessage());
+        }
     }
 
     /**
@@ -87,6 +178,81 @@ class Administradores extends ResourceController
     public function update($id = null)
     {
         //
+        try {
+            $input = $this->request->getRawInput();
+
+            $data = [
+                "nome" => $input['nome'],
+                "sobrenome" => $input['sobrenome'],
+                "cpf" => preg_replace('/[^0-9]/', '', $input['cpf']),
+                "uf" => $input['uf'],
+                "cidade" => $input['cidade'],
+                "cep" => preg_replace('/[^0-9]/', '', $input['cep']),
+                "complemento" => $input['complemento'],
+                "bairro" => $input['bairro'],
+                "telefone" => preg_replace('/[^0-9]/', '', $input['tel']),
+                "celular" => preg_replace('/[^0-9]/', '', $input['cel'])
+            ];
+
+            $status = $this->modelAdmin->update($id, $data);
+
+            if ($status === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+
+            return $this->respondCreated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
+    public function links($id = null)
+    {
+        $input = $this->request->getRawInput();
+
+        $data = [
+            'facebook'  => $input['linkFacebook'],
+            'instagram' => $input['linkInstagram'],
+            'website'   => $input['linkWebsite'],
+        ];
+
+        $status = $this->modelAdmin->update($id, $data);
+
+        if ($status === false) {
+            return $this->fail($this->modelAdmin->errors());
+        }
+
+        return $this->respondUpdated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+    }
+
+    public function foto($id = null)
+    {
+        $request = service('request');
+        $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        try {
+            $uploadLibraries = new UploadsLibraries;
+            $upload = $uploadLibraries->uploadCI($file, $id, 'admin');
+            $data = [
+                'foto' => $upload['foto']
+            ];
+            $status = $this->modelAdmin->update($id, $data);
+            if ($status === false) {
+                return $this->fail($this->modelAdmin->errors());
+            }
+
+            $session = session();
+            $data = $session->get('data');
+            if (is_array($data)) {
+                $data['foto'] = $upload['foto'];
+                $session->set('data', $data);
+            } else {
+                $data = ['foto' => $upload['foto']];
+                $session->set('data', $data);
+            }
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
     }
 
     /**
