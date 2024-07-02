@@ -18,4 +18,4 @@
 <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="<?= base_url('android-chrome-192x192.png') ?>">
 
 <!-- App favicon -->
-<link rel="shortcut icon" href="favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">

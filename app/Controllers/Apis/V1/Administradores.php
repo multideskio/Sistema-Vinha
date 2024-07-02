@@ -253,6 +253,7 @@ class Administradores extends ResourceController
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
+        
     }
 
     /**
