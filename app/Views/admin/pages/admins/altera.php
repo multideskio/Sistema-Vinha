@@ -200,9 +200,10 @@
 
 <?= $this->endSection(); ?>
 <?= $this->section('js') ?>
-<!-- profile-setting init js -->
+
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
+
 <script>
     function searchUpdate(id) {
         if (id) {
@@ -306,9 +307,7 @@
                     }, 1200);
             },
             error: function(xhr, status, error) {
-                console.log(xhr)
-                console.log(status)
-                console.log(error)
+
             }
         });
     }
@@ -339,10 +338,10 @@
             blocks: [0, 2, 2, 1, 4, 4]
         });
     }
+    
     $(document).ready(function() {
         searchUpdate(_idSearch)
         formatInputs()
-
         updateLinks(_idSearch)
         updateImage(_idSearch)
         updateTexts(_idSearch)
