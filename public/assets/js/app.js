@@ -1145,7 +1145,7 @@ File: Main Js File
 		document.getElementById("scrollbar").classList.remove("h-100");
 
 		var splitMenu = horizontalMenuSplit;
-		var extraMenuName = "More";
+		var extraMenuName = "Mais";
 		var menuData = document.querySelectorAll("ul.navbar-nav > li.nav-item");
 		var newMenus = "";
 		var splitItem = "";
