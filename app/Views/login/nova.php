@@ -262,7 +262,14 @@
                 $('#selectSupervisor').append(option);
                 $('#selectSupervisor').attr('required', true).attr('data-choices', true);
                 new Choices('#selectSupervisor');
-            });
+            }).fail(() => {
+                Swal.fire({
+                    title: 'Ainda não tem supervisores cadastrados',
+                    icon: 'error'
+                }).then((result) => {
+                    history.back();
+                });
+            });;
         }
 
         function formataInputs() {
@@ -293,7 +300,7 @@
 
                 },
                 success: function(responseText, statusText, xhr, $form) {
-                    
+
                     Swal.fire({
                         text: 'Cadastrado com sucesso!',
                         icon: 'success'
