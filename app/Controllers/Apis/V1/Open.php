@@ -146,8 +146,14 @@ class Open extends ResourceController
         //    return $this->respond($cacheData);
         //} else {
         $data = $this->modelSupervisores->findAll();
+
+        if(count($data)){
+            return $this->respond($data);
+        }else{
+            return $this->failNotFound();
+        }
         //$cache->save($cacheKey, $data, 3600);
-        return $this->respond($data);
+        
         //}
     }
 }
