@@ -20,16 +20,9 @@ class Home extends BaseController
 
     public function index()
     {
-        $data['rowConfig']  = $this->modelConfig->searchCacheData(1);
-        $data['textResult'] = "";
-        $data['titlePage']  = "";
-
-        // Comentar a linha que usa Kint para dump
-        // Kint::dump($data['rowConfig']);
-
         return view('login/login', [
             'data' => $this->modelConfig,
-            'titlePage' => ''
+            'titlePage' => 'Entrar'
         ]);
     }
 
@@ -61,10 +54,6 @@ class Home extends BaseController
         return view('ajuda/home', $this->data);
     }
 
-
-    
-
-
     public function ajuda($slug)
     {
         $modelAjuda = new AjudaModel();
@@ -82,12 +71,7 @@ class Home extends BaseController
         $this->data['result'] = $row;
         return view('ajuda/post', $this->data);
     }
-
-
-
-
-
-
+    
     public function sair()
     {
         session_destroy();

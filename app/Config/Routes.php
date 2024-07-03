@@ -6,17 +6,31 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
+
+$routes->get('nova-conta', 'Login::novaconta', ['filter' => 'csrf']);
+
 $routes->get('sair', 'Home::sair');
 $routes->get('teste', 'Home::teste');
 $routes->get('phpinfo', 'Home::phpinfo');
 $routes->get('ajuda', 'Home::busca_ajuda');
 $routes->get('ajuda/(:any)', 'Home::ajuda/$1');
 
+//$routes->get('confirma/(:any)', 'Home::index/$1');
+$routes->get('confirma/(:any)', 'Login::confirmacao/$1');
+
 
 /*$routes->get('pix', 'Home::pix');
 $routes->get('debito', 'Home::debito');
 $routes->get('credito', 'Home::credito');
 $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'Home::teste');*/
+
+$routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1', 'filter' => 'csrf'], static function ($routes) {
+    $routes->get('supervisor', 'Open::supervisor');
+    $routes->post('pastor', 'Open::pastor');
+    $routes->post('igreja', 'Open::igreja');
+});
+
+
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
     
@@ -95,7 +109,6 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->resource('whatsapp', ['filter' => 'logged']);
 });
 
-
 //Acesso de quem administra o sistema
 $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($routes) {
     $routes->get('',                    'Admin::index');
@@ -125,15 +138,10 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('config', 'Admin::config');
 });
 
-
-
-
 //Acesso de quem administra uma supervisao
 $routes->group('supervisao', ['filter' => 'supervisor'], static function ($routes) {
     $routes->get('', 'Supervisor::index');
 });
-
-
 
 //Acesso mais baixo de quem dizima
 $routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
@@ -141,7 +149,6 @@ $routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
     $routes->get('pagamentos', 'Igreja::pagamentos');
     $routes->get('transacoes', 'Igreja::transacoes');
 });
-
 
 $routes->group('gerente', ['filter' => 'gerente'],static function ($routes) {
     $routes->get('', 'Gerente::index');
@@ -153,7 +160,6 @@ $routes->group('gerente', ['filter' => 'gerente'],static function ($routes) {
 //Login
 $routes->group('login', static function ($routes) {
     $routes->get('', 'Login::index');
-    $routes->get('nova-conta', 'Login::novaconta');
     $routes->get('reset', 'Login::index');
 
     //Confirma

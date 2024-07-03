@@ -80,11 +80,8 @@ class AdminModel extends Model
     }
     protected function updateCache()
     {
-        $cache = \Config\Services::cache();
+        $cache = service('cache');
         $cache->delete('searchCacheDataConfig');
-
-        /*$dbutil = \Config\Database::utils();
-        $dbutil->optimizeTable('administracao');*/
     }
 
     protected function limpaStrings(array $data)
@@ -111,36 +108,28 @@ class AdminModel extends Model
     }
 
     //Cache dados de config
-    public function cacheData()
+    /*public function cacheData()
     {
         helper('auxiliar');
-        
-        $cache = \Config\Services::cache();
-
+        $cache = service('cache');
         if (!$cache->get('config_Cache')) {
             $builder = $this->first();
             $cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(30));
         } else {
             $builder = $cache->get('config_Cache');
         }
-
         return $builder;
-    }
+    }*/
 
     public function searchCacheData($id = 1){
         helper('auxiliar');
         $cache = \Config\Services::cache();
-        
-        //if (!$cache->get('searchCacheDataConfig')) {
-        
+        if (!$cache->get('searchCacheDataConfig')) {
             $data = $this->first();
-        //    $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
-        
-        //}else{
-            
-        //    $data = $cache->get('searchCacheDataConfig');
-        
-        //}
+            $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
+        }else{
+            $data = $cache->get('searchCacheDataConfig');
+        }
         
         return $data ;
 

@@ -7,7 +7,7 @@ self.addEventListener('install', (event) => {
             return cache.addAll([
                 '/',
                 '/index.php',
-                '/assets/',
+                //'/assets/',
                 '/offline.html',
                 '/assets/pwa/android-chrome-192x192.png',
                 '/assets/pwa/android-chrome-512x512.png',

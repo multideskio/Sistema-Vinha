@@ -3,7 +3,7 @@
 $rowConfig = $data->searchCacheData(1);
 ?>
 <head>
-    <?php echo view('partials/title-meta', array('title' => lang('Paginas.login.titlePage', [$rowConfig['empresa']]))); ?>
+    <?php echo view('partials/title-meta', array('title' => $titlePage )); ?>
     <?= $this->include('partials/head-css') ?>
     <style>
         @media only screen and (max-width: 768px) {
@@ -96,7 +96,7 @@ $rowConfig = $data->searchCacheData(1);
                         <div class="mt-4 text-center">
                             <!--  //site_url('login/nova-conta')  -->
                             <p class="mb-0">
-                                <?= lang('Paginas.login.criar.texto') ?> <a href="javascript:;" class="fw-semibold text-primary text-decoration-underline"><?= lang('Paginas.login.criar.link') ?></a>
+                                <?= lang('Paginas.login.criar.texto') ?> <a href="/nova-conta" class="fw-semibold text-primary text-decoration-underline"><?= lang('Paginas.login.criar.link') ?></a>
                             </p>
                         </div>
                     </div>

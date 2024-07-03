@@ -7,7 +7,7 @@
 <script src="/assets/js/plugins.js"></script>
 
 <div id="pwa-install-banner">
-    Instale nosso aplicativo PWA!
+    Instale nosso aplicativo!
     <button id="install-button">Instalar</button>
 </div>
 

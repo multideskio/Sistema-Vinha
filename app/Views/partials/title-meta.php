@@ -1,5 +1,5 @@
 <meta charset="utf-8" />
-<title><?= $titlePage ?> | <?= ($title) ? $title : '' ?></title>
+<title><?= $titlePage ?></title>
 <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
 <meta content="Sistema vinha associados" name="description" />
 <meta content="Multidesk" name="author" />

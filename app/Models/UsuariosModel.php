@@ -952,7 +952,7 @@ class UsuariosModel extends Model
     public function cadUser(string $tipo, array $input): bool
     {
         try {
-            if ($tipo == 'superadmin' || $tipo == 'gerente' || $tipo == 'supervisor' || $tipo == 'pastor' || $tipo == 'igreja') {
+            if (in_array($tipo, ['superadmin', 'gerente', 'supervisor', 'pastor', 'igreja'])) {
                 $nivel = ($tipo == 'superadmin') ? 1 : (($tipo == 'gerente') ? 2 : (($tipo == 'supervisor') ? 3 : 4));
                 $data = [
                     'tipo'        => $tipo,
@@ -970,7 +970,9 @@ class UsuariosModel extends Model
             // Inserir dados no banco de dados
             return $this->insert($data);
         } catch (\Exception $e) {
-            // Capturar qualquer exceção lançada pelo banco de dados
+            // Capturar qualquer exceção lançada
+            log_message('error', 'Erro no método cadUser: ' . $e->getMessage());
+
             if ($e->getCode() == 1062) { // Verificar o código de erro específico para duplicação de chave única (pode variar dependendo do banco de dados)
                 return "E-mail duplicado. Por favor, escolha outro e-mail.";
             } else {
@@ -986,7 +988,8 @@ class UsuariosModel extends Model
      * MELHORAR RETORNO DE DADOS
      */
 
-    function userData(){
+    function userData()
+    {
 
         if (session('data')['tipo'] == 'superadmin') {
             $buscaPerfil = new AdministradoresModel();

@@ -40,7 +40,7 @@ class WhatsappLibraries
 
     public function data(): ?array
     {
-        $row = $this->modelAdmin->find(session('data')['idAdm']);
+        $row = $this->modelAdmin->first();
 
         if ($row && isset($row['url_api'], $row['instance_api'], $row['key_api'])) {
             return [
