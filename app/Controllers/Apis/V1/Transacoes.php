@@ -120,7 +120,7 @@ class Transacoes extends ResourceController
     {
         $modelUser = new UsuariosModel();
         $dateIn = $this->request->getGet('dateIn');
-        $dateOut = $this->request->getGet('dateOut');
+        $dateOut = $this->request->getGet('dateOut') .' 23:59:59';
 
         // Função auxiliar para garantir que o valor seja 0 se for null
         $getValor = function ($result) {
