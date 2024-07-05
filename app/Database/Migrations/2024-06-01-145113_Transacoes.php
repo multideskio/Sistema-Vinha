@@ -39,20 +39,19 @@ class Transacoes extends Migration
                 'unsigned' => true
             ],
 
-            'id_gateway' => [
-                'type' => 'int',
-                'unsigned' => true
-            ],
-
             'id_transacao' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255
             ],
+            
+            'gateway' => [
+                'type' => 'VARCHAR',
+                'constraint' => 40
+            ],
 
-            "pago" => [
-                'type' => 'BOOLEAN',
-                'null' => false,
-                'DEFAULT' => false
+            "status" => [
+                'type' => 'VARCHAR',
+                'constraint' => 30
             ],
             
             /**atualização */
@@ -60,6 +59,7 @@ class Transacoes extends Migration
                 "type" => "VARCHAR",
                 "constraint" => 20
             ],
+
             "descricao" => [
                 "type" => "VARCHAR",
                 "constraint" => 20
