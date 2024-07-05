@@ -34,9 +34,9 @@ class CieloPix extends CieloBase
     {
         try {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
-            
+
             $params['Payment']['Type'] = 'Pix';
-            
+
             $endPoint = '/1/sales/';
 
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
@@ -67,13 +67,17 @@ class CieloPix extends CieloBase
             }
 
             $sendCieloWhatsApp = new CieloWhatsApp;
-            
-            $sendCieloWhatsApp->pixGerado($rowPastor, $response);
-            
-            $this->saveTransactionPix($params, $response, $descricao, 'PIX', $desc_longa);
-            
-            return $response;
 
+            $sendCieloWhatsApp->pixGerado($rowPastor, $response);
+
+            $this->saveTransactionPix($params, $response, $descricao, 'PIX', $desc_longa);
+
+            $cache = service('cache');
+            $cache->deleteMatching('transacoes_*');
+            $cache->deleteMatching('*_transacoes_*');
+            $cache->deleteMatching('*_transacoes');
+
+            return $response;
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança Pix: " . $e->getMessage());
         }
