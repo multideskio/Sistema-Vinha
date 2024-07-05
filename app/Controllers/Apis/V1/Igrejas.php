@@ -147,22 +147,7 @@ class Igrejas extends ResourceController
 
             $modelUser->cadUser('igreja', $dataUser);
 
-            if (!empty($input['filepond'])) {
-                $librariesUpload = new UploadsLibraries();
-                $upload = $librariesUpload->filePond('igreja', $id, $input);
-                if (file_exists($upload['file'])) {
-                    $update = [
-                        'foto' => $upload['newName']
-                    ];
-                    $status = $this->modelIgrejas->update($id, $update);
-                    if ($status === false) {
-                        return $this->fail($this->modelIgrejas->errors());
-                    }
-                } else {
-                    // Ocorreu um erro ao salvar a imagem
-                    throw new Exception('Erro ao salvar a imagem.');
-                }
-            }
+            
 
             $this->modelIgrejas->transComplete();
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);

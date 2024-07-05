@@ -1,94 +1,80 @@
-/*
-Template Name: Velzon - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://Themesbrand.com/
-Contact: Themesbrand@gmail.com
-File: Password addon Js File
-*/
-
-// password addon
-Array.from(document.querySelectorAll("form .auth-pass-inputgroup")).forEach(function (item) {
-    Array.from(item.querySelectorAll(".password-addon")).forEach(function (subitem) {
-            subitem.addEventListener("click", function (event) {
-                var passwordInput = item.querySelector(".password-input");
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text";
-                } else {
-                    passwordInput.type = "password";
-                }
-            });
+// Alternar visibilidade da senha
+$('.auth-pass-inputgroup').each(function() {
+    $(this).find('.password-addon').each(function() {
+        $(this).on('click', function() {
+            const passwordInput = $(this).closest('.auth-pass-inputgroup').find('.password-input');
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+            } else {
+                passwordInput.attr('type', 'password');
+            }
         });
     });
+});
 
-// passowrd match
-var password = document.getElementById("password-input");
-    //confirm_password = document.getElementById("confirm-password-input");
+// Comentado: Correspondência de senha
+// const password = $('#password-input');
+// const confirmPassword = $('#confirm-password-input');
 
-function validatePassword() {
-    if (password.value != confirm_password.value) {
-        confirm_password.setCustomValidity("Passwords Don't Match");
+// function validatePassword() {
+//     if (password.val() !== confirmPassword.val()) {
+//         confirmPassword[0].setCustomValidity("Passwords Don't Match");
+//     } else {
+//         confirmPassword[0].setCustomValidity("");
+//     }
+// }
+
+// password.on('change', validatePassword);
+// confirmPassword.on('keyup', validatePassword);
+
+// Validação da senha
+const passwordInput = $('#password-input-pastor');
+const messageBox = $('.password-contain');
+const letter = $('.pass-lower1');
+const capital = $('.pass-upper');
+const number = $('.pass-number');
+const length = $('.pass-length');
+
+passwordInput.on('focus', function() {
+    messageBox.show();
+});
+
+passwordInput.on('blur', function() {
+    messageBox.hide();
+});
+
+passwordInput.on('keyup', function() {
+
+    console.log(passwordInput.val());
+
+    // Validar letras minúsculas
+    const lowerCaseLetters = /[a-z]/g;
+    if (passwordInput.val().match(lowerCaseLetters)) {
+        letter.removeClass('text-danger').addClass('text-success');
     } else {
-        confirm_password.setCustomValidity("");
-    }
-}
-
-//Password validation
-//password.onchange = validatePassword;
-
-var myInput = document.getElementById("password-input");
-var letter = document.getElementById("pass-lower");
-var capital = document.getElementById("pass-upper");
-var number = document.getElementById("pass-number");
-var length = document.getElementById("pass-length");
-
-// When the user clicks on the password field, show the message box
-myInput.onfocus = function () {
-    document.getElementById("password-contain").style.display = "block";
-};
-
-// When the user clicks outside of the password field, hide the password-contain box
-myInput.onblur = function () {
-    document.getElementById("password-contain").style.display = "none";
-};
-
-// When the user starts to type something inside the password field
-myInput.onkeyup = function () {
-    // Validate lowercase letters
-    var lowerCaseLetters = /[a-z]/g;
-    if (myInput.value.match(lowerCaseLetters)) {
-        letter.classList.remove("invalid");
-        letter.classList.add("valid");
-    } else {
-        letter.classList.remove("valid");
-        letter.classList.add("invalid");
-    }
-
-    // Validate capital letters
-    var upperCaseLetters = /[A-Z]/g;
-    if (myInput.value.match(upperCaseLetters)) {
-        capital.classList.remove("invalid");
-        capital.classList.add("valid");
-    } else {
-        capital.classList.remove("valid");
-        capital.classList.add("invalid");
+        letter.removeClass('text-success').addClass('text-danger');
     }
 
-    // Validate numbers
-    var numbers = /[0-9]/g;
-    if (myInput.value.match(numbers)) {
-        number.classList.remove("invalid");
-        number.classList.add("valid");
+    // Validar letras maiúsculas
+    const upperCaseLetters = /[A-Z]/g;
+    if (passwordInput.val().match(upperCaseLetters)) {
+        capital.removeClass('invalid').addClass('valid');
     } else {
-        number.classList.remove("valid");
-        number.classList.add("invalid");
+        capital.removeClass('valid').addClass('invalid');
     }
 
-    // Validate length
-    if (myInput.value.length >= 8) {
-        length.classList.remove("invalid");
-        length.classList.add("valid");
+    // Validar números
+    const numbers = /[0-9]/g;
+    if (passwordInput.val().match(numbers)) {
+        number.removeClass('invalid').addClass('valid');
     } else {
-        length.classList.remove("valid");
-        length.classList.add("invalid");
+        number.removeClass('valid').addClass('invalid');
     }
-};
+
+    // Validar comprimento
+    if (passwordInput.val().length >= 8) {
+        length.removeClass('invalid').addClass('valid');
+    } else {
+        length.removeClass('valid').addClass('invalid');
+    }
+});

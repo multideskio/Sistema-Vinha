@@ -11,7 +11,7 @@ class Igreja extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-        $this->data['rowConfig'] = $this->modelConfig->cacheData();
+        //$this->data['rowConfig'] = $this->modelConfig->cacheData();
     }
     public function index(): string
     {

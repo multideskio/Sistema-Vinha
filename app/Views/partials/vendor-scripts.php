@@ -15,7 +15,7 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                //console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }, function(err) {
                 console.log('ServiceWorker registration failed: ', err);
             });
@@ -30,10 +30,10 @@
         // Guarda o evento para ser acionado mais tarde
         deferredPrompt = e;
 
-        // Exibe o banner de instalação após 10 segundos
+        // Exibe o banner de instalação após 20 segundos
         setTimeout(() => {
             document.getElementById('pwa-install-banner').style.display = 'block';
-        }, 10000);
+        }, 20000);
     });
 
     document.getElementById('install-button').addEventListener('click', async () => {

@@ -37,6 +37,16 @@ class Open extends ResourceController
     public function index()
     {
     }
+
+    /**
+     * The function `pastor` handles the registration process for a new pastor, including data
+     * validation, database insertion, sending WhatsApp messages, and confirmation emails.
+     * 
+     * @return The function `pastor()` is returning a response with a success message
+     * "Sucesso.cadastrado" if all the operations within the try block are successful. If an exception
+     * of type `SecurityException` is caught during the process, it will rollback the transaction and
+     * return a failure response with the error message from the exception.
+     */
     public function pastor()
     {
         $request = service('request');
@@ -127,7 +137,6 @@ class Open extends ResourceController
             $newEmail->envioEmail($rowUser['email'], 'Confirme seu e-mail', $message);
 
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
-
         } catch (SecurityException $e) {
             $this->modelPastor->transRollback();
             return $this->failUnauthorized($e->getMessage());
@@ -135,25 +144,52 @@ class Open extends ResourceController
     }
     public function igreja()
     {
+        $request = service('request');
+        try {
 
+            $this->modelPastor->transStart();
+
+            $header = $request->headers();
+            $input  = $request->getPost();
+
+            if ($header['Origin']->getValue() != rtrim(site_url(), '/')) {
+                throw new SecurityException('Origem de solicitação não permitida.');
+            }
+
+            if ($this->modelUser->where('email', $input['email'])->countAllResults()) {
+                throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
+            };
+
+            
+
+        } catch (SecurityException $e) {
+            $this->modelPastor->transRollback();
+            return $this->failUnauthorized($e->getMessage());
+        }
     }
 
+    /**
+     * The supervisor function checks if the request is AJAX, retrieves supervisor data, and returns a
+     * response accordingly.
+     * 
+     * @return If the request is not an AJAX request, the function will return a "failUnauthorized"
+     * response. If there is data retrieved from the model, it will return a "respond" response with
+     * the data. If there is no data found, it will return a "failNotFound" response.
+     */
     public function supervisor()
     {
-        //$cache = \Config\Services::cache();
-        //$cacheKey = "select_supervisores";
-        //if ($cacheData = $cache->get($cacheKey)) {
-        //    return $this->respond($cacheData);
-        //} else {
-        $data = $this->modelSupervisores->findAll();
+        $request = service('request');;
+        if (!$request->isAJAX()) {
+            return $this->failUnauthorized();
+        }
+        $data = $this->modelSupervisores
+            ->select('id, nome, sobrenome')
+            ->findAll();
 
-        if(count($data)){
+        if (count($data)) {
             return $this->respond($data);
-        }else{
+        } else {
             return $this->failNotFound();
         }
-        //$cache->save($cacheKey, $data, 3600);
-        
-        //}
     }
 }
