@@ -65,6 +65,8 @@ class ConfigMensagens extends Migration
         $this->forge->createTable('config_mensagens', true);
         $db->enableForeignKeyChecks();
 
+        $seeder = \Config\Database::seeder();
+        $seeder->call('MessagesWhatsApp');
     }
 
     public function down()
