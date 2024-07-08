@@ -28,6 +28,35 @@ class Login extends BaseController
         return view('login/nova', $data);
     }
 
+    public function novasenha($token): string
+    {
+        $data['rowConfig'] = $this->config;
+
+        if ($token) {
+            $modelUser = new UsuariosModel();
+            $row = $modelUser->where('token', $token)->first();
+
+            if ($row) {
+                $data['titlePage'] = 'Nova senha';
+                $data['token'] = $token;
+                return view('login/novasenha', $data);
+            }
+        }
+
+        $data['titlePage'] = 'Erro';
+        return view('login/confirm/erro', $data);
+    }
+
+
+    public function recuperacao(): string
+    {
+
+        $data['titlePage'] = 'Recuperar conta';
+        $data['rowConfig'] = $this->config;
+
+        return view('login/recover', $data);
+    }
+
     //Apenas avisa que a verificação foi realizada
     public function confirmacao($token = null): string
     {

@@ -2,8 +2,6 @@
 <head>
     <?php echo view('partials/title-meta', array('title' => 'Vinha Ministérios')); ?>
     <?= $this->include('partials/head-css') ?>
-    <!--datatable css-->
-    <link rel="stylesheet" href="//cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
     <!-- Sweet Alert css-->
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <?= $this->renderSection('css') ?>
@@ -56,9 +54,7 @@
         function recursoindisponivel() {
             Swal.fire({
                 title: 'Recurso indisponivél no momento',
-                type: 'error',
-                confirmButtonClass: 'btn btn-danger w-xs mt-2',
-                buttonsStyling: false,
+                type: 'error'
             });
         }
     </script>

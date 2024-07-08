@@ -1,5 +1,6 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
+
 <h4 class="text-muted mb-0">Gerenciamento de regiões</h4>
 <div class="row mt-3 gx-1">
     <div class="col-lg-4">
@@ -89,7 +90,7 @@
         </div>
     </div>
 </div>
-<?= $this->endSection('page') ?>
+<?= $this->endSection() ?>
 <?= $this->section('js') ?>
 <script src="/assets/js/custom/regioes.min.js"></script>
-<?= $this->endSection('js') ?>
+<?= $this->endSection() ?>

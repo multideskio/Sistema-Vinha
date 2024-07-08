@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Models;
+<?php namespace App\Models;
 
 use CodeIgniter\Model;
 
@@ -13,7 +11,20 @@ class TransacoesModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id_pedido', 'id_adm', 'id_user', 'id_cliente', 'id_transacao', 'gateway', 'status', 'valor', 'log', 'tipo_pagamento', 'descricao', 'data_pagamento', 'status_text', 'descricao_longa'
+        'id_pedido',
+        'id_adm',
+        'id_user',
+        'id_cliente',
+        'id_transacao',
+        'gateway',
+        'status',
+        'valor',
+        'log',
+        'tipo_pagamento',
+        'descricao',
+        'data_pagamento',
+        'status_text',
+        'descricao_longa'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -41,10 +52,6 @@ class TransacoesModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-
-
-
 
     public function updateStatus()
     {
@@ -184,7 +191,6 @@ class TransacoesModel extends Model
 
         return $result;
     }
-
 
     public function dashCredito($dateIn = null, $dateOut = null)
     {

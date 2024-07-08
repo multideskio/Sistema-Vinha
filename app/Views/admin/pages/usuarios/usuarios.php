@@ -1,15 +1,4 @@
 <?= $this->extend('admin/template') ?>
-
-<?= $this->section('css'); ?>
-<!-- Sweet Alert css-->
-<link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
-
-<!-- Filepond css -->
-<link rel="stylesheet" href="/assets/libs/filepond/filepond.min.css" type="text/css" />
-<link rel="stylesheet" href="/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css">
-
-<?= $this->endSection(); ?>
-
 <?= $this->section('page') ?>
 <div class="clearfix">
     <p class="text-muted float-start">Gerenciamento de Usuários</p>
@@ -18,8 +7,6 @@
         <i class="ri-user-settings-line"></i> Cadastrar Usuário
     </button>
 </div>
-
-
 <div class="col-12 mt-2">
     <div class="card">
         <div class="card-body">

@@ -30,22 +30,9 @@ class RegioesModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
-        //"nome" => "required|is_unique[regioes.nome]"
-        "nome" => "required|max_length[60]|is_unique[regioes.nome]",
-        //"descricao" => "required"
-    ];
+    protected $validationRules      = [];
 
-    protected $validationMessages   = [
-        "nome" => [
-            "is_unique"  => "Já existe uma região cadastrada com esse nome.",
-            "required"   => "O campo nome da Região é obrigatório.",
-            "max_length" => "O campo nome da região não pode ter mais do que 60 caracteres."
-        ],
-        /* "descricao" => [
-            "required" => "O campo descricao é obrigatório.",
-        ]*/
-    ];
+    protected $validationMessages   = [];
 
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -88,7 +75,7 @@ class RegioesModel extends Model
         } else {
             $builder = $cache->get('regioes_Cache');
         }
-        return $builder;
+        return $this->select('id, nome, descricao')->findAll();
     }
 
 

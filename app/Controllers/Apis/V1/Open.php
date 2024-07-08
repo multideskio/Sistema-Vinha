@@ -25,6 +25,7 @@ class Open extends ResourceController
     protected $modelIgreja;
     protected $modelSupervisores;
     protected $modelMessages;
+    protected $request;
 
     public function __construct()
     {
@@ -33,6 +34,7 @@ class Open extends ResourceController
         $this->modelIgreja       = new IgrejasModel();
         $this->modelSupervisores = new SupervisoresModel();
         $this->modelMessages     = new ConfigMensagensModel();
+        $this->request           = service('request');
     }
     public function index()
     {
@@ -49,22 +51,23 @@ class Open extends ResourceController
      */
     public function pastor()
     {
-        $request = service('request');
         try {
 
             $this->modelPastor->transStart();
+            $header = $this->request->headers();
+            $input = $this->request->getPost();
 
-            $header = $request->headers();
-            $input = $request->getPost();
-
+            //VERIFICA ORIGEM
             if ($header['Origin']->getValue() != rtrim(site_url(), '/')) {
                 throw new SecurityException('Origem de solicitação não permitida.');
             }
 
+            //VERIFICA SE JA EXISTE UM EMAIL NO BANCO DE DADOS
             if ($this->modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
             };
 
+            //ARRAY CADASTRO DO PASTOR
             $data = [
                 "id_adm"       => 1,
                 //"id_user"      => session('data')['id'],
@@ -82,12 +85,15 @@ class Open extends ResourceController
                 'celular' => $input['whatsapp']
             ];
 
+            //INSERE PASTOR
             $id = $this->modelPastor->insert($data);
 
+            //VERIFICA SE HÁ ERROS
             if ($id  === false) {
                 throw new SecurityException($this->modelPastor->errors()[]);
             }
 
+            //ARRAY CADASTRO USUARIO PASTOR
             $dataUser = [
                 'tipo'        => 'pastor',
                 'id_perfil'   => $id,
@@ -96,17 +102,23 @@ class Open extends ResourceController
                 'nivel'       => '4'
             ];
 
+            $this->modelUser->transStart();
+            //INSERE USUÁRIO
             $user = $this->modelUser->insert($dataUser);
 
+            //VERIFICA SE HÁ ERROS
             if ($user === false) {
                 throw new SecurityException($this->modelUser->errors()[]);
             }
-
             $this->modelPastor->transComplete();
-
+            $this->modelUser->transComplete();
+            
+            //DADOS PARA ENVIO NO WHATSAPP
+            //BUSCA DADOS DA API
             $whatsapp = new WhatsappLibraries();
             $messages = $this->modelMessages->where('tipo', 'novo_usuario')->first();
 
+            //VERIFICA SE ESTÁ ATIVO PARA ENVIO
             if ($messages['status']) {
                 // Valores que irão substituir as tags
                 $valores = [
@@ -114,56 +126,48 @@ class Open extends ResourceController
                     '{EMAIL}' => $input['email'],
                     '{TEL}'   => $input['whatsapp']
                 ];
-
                 // Substituir as tags com os valores
                 $novaString = strtr($messages['mensagem'], $valores);
                 $msg['message'] = $novaString;
-
                 $whatsapp->sendMessageText($msg, $input['whatsapp']);
             }
 
+            //DADOS PARA ENVIO DE EMAIL
+            //ENVIA EMAIL DE VERIFICAÇÃO DE CADASTRO
             $newEmail = new EmailsLibraries;
-
-
             $rowUser = $this->modelUser->find($user);
-
             $sendEmail = [
                 'nome' => $input['nome'],
                 'token' => $rowUser['token']
             ];
-
             $message = view('emails/confirma-email', $sendEmail);
-
             $newEmail->envioEmail($rowUser['email'], 'Confirme seu e-mail', $message);
 
+            //RESPOSTA DE SUCESSO
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
         } catch (SecurityException $e) {
+            //FAZ O ROLLBACK DOS CADASTROS DE REALIZADOS ANTERIORMENTE
             $this->modelPastor->transRollback();
+            $this->modelUser->transRollback();
+            //MENSAGEM DE ERRO
             return $this->failUnauthorized($e->getMessage());
         }
     }
     public function igreja()
     {
-        $request = service('request');
         try {
-
-            $this->modelPastor->transStart();
-
-            $header = $request->headers();
-            $input  = $request->getPost();
-
+            $this->modelIgreja->transStart();
+            $header = $this->request->headers();
+            $input  = $this->request->getPost();
             if ($header['Origin']->getValue() != rtrim(site_url(), '/')) {
                 throw new SecurityException('Origem de solicitação não permitida.');
             }
-
             if ($this->modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
             };
-
-            
-
+            $this->modelIgreja->transComplete();
         } catch (SecurityException $e) {
-            $this->modelPastor->transRollback();
+            $this->modelIgreja->transRollback();
             return $this->failUnauthorized($e->getMessage());
         }
     }
@@ -178,8 +182,8 @@ class Open extends ResourceController
      */
     public function supervisor()
     {
-        $request = service('request');;
-        if (!$request->isAJAX()) {
+
+        if (!$this->request->isAJAX()) {
             return $this->failUnauthorized();
         }
         $data = $this->modelSupervisores
@@ -191,5 +195,57 @@ class Open extends ResourceController
         } else {
             return $this->failNotFound();
         }
+    }
+
+    public function newpass(){
+        
+        if (!$this->request->isAJAX()) {
+            return $this->failUnauthorized();
+        }
+
+        $input   = $this->request->getPost();
+        
+        //VERIFICA SE EXISTE CADASTRO DO USUÁRIO
+        $build   = $this->modelUser->where('token', $input['token'])->first();
+
+        if ($build) {
+            $data = [
+                'password' => $input['senha']
+            ];
+            $update = $this->modelUser->update($build['id'], $data);
+            return $this->respondUpdated($update);
+        }
+
+        return $this->failNotFound();
+    }
+
+    public function recover()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->failUnauthorized();
+        }
+        
+        //
+        $input   = $this->request->getPost();
+        //VERIFICA SE EXISTE CADASTRO DO USUÁRIO
+        $build   = $this->modelUser->select('token')->where('email', $input['email'])->first();
+        
+        if ($build) {
+            //Envio de e-mail
+            $sendEmail = [
+                'token' => $build['token']
+            ];
+            $email   = new EmailsLibraries;
+            $message = view('emails/recupera', $sendEmail);
+            $email->envioEmail($input['email'], 'Recuperação de conta', $message);
+            
+            return $this->respond($build);
+        }
+
+        return $this->failNotFound();
+    }
+
+    protected function enviaWhatsApp(){
+
     }
 }

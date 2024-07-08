@@ -17,20 +17,20 @@
                                 </tr>
                                 <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; margin: 0;">
                                     <td class="content-block" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; vertical-align: top; margin: 0; padding: 0 0 15px;" valign="top">
-                                        <p style="font-family: 'Roboto', sans-serif; font-weight: 500;">Olá <?= $nome ?></p>
-                                        <p>Por favor, verifique seu e-mail.</p>
-                                        <p style="margin-bottom: 0; text-align: center;">Valide seu endereço de e-mail para começar a usar nosso sistema.</p>
+                                        <p style="font-family: 'Roboto', sans-serif; font-weight: 500;">Olá...</p>
+                                        <p>Para recuperar sua senha, clique no botão a baixo.</p>
+                                        <p>Caso não tenha pedido essa recuperação de senha, desconsidere essa mensagem.</p>
                                     </td>
                                 </tr>
                                 <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                     <td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 22px; text-align: center;" valign="top">
-                                        <a href="<?= site_url("confirma/{$token}") ?>" itemprop="url" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: .8125rem; color: #FFF; text-decoration: none; font-weight: 400; text-align: center; cursor: pointer; display: inline-block; border-radius: .25rem; text-transform: capitalize; background-color: #405189; margin: 0; border-color: #405189; border-style: solid; border-width: 1px; padding: .5rem .9rem;">Confirme seu e-mail clicando aqui!</a>
+                                        <a href="<?= site_url("recupera/{$token}") ?>" itemprop="url" style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: .8125rem; color: #FFF; text-decoration: none; font-weight: 400; text-align: center; cursor: pointer; display: inline-block; border-radius: .25rem; text-transform: capitalize; background-color: #405189; margin: 0; border-color: #405189; border-style: solid; border-width: 1px; padding: .5rem .9rem;">Defina uma nova senha clicando aqui!</a>
                                     </td>
                                 </tr>
                                 <tr style="font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
                                     <td class="content-block" style="color: #878a99; text-align: center;font-family: 'Roboto', sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0; padding-top: 5px" valign="top">
-                                        <p style="margin-bottom: 10px;">Ou Confirme usando este link:</p>
-                                        <a class="color: #405189;" href="<?= site_url("confirma/{$token}") ?>" target="_blank"><?= site_url("confirma/{$token}") ?></a>
+                                        <p style="margin-bottom: 10px;">Ou recupere sua conta usando este link:</p>
+                                        <a class="color: #405189;" href="<?= site_url("recupera/{$token}") ?>" target="_blank"><?= site_url("recupera/{$token}") ?></a>
                                     </td>
                                 </tr>
                             </table>

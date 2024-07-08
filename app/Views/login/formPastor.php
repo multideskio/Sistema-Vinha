@@ -120,9 +120,7 @@
         <div class="mb-4">
             <p class="mb-0 fs-12 text-muted fst-italic">Ao se registrar, você concorda com os <a href="/terms" class="text-primary text-decoration-underline fst-normal fw-medium">termos de uso</a></p>
         </div>
-
         
-
         <div class="mt-4">
             <button class="btn btn-success w-100" type="submit">Criar conta</button>
         </div>

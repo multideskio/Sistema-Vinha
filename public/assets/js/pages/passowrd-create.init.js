@@ -38,7 +38,7 @@ const length = $('.pass-length');
 passwordInput.on('focus', function() {
     messageBox.show();
 });
-
+ 
 passwordInput.on('blur', function() {
     messageBox.hide();
 });

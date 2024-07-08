@@ -1,8 +1,4 @@
 <?= $this->extend('admin/template') ?>
-<?= $this->section('css'); ?>
-<!-- Sweet Alert css-->
-<link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
-<?= $this->endSection(); ?>
 <?= $this->section('page') ?>
 <div class="clearfix">
     <p class="text-muted float-start">Gerenciamento de supervisores</p>

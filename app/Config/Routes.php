@@ -7,7 +7,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
 
-$routes->get('nova-conta', 'Login::novaconta', ['filter' => 'csrf']);
+$routes->get('nova-conta',      'Login::novaconta',   ['filter' => 'csrf']);
+$routes->get('recuperacao',     'Login::recuperacao', ['filter' => 'csrf']);
+$routes->get('recupera/(:any)', 'Login::novasenha/$1', ['filter' => 'csrf']);
 
 $routes->get('sair', 'Home::sair');
 $routes->get('teste', 'Home::teste');
@@ -28,6 +30,8 @@ $routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1', 'fil
     $routes->get('supervisor', 'Open::supervisor');
     $routes->post('pastor', 'Open::pastor');
     $routes->post('igreja', 'Open::igreja');
+    $routes->post('recover', 'Open::recover');
+    $routes->post('newpass', 'Open::newpass');
 });
 
 

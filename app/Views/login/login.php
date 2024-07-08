@@ -61,7 +61,7 @@ $rowConfig = $data->searchCacheData(1);
                                     </div>
                                     <div class="mb-3">
                                         <div class="float-end">
-                                            <a href="auth-pass-reset-basic" class="text-muted"><?= lang('Paginas.login.recuperar') ?></a>
+                                            <a href="/recuperacao" class="text-muted"><?= lang('Paginas.login.recuperar') ?></a>
                                         </div>
                                         <label class="form-label" for="password-input"><?= lang('Paginas.login.senha.label') ?></label>
                                         <div class="position-relative auth-pass-inputgroup mb-3">
