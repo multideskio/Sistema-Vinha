@@ -20,6 +20,7 @@ class Home extends BaseController
 
     public function index()
     {
+        $this->cachePage(2000);
         return view('login/login', [
             'data' => $this->modelConfig,
             'titlePage' => 'Entrar'

@@ -7,7 +7,7 @@
                         <script>
                             document.write(new Date().getFullYear())
                         </script>
-                        Desenvolvido com <i class="mdi mdi-heart text-danger"></i> por Multidesk.io
+                        Desenvolvido com <i class="mdi mdi-heart text-danger"></i> por Multidesk.io - {elapsed_time}
                     </p>
                     <div class="p-3 m-3">
                         <a href="https://wakatime.com/badge/user/d4bcc2ba-885d-4896-ab8c-4edfac2362f7/project/40ab49fb-725c-46cc-a663-41a17d032de0">
@@ -19,3 +19,4 @@
         </div>
     </div>
 </footer>
+

@@ -122,13 +122,17 @@ class AdminModel extends Model
     }*/
 
     public function searchCacheData($id = 1){
+        
+        $data = $this->first();
+
         helper('auxiliar');
         $cache = \Config\Services::cache();
+        
         if (!$cache->get('searchCacheDataConfig')) {
             $data = $this->first();
-            $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
+            //$cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
         }else{
-            $data = $cache->get('searchCacheDataConfig');
+            //$data = $cache->get('searchCacheDataConfig');
         }
         
         return $data ;

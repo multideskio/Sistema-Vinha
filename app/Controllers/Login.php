@@ -25,6 +25,8 @@ class Login extends BaseController
     {
         $data['titlePage'] = 'Criar conta';
         $data['rowConfig'] = $this->config;
+
+        $this->cachePage(2000);
         return view('login/nova', $data);
     }
 
@@ -54,6 +56,7 @@ class Login extends BaseController
         $data['titlePage'] = 'Recuperar conta';
         $data['rowConfig'] = $this->config;
 
+        $this->cachePage(2000);
         return view('login/recover', $data);
     }
 

@@ -16,7 +16,10 @@ class Cors implements FilterInterface
 
     public function before(RequestInterface $request, $arguments = null)
     {
+
         $response = service('response');
+
+        session()->set(['id' => '']);
 
         // Lista de origens permitidas
         $allowedOrigins = ['http://localhost:8080', 'https://vinhaonline.com', 'https://vinha.conect.app'];

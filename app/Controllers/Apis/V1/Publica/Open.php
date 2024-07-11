@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Apis\V1;
+namespace App\Controllers\Apis\V1\Publica ;
 
 use App\Libraries\EmailsLibraries;
 use App\Libraries\WhatsappLibraries;
