@@ -74,6 +74,9 @@ class Cache extends BaseConfig
      * if you run multiple applications with the same cache engine.
      */
 
+    // Adicione a propriedade prefix explicitamente
+    
+    public $prefix;
     public function __construct()
     {
         parent::__construct();
