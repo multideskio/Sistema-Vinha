@@ -352,12 +352,12 @@ function reembolsar(id, id_transacao, valor) {
 }
 
 
-function sincronizar(id) {
+function sincronizar(id_transacao) {
     Swal.fire({
         text: 'Sincronizando...',
         icon: 'info',
     });
-    $.getJSON(`${_baseUrl}api/v1/cielo/payment-status/${id}`,
+    $.getJSON(`${_baseUrl}api/v1/cielo/payment-status/${id_transacao}`,
         function (data, textStatus, jqXHR) {
             console.log(data.statusName)
             if ('Pending' === data.statusName) {
