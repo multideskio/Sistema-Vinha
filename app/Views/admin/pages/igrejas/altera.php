@@ -80,7 +80,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#privacy" role="tab">
+                        <a class="nav-link" data-bs-toggle="tab" href="#transacoes" role="tab">
                             <i class="far fa-envelope"></i> Transações do usuário
                         </a>
                     </li>
@@ -225,8 +225,8 @@
                     </div>
 
                     <!--end tab-pane-->
-                    <div class="tab-pane" id="privacy" role="tabpanel">
-
+                    <div class="tab-pane" id="transacoes" role="tabpanel">
+                        
                     </div>
                     <!--end tab-pane-->
                 </div>

@@ -3,6 +3,8 @@
 namespace App\Controllers\Apis\V1;
 
 use App\Gateways\Cielo\CieloCron;
+use App\Gateways\Cielo\CieloPix;
+use App\Models\ReembolsosModel;
 use App\Models\UsuariosModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -18,10 +20,16 @@ class Transacoes extends ResourceController
      */
 
     protected $modelTransacoes;
+    protected $modelReembolso;
+    protected $cieloCron;
+    protected $cieloPix;
 
     public function __construct()
     {
         $this->modelTransacoes = new \App\Models\TransacoesModel();
+        $this->modelReembolso = new ReembolsosModel();
+        $this->cieloCron = new CieloCron;
+        $this->cieloPix = new CieloPix;
 
         helper('auxiliar');
     }
@@ -34,8 +42,8 @@ class Transacoes extends ResourceController
             $data = $this->modelTransacoes->listSearch($this->request->getGet());
         }*/
 
-        $cielo = new CieloCron;
-        $data = $cielo->verifyTransaction();
+        //$cielo = new CieloCron;
+        $data = $this->cieloCron->verifyTransaction();
 
         return $this->respond($data);
     }
@@ -44,6 +52,12 @@ class Transacoes extends ResourceController
     {
         //
         $data = $this->modelTransacoes->listSearchUsers($this->request->getGet(), 10);
+        return $this->respond($data);
+    }
+
+    public function adminUsers($id = null)
+    {
+        $data = $this->modelTransacoes->listTransacaoUsuario($id, $this->request->getGet(), 10);
         return $this->respond($data);
     }
 
@@ -120,7 +134,7 @@ class Transacoes extends ResourceController
     {
         $modelUser = new UsuariosModel();
         $dateIn = $this->request->getGet('dateIn');
-        $dateOut = $this->request->getGet('dateOut') .' 23:59:59';
+        $dateOut = $this->request->getGet('dateOut') . ' 23:59:59';
 
         // Função auxiliar para garantir que o valor seja 0 se for null
         $getValor = function ($result) {
@@ -195,5 +209,29 @@ class Transacoes extends ResourceController
         $data['totalUsers'] = $modelUser->countAllResults();
 
         return $this->respond($data);
+    }
+
+    public function reembolso($id)
+    {
+        try {
+            $input = $this->request->getPost();
+            //GRAVA DADAOS DO REEMBOLSO
+            $data = [
+                "id_admin"     => session('data')['idAdm'],
+                "id_user"      => session('data')['id'],
+                'id_transacao' => $input['id_transacao'],
+                'descricao'    => $input['desc']
+            ];
+            $this->modelReembolso->transStart();
+            $this->modelReembolso->insert($data);
+            $valor = intval(limparString($input['valor']));
+            $reembolso = $this->cieloPix->refundPix($id, $valor);
+            $this->modelReembolso->transComplete();
+            //return $this->respond([$data, $valor]);
+            return $this->respond($reembolso);
+        } catch (\Exception $e) {
+            $this->modelReembolso->transRollback();
+            return $this->fail($e->getMessage());
+        }
     }
 }

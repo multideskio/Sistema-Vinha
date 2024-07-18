@@ -49,7 +49,7 @@ class CieloPix extends CieloBase
             if (session('data')['tipo'] == 'igreja') {
                 $builderPerfil = new IgrejasModel();
                 $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
+            } 
 
             if (session('data')['tipo'] == 'supervisor') {
                 $builderPerfil = new SupervisoresModel();
@@ -81,5 +81,63 @@ class CieloPix extends CieloBase
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança Pix: " . $e->getMessage());
         }
+    }
+
+
+    public function refundPix($paymentId, $amount)
+    {
+        try {
+            // Verifica se o reembolso está ativo
+            $cielo = $this->data();
+            if (!$cielo['active_pix']) {
+                throw new Exception('Reembolso por Pix não está ativo.');
+            }
+
+            // Valida os parâmetros
+            if (empty($paymentId)) {
+                throw new Exception('O ID do pagamento é obrigatório.');
+            }
+            if ($amount <= 0) {
+                throw new Exception('O valor do reembolso deve ser maior que zero.');
+            }
+
+            // Configura os parâmetros para a solicitação de reembolso
+            $params = [
+                "Amount" => $amount
+            ];
+
+            // Define o endpoint para o reembolso
+            $endPoint = "/1/sales/{$paymentId}/void";
+
+            // Faz a requisição para a API de reembolso
+            $response = $this->makeRequest('PUT', $endPoint, $params, 'handleRefundResponse');
+
+            // Registra a transação de reembolso no banco de dados
+            $this->saveTransactionRefund($paymentId, $amount, $response);
+
+            return $response;
+        } catch (Exception $e) {
+            throw new Exception("Erro ao processar o reembolso Pix: " . $e->getMessage());
+        }
+    }
+
+    protected function handleRefundResponse(array $response): array
+    {
+        return $response;
+    }
+
+    protected function saveTransactionRefund($paymentId, $amount, $response)
+    {
+        $data = [
+            'id_transacao' => $paymentId,
+            'valor' => centavosParaReais($amount),
+            'log' => json_encode($response),
+            'status_text' => 'Reembolsado'
+        ];
+
+        $dataId = $this->transactionsModel->where('id_transacao', $paymentId)->select('id')->first();
+
+        // Atualiza a transação existente com o status de reembolso
+        $this->transactionsModel->update($dataId['id'], $data);
     }
 }

@@ -59,6 +59,9 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
 
 
     $routes->get('transacoes/user', 'Transacoes::usuario', ['filter' => 'logged']);
+
+    $routes->post('transacoes/user/reembolso/(:any)', 'Transacoes::reembolso/$1', ['filter' => 'admin']);
+    $routes->get('transacoes/user/(:num)', 'Transacoes::adminUsers/$1', ['filter' => 'admin']);
     $routes->get('transacoes/dashboard', 'Transacoes::dashboardAdmin', ['filter' => 'logged']);
 
     $routes->resource('transacoes', ['filter' => 'logged']);

@@ -90,11 +90,12 @@ class IgrejasModel extends Model
             ->select('supervisores.nome AS nome_supervisor, supervisores.sobrenome AS sobre_supervisor')
             ->select('gerentes.nome AS nome_gerente, gerentes.sobrenome AS sobre_gerente')
             ->select('regioes.nome AS regiao')
-            ->select('usuarios.email AS email')
+            //->select('usuarios.email AS email')
             ->join('usuarios', 'usuarios.id_perfil = igrejas.id')
             ->join('supervisores', 'supervisores.id = igrejas.id_supervisor')
             ->join('gerentes', 'gerentes.id = supervisores.id_gerente')
-            ->join('regioes', 'regioes.id = supervisores.id_regiao');
+            ->join('regioes', 'regioes.id = supervisores.id_regiao')
+            ;
 
         // Adicionar condições de busca se o termo estiver presente
         if ($search) {
