@@ -75,21 +75,24 @@ class Cache extends BaseConfig
      */
 
     // Adicione a propriedade prefix explicitamente
-    
+
     public $prefix;
+
     public function __construct()
     {
         parent::__construct();
 
         // Defina o prefixo com base no domínio acessado
-        $domain = $_SERVER['SERVER_NAME'];
+        // Verifique se a chave SERVER_NAME existe no array $_SERVER
+        $domain = $_SERVER['SERVER_NAME'] ?? 'default_domain';
 
         if (strpos($domain, 'localhost') !== false) {
             $this->prefix = 'localhost_';
         } else {
-            $this->prefix = $domain.'_';
+            $this->prefix = $domain . '_';
         }
     }
+
 
     /**
      * --------------------------------------------------------------------------
