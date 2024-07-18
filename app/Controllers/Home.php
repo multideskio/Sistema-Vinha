@@ -13,14 +13,15 @@ class Home extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-        $this->data['rowConfig']  = $this->modelConfig->searchCacheData(1);
+        //$this->data['rowConfig']  = $this->modelConfig->searchCacheData(1);
         $this->data['textResult'] = "";
         $this->data['titlePage']  = "";
     }
 
     public function index()
     {
-        $this->cachePage(2000);
+        
+        //$this->cachePage(getCacheExpirationTimeInSeconds(60));
         return view('login/login', [
             'data' => $this->modelConfig,
             'titlePage' => 'Entrar'
@@ -29,7 +30,7 @@ class Home extends BaseController
 
     public function busca_ajuda()
     {
-
+        $this->cachePage(getCacheExpirationTimeInSeconds(60));
         $modelAjuda = new AjudaModel();
         if ($this->request->getGet('search')) {
             $rows = $modelAjuda->groupStart()

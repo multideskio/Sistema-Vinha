@@ -108,7 +108,7 @@ $rowConfig = $data->searchCacheData(1);
         <!-- end auth page content -->
 
         <!-- footer -->
-        <?= $this->include('login/footer.php') ?>
+        <?= $this->include('login/includes/footer.php') ?>
         <!-- end Footer -->
     </div>
     <!-- end auth-page-wrapper -->

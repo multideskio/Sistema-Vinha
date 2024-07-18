@@ -64,19 +64,19 @@ class RegioesModel extends Model
 
 
     //Cache dados de config
-    public function cacheData()
+    /*public function cacheData()
     {
         helper('auxiliar');
         $cache = \Config\Services::cache();
-        if (!$cache->get('regioes_Cache')) {
+        if (!$cache->get('regioes')) {
             $builder = $this->select('id, nome, descricao')->findAll();
             // Save into the cache for 365 days
-            $cache->save('regioes_Cache', $builder, getCacheExpirationTimeInSeconds(365));
+            $cache->save('regioes', $builder, getCacheExpirationTimeInSeconds(365));
         } else {
-            $builder = $cache->get('regioes_Cache');
+            $builder = $cache->get('regioes');
         }
         return $this->select('id, nome, descricao')->findAll();
-    }
+    }*/
 
 
     public function listSearch($input = false)
@@ -105,9 +105,10 @@ class RegioesModel extends Model
         } else {
             helper('auxiliar');
             $cache = \Config\Services::cache();
+            
             if (!$cache->get('regioes')) {
                 // Executa a consulta e paginação
-                $rows  = $this->paginate(5);
+                $rows  = $this->paginate(30);
                 $pager = $this->pager->links('default', 'paginate');
 
                 // Prepara os dados para retorno
@@ -115,10 +116,13 @@ class RegioesModel extends Model
                     'rows' => $rows,
                     'pager' => $pager
                 ];
+
                 // Save into the cache for 365 days
                 $cache->save('regioes', $data, getCacheExpirationTimeInSeconds(365));
             } else {
+
                 $data = $cache->get('regioes');
+
             }
         }
         return $data;

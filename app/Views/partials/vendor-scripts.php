@@ -22,7 +22,8 @@
         });
     }
 
-    let deferredPrompt;
+    
+    /*let deferredPrompt;
 
     window.addEventListener('beforeinstallprompt', (e) => {
         // Previne o mini-infobar de aparecer no mobile
@@ -35,8 +36,7 @@
             document.getElementById('pwa-install-banner').style.display = 'block';
         }, 20000);
     });
-
-    document.getElementById('install-button').addEventListener('click', async () => {
+document.getElementById('install-button').addEventListener('click', async () => {
         if (deferredPrompt) {
             // Mostra o prompt de instalação
             deferredPrompt.prompt();
@@ -54,5 +54,5 @@
         }
         // Esconde o banner após a interação
         document.getElementById('pwa-install-banner').style.display = 'none';
-    });
+    });*/
 </script>

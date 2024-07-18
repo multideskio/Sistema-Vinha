@@ -79,7 +79,7 @@
         </div>
         
         <!-- footer -->
-        <?= $this->include('login/footer.php') ?>
+        <?= $this->include('login/includes/footer.php') ?>
         <!-- end Footer -->
     </div>
     <!-- end auth-page-wrapper -->

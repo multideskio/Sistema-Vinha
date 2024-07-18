@@ -336,7 +336,7 @@ class Usuarios extends ResourceController
             return $this->modelUsuarios->login($input['email'], $input['senha']);
         } catch (\Exception $e) {
             session()->setFlashdata("error", $e->getMessage());
-            return redirect()->back();
+            return redirect()->to(site_url());
         }
     }
 

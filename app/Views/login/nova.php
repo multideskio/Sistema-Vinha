@@ -1,11 +1,9 @@
 <?= $this->include('partials/main') ?>
-
 <head>
     <?php echo view('partials/title-meta', array('title' => $titlePage)); ?>
     <?= $this->include('partials/head-css') ?>
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 </head>
-
 <body>
     <div class="auth-page-wrapper pt-5">
         <!-- auth page bg -->
@@ -17,7 +15,6 @@
                 </svg>
             </div>
         </div>
-
         <!-- auth page content -->
         <div class="auth-page-content">
             <div class="container">
@@ -49,20 +46,16 @@
                                             <option value="2">Igreja</option>
                                         </select>
                                     </div>
-
-                                    <?= $this->include('login/formIgreja.php') ?>
-                                    <?= $this->include('login/formPastor.php') ?>
-
+                                    <?= $this->include('login/forms/formIgreja.php') ?>
+                                    <?= $this->include('login/forms/formPastor.php') ?>
                                 </div>
                             </div>
                             <!-- end card body -->
                         </div>
                         <!-- end card -->
-
                         <div class="mt-4 text-center">
-                            <p class="mb-0">Já tem uma conta?<a href="/" class="fw-semibold text-primary text-decoration-underline"> Entrar </a> </p>
+                            <p class="mb-0">Já tem uma conta?<a href="/" class="fw-semibold text-primary text-decoration-underline">Entrar</a></p>
                         </div>
-
                     </div>
                 </div>
                 <!-- end row -->
@@ -70,43 +63,27 @@
             <!-- end container -->
         </div>
         <!-- end auth page content -->
-
         <!-- footer -->
-        <?= $this->include('login/footer.php') ?>
+        <?= $this->include('login/includes/footer.php') ?>
         <!-- end Footer -->
     </div>
     <!-- end auth-page-wrapper -->
-
     <?= $this->include('partials/vendor-scripts') ?>
-
     <!-- particles js -->
     <script src="/assets/libs/particles.js/particles.js"></script>
     <!-- particles app js -->
     <script src="/assets/js/pages/particles.app.js"></script>
     <!-- validation init -->
     <script src="/assets/js/pages/form-validation.init.js"></script>
-    
-    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    
-    <!-- password create init -->
-    <script src="/assets/js/pages/passowrd-create.init.js"></script>
-
-    
-
     <!-- Sweet Alerts js -->
     <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-
     <!-- Plugin adicionais -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script src="/assets/js/custom/functions.min.js"></script>
-
     <!-- cleave.js -->
     <script src="/assets/libs/cleave.js/cleave.min.js"></script>
-
     <script src="/assets/js/custom/newlogin.min.js"></script>
-
 </body>
 
 </html>

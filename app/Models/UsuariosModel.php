@@ -981,9 +981,6 @@ class UsuariosModel extends Model
         }
     }
 
-
-
-
     /**
      * MELHORAR RETORNO DE DADOS
      */

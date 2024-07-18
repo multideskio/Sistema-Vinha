@@ -87,23 +87,18 @@ class AdminModel extends Model
     protected function limpaStrings(array $data)
     {
         helper('auxiliar');
-
         if (array_key_exists('cnpj', $data['data'])) {
             $data['data']['cnpj'] = limparString($data['data']['cnpj']);
         }
-
         if (array_key_exists('cep', $data['data'])) {
             $data['data']['cep'] = limparString($data['data']['cep']);
         }
-
         if (array_key_exists('telefone', $data['data'])) {
             $data['data']['telefone'] = limparString($data['data']['telefone']);
         }
-
         if (array_key_exists('celular', $data['data'])) {
             $data['data']['celular'] = limparString($data['data']['celular']);
         }
-
         return $data;
     }
 
@@ -122,20 +117,15 @@ class AdminModel extends Model
     }*/
 
     public function searchCacheData($id = 1){
-        
-        $data = $this->first();
-
+        $data = false ;
         helper('auxiliar');
         $cache = \Config\Services::cache();
-        
         if (!$cache->get('searchCacheDataConfig')) {
             $data = $this->first();
-            //$cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
+            $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
         }else{
-            //$data = $cache->get('searchCacheDataConfig');
+            $data = $cache->get('searchCacheDataConfig');
         }
-        
         return $data ;
-
     }
 }

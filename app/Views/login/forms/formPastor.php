@@ -2,7 +2,9 @@
     <?= form_open("api/v1/public/pastor", 'class="needs-validation formSend" novalidate') ?>
         <div class="mb-3">
             <label for="selectSupervisor" class="form-label">Supervisor <span class="text-danger">*</span></label>
-            <select name="selectSupervisor" id="selectSupervisor" class="form-select selectSupervisor" required></select>
+            <select name="selectSupervisor" id="selectSupervisor" class="form-select selectSupervisor" required>
+                <option value="">Carregando...</option>
+            </select>
             <div class="invalid-feedback">
                 Escolha um supervisor
             </div>
@@ -25,8 +27,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="cpf" class="form-label">CPF <span class="text-danger">*</span></label>
-            <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="Enter CPF" required>
+            <label for="p_cpf" class="form-label">CPF <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="p_cpf" name="cpf" placeholder="Enter CPF" required>
             <div class="invalid-feedback">
                 Informe seu CPF
             </div>
@@ -49,8 +51,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="cep">CEP <span class="text-danger">*</span></label>
-            <input type="text" name="cep" id="cep" class="form-control cep" placeholder="00000-000" required>
+            <label for="p_cep">CEP <span class="text-danger">*</span></label>
+            <input type="text" name="cep" id="p_cep" class="form-control cep" placeholder="00000-000" required>
             <div class="invalid-feedback">
                 Informe seu CEP
             </div>
@@ -89,8 +91,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="whatsapp">Telefone/WhatsApp <span class="text-danger">*</span></label>
-            <input type="text" name="whatsapp" id="whatsapp" class="form-control whatsapp" placeholder="+55 (00) 9 0000-0000" required>
+            <label for="p_whatsapp">Telefone/WhatsApp <span class="text-danger">*</span></label>
+            <input type="text" name="whatsapp" id="p_whatsapp" class="form-control whatsapp" placeholder="+55 (00) 9 0000-0000" required>
             <div class="invalid-feedback">
                 Informe seu número de whatsApp
             </div>
@@ -114,15 +116,10 @@
                 </div>
             </div>
         </div>
-        
         <?= $this->include('login/includes/validacao.php') ?>
-
-        <div class="mb-4">
-            <p class="mb-0 fs-12 text-muted fst-italic">Ao se registrar, você concorda com os <a href="/terms" class="text-primary text-decoration-underline fst-normal fw-medium">termos de uso</a></p>
-        </div>
-        
+        <?= $this->include('login/includes/terms.php') ?>
         <div class="mt-4">
-            <button class="btn btn-success w-100" type="submit">Criar conta</button>
+            <button class="btn btn-success w-100" type="submit" id="btn-send-pastor">Criar conta</button>
         </div>
     </form>
 </div>

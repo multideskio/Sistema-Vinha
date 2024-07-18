@@ -67,6 +67,7 @@ class SupervisoresModel extends Model
     {
         $cache = \Config\Services::cache();
         $cache->delete("supervisores_Cache");
+        $cache->delete("public_supervisores");
     }
     protected function filterHtml(array $data)
     {

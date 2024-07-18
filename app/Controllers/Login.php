@@ -26,7 +26,7 @@ class Login extends BaseController
         $data['titlePage'] = 'Criar conta';
         $data['rowConfig'] = $this->config;
 
-        $this->cachePage(2000);
+        //$this->cachePage(2000);
         return view('login/nova', $data);
     }
 

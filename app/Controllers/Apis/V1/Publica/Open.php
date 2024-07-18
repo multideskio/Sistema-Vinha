@@ -26,6 +26,7 @@ class Open extends ResourceController
     protected $modelSupervisores;
     protected $modelMessages;
     protected $request;
+    protected $cache;
 
     public function __construct()
     {
@@ -35,6 +36,9 @@ class Open extends ResourceController
         $this->modelSupervisores = new SupervisoresModel();
         $this->modelMessages     = new ConfigMensagensModel();
         $this->request           = service('request');
+        $this->cache             = \Config\Services::cache();
+
+        helper('auxiliar');
     }
     public function index()
     {
@@ -165,9 +169,92 @@ class Open extends ResourceController
             if ($this->modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
             };
+
+            //ARRAY CADASTRO DO PASTOR
+            $data = [
+                "id_adm"       => 1,
+                //"id_user"      => session('data')['id'],
+                "id_supervisor" => $input['selectSupervisor'],
+                "nome_tesoureiro" => $input['nomeTesoureiro'],
+                "sobrenome_tesoureiro" => $input['sobreTesoureiro'],
+                "cpf_tesoureiro" => $input['cpfTesoureiro'],
+                "fundacao" => $input['dataFundacao'],
+                "razao_social" => $input['razaosocial'],
+                "fantasia" => $input['fantasia'],
+                "cnpj" => $input['cnpj'],
+                "uf" => $input['uf'],
+                "cidade" => $input['cidade'],
+                "cep" => $input['cep'],
+                "complemento" => $input['complemento'],
+                "bairro" => $input['bairro'],
+                "data_dizimo" => $input['dia'],
+                //"telefone" => $input['tel'],
+                "celular" => $input['whatsapp']
+            ];
+
+            $id = $this->modelIgreja->insert($data);
+
+            //VERIFICA SE HÁ ERROS
+            if ($id  === false) {
+                throw new SecurityException($this->modelIgreja->errors()[]);
+            }
+
+            //ARRAY CADASTRO USUARIO PASTOR
+            $dataUser = [
+                'tipo'        => 'igreja',
+                'id_perfil'   => $id,
+                'email'       => $input['email'],
+                'password'    => $input['password'],
+                'nivel'       => '4'
+            ];
+
+            $this->modelUser->transStart();
+            //INSERE USUÁRIO
+            $user = $this->modelUser->insert($dataUser);
+
+            //VERIFICA SE HÁ ERROS
+            if ($user === false) {
+                throw new SecurityException($this->modelUser->errors()[]);
+            }
+            $this->modelUser->transComplete();
             $this->modelIgreja->transComplete();
+
+            //DADOS PARA ENVIO NO WHATSAPP
+            //BUSCA DADOS DA API
+            $whatsapp = new WhatsappLibraries();
+            $messages = $this->modelMessages->where('tipo', 'novo_usuario')->first();
+
+            //VERIFICA SE ESTÁ ATIVO PARA ENVIO
+            if ($messages['status']) {
+                // Valores que irão substituir as tags
+                $valores = [
+                    '{NOME}'  => $input['razaosocial'],
+                    '{EMAIL}' => $input['email'],
+                    '{TEL}'   => $input['whatsapp']
+                ];
+                // Substituir as tags com os valores
+                $novaString = strtr($messages['mensagem'], $valores);
+                $msg['message'] = $novaString;
+                $whatsapp->sendMessageText($msg, $input['whatsapp']);
+            }
+
+            //DADOS PARA ENVIO DE EMAIL
+            //ENVIA EMAIL DE VERIFICAÇÃO DE CADASTRO
+            $newEmail = new EmailsLibraries;
+            $rowUser = $this->modelUser->find($user);
+            $sendEmail = [
+                'nome' => $input['razaosocial'],
+                'token' => $rowUser['token']
+            ];
+            $message = view('emails/confirma-email', $sendEmail);
+            $newEmail->envioEmail($rowUser['email'], 'Confirme seu e-mail', $message);
+
+            //RESPOSTA DE SUCESSO
+            return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
+
         } catch (SecurityException $e) {
             $this->modelIgreja->transRollback();
+            $this->modelUser->transRollback();
             return $this->failUnauthorized($e->getMessage());
         }
     }
@@ -182,16 +269,21 @@ class Open extends ResourceController
      */
     public function supervisor()
     {
-
         if (!$this->request->isAJAX()) {
             return $this->failUnauthorized();
         }
+
         $data = $this->modelSupervisores
             ->select('id, nome, sobrenome')
             ->findAll();
 
         if (count($data)) {
-            return $this->respond($data);
+            if(!$this->cache->get('public_supervisores')){
+                $this->cache->save('public_supervisores', $data, getCacheExpirationTimeInSeconds(30));
+                return $this->respond($data);
+            }else{
+                return $this->respond($this->cache->get('public_supervisores'));
+            }
         } else {
             return $this->failNotFound();
         }
