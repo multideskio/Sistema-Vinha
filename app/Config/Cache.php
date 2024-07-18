@@ -87,7 +87,7 @@ class Cache extends BaseConfig
         if (strpos($domain, 'localhost') !== false) {
             $this->prefix = 'localhost_';
         } else {
-            $this->prefix = parse_url($domain, PHP_URL_HOST) . '_';
+            $this->prefix = $domain.'_';
         }
     }
 
