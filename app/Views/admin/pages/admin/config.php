@@ -210,6 +210,15 @@
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-info" type="submit">Atualizar SMTP</button>
+                            /* The above code is a mix of PHP and HTML. It is setting the value of an
+                            input field with the name "emailUser" to the value stored in the session
+                            data under the key 'email'. This code is using the PHP shorthand syntax
+                            <?= to echo the value directly into the HTML output. */
+                            /* The above code is a mix of PHP and HTML. It is setting the value of an
+                            input field with the name "emailUser" to the value stored in the session
+                            data under the key 'email'. This code is using the PHP shorthand syntax
+                            <?= to echo the value directly into the HTML output. */
+                            <input type="text" name="emailUser" value="<?= session('data')['email'] ?>">
                             <button class="btn btn-dark" type="button" id="testarEmail">Testar envio de e-mail</button>
                         </div>
                         </form>
