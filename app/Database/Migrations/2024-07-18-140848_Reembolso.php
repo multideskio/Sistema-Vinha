@@ -48,7 +48,7 @@ class Reembolso extends Migration
         ]);
 
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('id_transacao', 'transacoes', 'id', 'CASCADE', 'CASCADE');
+        //$this->forge->addForeignKey('id_transacao', 'transacoes', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('reembolsos', true);
         
 
