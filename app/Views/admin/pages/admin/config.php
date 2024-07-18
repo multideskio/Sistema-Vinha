@@ -557,5 +557,5 @@
 <script>
     const idEmp = "<?= session('data')['idAdm'] ?>";
 </script>
-<script src="/assets/js/custom/config.min.js"></script>
+<script src="/assets/js/custom/config.js"></script>
 <?= $this->endSection(); ?>
