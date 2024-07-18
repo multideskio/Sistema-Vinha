@@ -130,7 +130,7 @@ class CieloPix extends CieloBase
     {
         $data = [
             'id_transacao' => $paymentId,
-            'valor' => centavosParaReais($amount),
+            //'valor' => centavosParaReais($amount),
             'log' => json_encode($response),
             'status_text' => 'Reembolsado'
         ];

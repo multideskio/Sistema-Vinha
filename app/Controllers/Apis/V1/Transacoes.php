@@ -216,15 +216,17 @@ class Transacoes extends ResourceController
         try {
             $input = $this->request->getPost();
             //GRAVA DADAOS DO REEMBOLSO
+            $valor = intval(limparString($input['valor']));
             $data = [
                 "id_admin"     => session('data')['idAdm'],
                 "id_user"      => session('data')['id'],
+                "valor"        => centavosParaReais($valor),
                 'id_transacao' => $input['id_transacao'],
                 'descricao'    => $input['desc']
             ];
             $this->modelReembolso->transStart();
             $this->modelReembolso->insert($data);
-            $valor = intval(limparString($input['valor']));
+            
             $reembolso = $this->cieloPix->refundPix($id, $valor);
             $this->modelReembolso->transComplete();
             //return $this->respond([$data, $valor]);

@@ -32,6 +32,12 @@ class Reembolso extends Migration
             'descricao' => [
                 'type' => 'TEXT'
             ],
+
+            'valor' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2'
+            ],
+
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

@@ -16,7 +16,8 @@ class ReembolsosModel extends Model
         'id_admin',
         'id_user',
         'id_transacao',
-        'descricao'
+        'descricao',
+        'valor'
     ];
 
     protected bool $allowEmptyInserts = false;

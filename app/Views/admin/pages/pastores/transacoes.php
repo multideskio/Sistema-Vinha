@@ -12,7 +12,7 @@
                     <th title="Data de pagamento">Dt.Pg</th>
                     <th>Valor</th>
                     <th>Situação</th>
-                    <th>Forma de pagamento</th>
+                    <th>Tipo</th>
                     <th>Ações</th>
                 </tr>
             </thead>

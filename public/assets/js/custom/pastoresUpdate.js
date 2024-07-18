@@ -1,6 +1,13 @@
-$(document).ready(function() {
+$(document).ready(function () {
     listTransacoes();
     atualizarTabela();
+
+    $('#valor').maskMoney({
+        allowNegative: false,
+        thousands: '.',
+        decimal: ',',
+        affixesStay: true
+    });
 
     $('#formReembolso').removeAttr('action');
 
@@ -33,21 +40,21 @@ $(document).ready(function() {
 
     searchUpdate(_idSearch)
 
-    $(".enviaLinks").on('change', function() {
+    $(".enviaLinks").on('change', function () {
         $('.formTexts').submit();
     });
 
     $('.formTexts').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
+        beforeSubmit: function (formData, jqForm, options) {
             options.type = 'PUT'
         },
-        success: function(responseText, statusText, xhr, $form) {
+        success: function (responseText, statusText, xhr, $form) {
             $(".alertAlterado").show(),
                 setTimeout(() => {
                     $(".alertAlterado").fadeOut()
                 }, 1200);
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.log(xhr)
             console.log(status)
             console.log(error)
@@ -55,17 +62,17 @@ $(document).ready(function() {
     });
 
     $('.formGeral').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
+        beforeSubmit: function (formData, jqForm, options) {
             options.type = 'PUT'
         },
-        success: function(responseText, statusText, xhr, $form) {
+        success: function (responseText, statusText, xhr, $form) {
             Swal.fire({
                 title: 'OK!',
                 text: 'Atualizado com sucesso!',
                 icon: 'success'
             })
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             Swal.fire({
                 title: 'Erro ao atualizar...',
                 icon: 'error',
@@ -75,22 +82,22 @@ $(document).ready(function() {
         }
     });
 
-    $("#profile-img-file-input").on('change', function() {
+    $("#profile-img-file-input").on('change', function () {
         $('.formUpload').submit();
     });
 
     $('.formUpload').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
+        beforeSubmit: function (formData, jqForm, options) {
             console.log('Enviando...')
         },
-        success: function(responseText, statusText, xhr, $form) {
+        success: function (responseText, statusText, xhr, $form) {
             Swal.fire({
                 title: 'OK!',
                 text: 'Imagem atualizada com sucesso!',
                 icon: 'success'
             })
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             Swal.fire({
                 title: 'Erro ao atualizar imagem',
                 icon: 'error',
@@ -115,7 +122,7 @@ function searchUpdate(id) {
         // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
         var url = _baseUrl + `api/v1/pastores/${id}`;
         $.getJSON(url)
-            .done(function(data, textStatus, jqXHR) {
+            .done(function (data, textStatus, jqXHR) {
                 if (data.foto) {
                     $("#fotoPerfil").attr('src', data.foto);
                 }
@@ -143,7 +150,7 @@ function searchUpdate(id) {
                 populateSupervisorSelect(data.idSupervisor)
                 /*listGerentes(data.idGerente)*/
 
-            }).fail(function(jqXHR, textStatus, errorThrown) {
+            }).fail(function (jqXHR, textStatus, errorThrown) {
 
                 $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
 
@@ -156,7 +163,7 @@ function searchUpdate(id) {
                     icon: 'error',
                     confirmButtonClass: 'btn btn-primary w-xs mt-2',
                     buttonsStyling: false,
-                }).then(function(result) {
+                }).then(function (result) {
                     history.back();
                 });;
 
@@ -164,7 +171,7 @@ function searchUpdate(id) {
             });
 
         // Tratamento de erro para a imagem
-        $('#fotoPerfil').on('error', function() {
+        $('#fotoPerfil').on('error', function () {
             $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
         });
     }
@@ -174,9 +181,9 @@ function searchUpdate(id) {
 function populateSupervisorSelect(idAtual) {
     $('#selectSupervisor').empty().removeAttr('required');
 
-    $.getJSON(_baseUrl + "api/v1/supervisores/list", function(data) {
+    $.getJSON(_baseUrl + "api/v1/supervisores/list", function (data) {
 
-        data.forEach(function(supervisor) {
+        data.forEach(function (supervisor) {
             if (idAtual === supervisor.id) {
                 var option = `<option selected value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
             } else {
@@ -193,13 +200,13 @@ function populateSupervisorSelect(idAtual) {
 
         new Choices('#selectSupervisor');
 
-    }).fail(function() {
+    }).fail(function () {
         Swal.fire({
             title: 'Cadastre supervisores antes...',
             icon: 'error',
             confirmButtonClass: 'btn btn-primary w-xs mt-2',
             buttonsStyling: false,
-        }).then(function(result) {
+        }).then(function (result) {
             history.back();
         });
     });
@@ -207,13 +214,13 @@ function populateSupervisorSelect(idAtual) {
 
 
 function listTransacoes() {
-    $("#inSearchBtn").click(function(e) {
+    $("#inSearchBtn").click(function (e) {
         var search = $("#inSearch").val();
         atualizarTabela(search);
         $(".loadResult").hide();
     });
 
-    $("#inSearch").keypress(function(e) {
+    $("#inSearch").keypress(function (e) {
         $(".loadResult").hide();
         // Verifica se a tecla pressionada é a tecla Enter (código 13)
         if (e.which === 13) {
@@ -222,7 +229,7 @@ function listTransacoes() {
         }
     });
 
-    $("#pager").on("click", "a", function(e) {
+    $("#pager").on("click", "a", function (e) {
         $(".loadResult").hide();
         e.preventDefault();
         var href = $(this).attr("href");
@@ -259,7 +266,7 @@ function atualizarTabela(search = false, page = 1) {
     }
 
     $.getJSON(url)
-        .done(function(data, textStatus, jqXHR) {
+        .done(function (data, textStatus, jqXHR) {
             $("#valorPageView").html(data.currentPageTotal);
             $("#valorTotalView").html(data.allPagesTotal);
             $("#numResults").html(data.num);
@@ -270,21 +277,21 @@ function atualizarTabela(search = false, page = 1) {
                 $('#cardResult').show();
                 $('.noresult').hide(); // Oculta a mensagem de 'noresult' se houver dados
             }
-            $.each(data.rows, function(index, row) {
+            $.each(data.rows, function (index, row) {
                 var status;
                 var btn;
                 if (row.status == 'Pago') {
                     status = `<span class="badge bg-success">${row.status}</span>`;
-                    btn = `<button class="btn btn-warning btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}')">Reembolsar</button>`;
+                    btn = `<button class="btn btn-warning btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}', '${row.valor}')">Reembolsar</button> <button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else if (row.status == 'Cancelado') {
                     status = `<span class="badge bg-danger">${row.status}</span>`;
-                    btn = '';
+                    btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else if (row.status == 'Reembolsado') {
                     status = `<span class="badge bg-dark">${row.status}</span>`;
-                    btn = '';
+                    btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else {
                     status = `<span class="badge bg-warning">${row.status}</span>`;
-                    btn = `<button class="btn btn-info btn-sm" onclick="sincronizar(${row.id_transacao})">Sincronizar</button>`
+                    btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`
                 }
 
                 var newRow = `
@@ -307,33 +314,34 @@ function atualizarTabela(search = false, page = 1) {
             $(".loadResult").hide();
             $("#pager").html(data.pager);
         })
-        .fail(function(jqXHR, textStatus, errorThrown) {
+        .fail(function (jqXHR, textStatus, errorThrown) {
             console.error("Erro ao carregar os dados:", textStatus, errorThrown);
         });
 }
 
 
-function reembolsar(id, id_transacao){
+function reembolsar(id, id_transacao, valor) {
     //alert(id)
     $("#staticBackdrop").modal('show');
     var url = `${_baseUrl}api/v1/transacoes/user/reembolso/${id}?`;
     $("#formReembolso").attr('action', url);
     $('#id_transacao').val(id_transacao)
+    $('#valor').val(valor)
 
     $('.formReembolso').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
+        beforeSubmit: function (formData, jqForm, options) {
             Swal.fire({
                 text: 'Solicitando reembolso...',
                 icon: 'info',
             });
         },
-        success: function(responseText, statusText, xhr, $form) {
+        success: function (responseText, statusText, xhr, $form) {
             Swal.fire({
                 text: 'Reembolso realizado com sucesso...',
                 icon: 'success'
             })
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.log(xhr.responseJSON.messages.error)
             Swal.fire({
                 text: 'Erro ao tentar fazer o reembolso, se caso o erro persistir, entre com contato com suporte.',
@@ -341,4 +349,48 @@ function reembolsar(id, id_transacao){
             })
         }
     });
+}
+
+
+function sincronizar(id) {
+    Swal.fire({
+        text: 'Sincronizando...',
+        icon: 'info',
+    });
+    $.getJSON(`${_baseUrl}api/v1/cielo/payment-status/${id}`,
+        function (data, textStatus, jqXHR) {
+            console.log(data.statusName)
+            if ('Pending' === data.statusName) {
+                Swal.fire({
+                    html: 'Transação sincronizada<br>status: Pendente',
+                    icon: 'warning',
+                });
+            } else if ('Authorized' === data.statusName) {
+                Swal.fire({
+                    html: 'Transação sincronizada<br>status: Pago',
+                    icon: 'success',
+                }).then(() => {
+                    atualizarTabela()
+                });
+            } else if ('PaymentConfirmed' === data.statusName) {
+                Swal.fire({
+                    html: 'Transação sincronizada<br>status: Pago',
+                    icon: 'success',
+                }).then(() => {
+                    atualizarTabela()
+                });
+            }else if('Refunded' === data.statusName){
+                Swal.fire({
+                    html: 'Transação sincronizada<br>status: Reembolsado',
+                    icon: 'info',
+                })
+            }
+            else {
+                Swal.fire({
+                    html: 'Transação sincronizada<br>status: ' + data.statusName,
+                    icon: 'error',
+                });
+            }
+        }
+    );
 }

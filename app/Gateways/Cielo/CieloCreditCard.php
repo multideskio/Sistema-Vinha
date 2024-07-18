@@ -39,14 +39,14 @@ class CieloCreditCard extends CieloBase
     {
         try {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
-            
+
             $endPoint = '/1/sales/';
-            
+
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
 
             $this->saveTransactionCreditCard($params, $response, $descricao, 'Crédito', $desc_l);
 
-            if(!$response['Payment']['ReturnMessage'] == 'Operation Successful'){
+            if (!$response['Payment']['ReturnMessage'] == 'Operation Successful') {
                 throw new Exception('Tranzação não autorizada', 1);
             };
 
@@ -54,5 +54,41 @@ class CieloCreditCard extends CieloBase
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança de cartão de crédito: " . $e->getMessage());
         }
+    }
+
+    
+    public function refundCreditCard($paymentId, $amount)
+    {
+        try {
+            if (empty($paymentId)) {
+                throw new Exception('O ID do pagamento é obrigatório.');
+            }
+
+            $params = [
+                "Amount" => $amount // valor em centavos, 10000 = R$ 100,00
+            ];
+
+            $endPoint = "/1/sales/{$paymentId}/void";
+
+            $response = $this->makeRequest('PUT', $endPoint, $params, 'handleRefundResponse');
+
+            if ($response['Status'] != 10) { // 10 é o status para 'PaymentCancelled'
+                throw new Exception("Reembolso não realizado. Status: {$response['Status']}");
+            }
+
+            return $response;
+        } catch (Exception $e) {
+            throw new Exception("Erro ao realizar reembolso: " . $e->getMessage());
+        }
+    }
+
+    protected function handleRefundResponse($response)
+    {
+        return [
+            'paymentId' => $response['PaymentId'],
+            'status' => $response['Status'],
+            'statusName' => $this->getPaymentStatusName($response['Status']),
+            'full' => $response
+        ];
     }
 }
