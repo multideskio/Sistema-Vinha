@@ -210,7 +210,7 @@
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-info" type="submit">Atualizar SMTP</button>
-                            <input type="text" name="emailUser" value="<?= session('data')['email'] ?>">
+                            <input type="text" name="<?= time() ?>" id="emailUser" value="<?= session('data')['email'] ?>">
                             <button class="btn btn-dark" type="button" id="testarEmail">Testar envio de e-mail</button>
                         </div>
                         </form>

@@ -132,15 +132,13 @@ class Emails extends ResourceController
 
     public function teste()
     {
+        $request = service('request');
+        $input   = $request->getPost('email');
+
         try {
             $email = new EmailsLibraries();
-            $request = service('request');
-            $input   = $request->getPost('email');
-
             $modelConfigs = new AdminModel();
-
             $data = $modelConfigs->select('logo')->find(session('data')['idAdm']);
-
             $message = view('emails/teste', $data);
             $email->testarEnvioEmail($input, 'Teste de envio', $message);
             return $this->respond(['message' => 'Mensagem enviada com sucesso.']);

@@ -73,7 +73,20 @@ class Cache extends BaseConfig
      * This string is added to all cache item names to help avoid collisions
      * if you run multiple applications with the same cache engine.
      */
-    public string $prefix = '';
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Defina o prefixo com base no domínio acessado
+        $domain = $_SERVER['SERVER_NAME'];
+
+        if (strpos($domain, 'localhost') !== false) {
+            $this->prefix = 'localhost_';
+        } else {
+            $this->prefix = parse_url($domain, PHP_URL_HOST) . '_';
+        }
+    }
 
     /**
      * --------------------------------------------------------------------------

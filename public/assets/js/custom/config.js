@@ -233,7 +233,8 @@ function envioDeTeste() {
 
 
     $("#testarEmail").on('click', function () {
-        var email = $('#emailUser').val();
+        let email = $('#emailUser').val();
+        console.log(email);
         Swal.fire({
             title: `Estamos enviando um e-mail de teste para ${email}`,
             icon: 'info'
