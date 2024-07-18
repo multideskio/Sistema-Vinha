@@ -23,6 +23,7 @@ class Login extends BaseController
 
     public function novaconta(): string
     {
+        $this->cachePage(getCacheExpirationTimeInSeconds(365));
         $data['titlePage'] = 'Criar conta';
         $data['rowConfig'] = $this->config;
 
@@ -32,6 +33,7 @@ class Login extends BaseController
 
     public function novasenha($token): string
     {
+        $this->cachePage(getCacheExpirationTimeInSeconds(365));
         $data['rowConfig'] = $this->config;
 
         if ($token) {
@@ -56,7 +58,7 @@ class Login extends BaseController
         $data['titlePage'] = 'Recuperar conta';
         $data['rowConfig'] = $this->config;
 
-        $this->cachePage(2000);
+        $this->cachePage(getCacheExpirationTimeInSeconds(365));
         return view('login/recover', $data);
     }
 
