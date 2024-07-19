@@ -28,7 +28,7 @@ $routes->get('debito', 'Home::debito');
 $routes->get('credito', 'Home::credito');
 $routes->match(['get', 'post', 'put', 'delete', 'options', 'patch'], 'teste', 'Home::teste');*/
 
-$routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1\Publica', 'filter' => 'csrf'], static function ($routes) {
+$routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1\Publica'], static function ($routes) {
     $routes->get('supervisor', 'Open::supervisor');
     $routes->post('pastor', 'Open::pastor');
     $routes->post('igreja', 'Open::igreja');
