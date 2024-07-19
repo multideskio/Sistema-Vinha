@@ -87,7 +87,7 @@ class TransacoesModel extends Model
 
         $this->select("transacoes.*")
             ->select('usuarios.tipo AS tipo_user')
-            ->where('transacoes.id_cliente', $id)
+            ->where('transacoes.id_user', $id)
             //->where('transacoes.id_user', session('data')['id'])
             ->join('usuarios', 'usuarios.id = transacoes.id_user')
             ->orderBy('transacoes.id', $order);

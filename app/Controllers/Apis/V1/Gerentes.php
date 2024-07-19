@@ -55,7 +55,7 @@ class Gerentes extends ResourceController
 
         $search = $this->modelGerentes
             ->select('gerentes.*')
-            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp, usuarios.id AS id_login')
             ->join('usuarios', 'usuarios.id_perfil = gerentes.id')
             ->where('usuarios.tipo', 'gerente')
             ->find($id);
@@ -63,6 +63,7 @@ class Gerentes extends ResourceController
         if ($search) {
             $data = [
                 "id" => $search['id'],
+                "id_login" => $search['id_login'],
                 "nome" => $search['nome'],
                 "sobrenome" => $search['sobrenome'],
                 "cpf" => $search['cpf'],

@@ -78,7 +78,7 @@ class Admin extends BaseController
 
     public function pastor($id): string
     {
-        $data['idSearch']  = $id ;
+        $data['idSearch']  = $id;
         $data['titlePage'] = 'Alterando Pastor';
         //
         return view('admin/pages/pastores/altera', $data);

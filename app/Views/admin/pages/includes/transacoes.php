@@ -30,8 +30,7 @@
     <div class="noresult" style="display: none">
         <div class="text-center">
             <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
-            <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
-            <p class="text-muted mb-0">Cadastre supervisores...</p>
+            <h5 class="mt-2">Nunhuma transação foi encontrada para esse usuário.</h5>
         </div>
     </div>
 </div>
@@ -43,6 +42,7 @@
         <h5 class="mt-2">Carregando registros</h5>
     </div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">

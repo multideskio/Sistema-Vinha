@@ -49,7 +49,7 @@ class CieloPix extends CieloBase
             if (session('data')['tipo'] == 'igreja') {
                 $builderPerfil = new IgrejasModel();
                 $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            } 
+            }
 
             if (session('data')['tipo'] == 'supervisor') {
                 $builderPerfil = new SupervisoresModel();
@@ -128,16 +128,17 @@ class CieloPix extends CieloBase
 
     protected function saveTransactionRefund($paymentId, $amount, $response)
     {
-        $data = [
-            'id_transacao' => $paymentId,
-            //'valor' => centavosParaReais($amount),
-            'log' => json_encode($response),
-            'status_text' => 'Reembolsado'
-        ];
 
-        $dataId = $this->transactionsModel->where('id_transacao', $paymentId)->select('id')->first();
-
-        // Atualiza a transação existente com o status de reembolso
-        $this->transactionsModel->update($dataId['id'], $data);
+        if ($response['ReasonMessage'] == 'Successful') {
+            $data = [
+                'id_transacao' => $paymentId,
+                //'valor' => centavosParaReais($amount),
+                //'log' => json_encode($response),
+                'status_text' => 'Reembolsado'
+            ];
+            $dataId = $this->transactionsModel->where('id_transacao', $paymentId)->select('id')->first();
+            // Atualiza a transação existente com o status de reembolso
+            $this->transactionsModel->update($dataId['id'], $data);
+        }
     }
 }

@@ -67,7 +67,7 @@ class Supervisores extends ResourceController
         //
         $search = $this->modelSupervisores
             ->select('supervisores.*')
-            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp, usuarios.id AS id_login')
             ->select('regioes.nome AS regiao')
             ->select('gerentes.nome AS gerente, gerentes.sobrenome AS sobregerente')
             ->join('usuarios', 'usuarios.id_perfil = supervisores.id')
@@ -80,6 +80,7 @@ class Supervisores extends ResourceController
             $data = [
                 "id" => $search['id'],
                 "nome" => $search['nome'],
+                "id_login" => $search['id_login'],
                 "sobrenome" => $search['sobrenome'],
                 "idGerente" => $search['id_gerente'],
                 "idRegiao" => $search['id_regiao'],

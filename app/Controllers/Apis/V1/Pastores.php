@@ -45,7 +45,7 @@ class Pastores extends ResourceController
         try {
             $search = $this->modelPastores
                 ->select('pastores.*')
-                ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+                ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp, usuarios.id AS id_login')
                 ->join('usuarios', 'usuarios.id_perfil = pastores.id')
                 ->join('supervisores', 'supervisores.id = pastores.id_supervisor')
                 ->where('usuarios.tipo', 'pastor')
@@ -54,6 +54,7 @@ class Pastores extends ResourceController
             if ($search) {
                 $data = [
                     "id" => $search['id'],
+                    "id_login" => $search['id_login'], 
                     "nome" => $search['nome'],
                     "sobrenome" => $search['sobrenome'],
                     "idSupervisor" => $search['id_supervisor'],

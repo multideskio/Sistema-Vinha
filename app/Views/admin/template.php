@@ -5,9 +5,6 @@
     <!-- Sweet Alert css-->
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <?= $this->renderSection('css') ?>
-    <script>
-        const _idSearch = "<?= $idSearch ?>"
-    </script>
 </head>
 <body>
     <!-- Begin page -->
@@ -49,6 +46,10 @@
     <script src="/assets/libs/cleave.js/cleave.min.js"></script>
     <!-- form masks init -->
     <script src="/assets/js/pages/form-masks.init.js"></script>
+    <script>
+        let _idSearch = "<?= $idSearch ?>";
+        let globalIdLogin;
+    </script>
     <?= $this->renderSection('js') ?>
     <script>
         function recursoindisponivel() {

@@ -226,7 +226,7 @@
 
                     <!--end tab-pane-->
                     <div class="tab-pane" id="transacoes" role="tabpanel">
-                        
+                        <?= $this->include('admin/pages/includes/transacoes.php') ?>
                     </div>
                     <!--end tab-pane-->
                 </div>
@@ -235,7 +235,6 @@
     </div>
     <!--end col-->
 </div>
-
 
 <div class="modal fade" id="dadosCnpj" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="dadosCnpjLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -330,6 +329,7 @@
 <!-- profile-setting init js -->
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
+<script src="/assets/js/custom/listaTransacoes.min.js"></script>
 <script>
     $(document).ready(function() {
 
@@ -549,6 +549,4 @@
         });
     }
 </script>
-
-
 <?= $this->endSection() ?>

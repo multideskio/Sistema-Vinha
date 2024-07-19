@@ -15,6 +15,8 @@ $routes->get('sair', 'Home::sair');
 $routes->get('teste', 'Home::teste');
 $routes->get('phpinfo', 'Home::phpinfo');
 $routes->get('ajuda', 'Home::busca_ajuda');
+
+
 $routes->get('ajuda/(:any)', 'Home::ajuda/$1');
 
 //$routes->get('confirma/(:any)', 'Home::index/$1');
@@ -143,11 +145,20 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('ajuda',      'Admin::ajuda');
 
     $routes->get('config', 'Admin::config');
+
+    $routes->get('perfil', 'Admin::perfil');
+});
+
+
+$routes->group('gerente', ['filter' => 'gerente'],static function ($routes) {
+    $routes->get('', 'Gerente::index');
+    $routes->get('(:any)', 'Gerente::index');
 });
 
 //Acesso de quem administra uma supervisao
 $routes->group('supervisao', ['filter' => 'supervisor'], static function ($routes) {
     $routes->get('', 'Supervisor::index');
+    $routes->get('(:any)', 'Supervisor::index');
 });
 
 //Acesso mais baixo de quem dizima
@@ -155,11 +166,9 @@ $routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
     $routes->get('', 'Igreja::index');
     $routes->get('pagamentos', 'Igreja::pagamentos');
     $routes->get('transacoes', 'Igreja::transacoes');
+    $routes->get('(:any)', 'Igreja::index');
 });
 
-$routes->group('gerente', ['filter' => 'gerente'],static function ($routes) {
-    $routes->get('', 'Gerente::index');
-});
 
 
 

@@ -84,4 +84,11 @@ class Login extends BaseController
             return view('login/confirm/erro', $data);
         }
     }
+
+    public function perfil()
+    {
+        $idUser = session('data')['id'];
+
+        echo $idUser;
+    }
 }

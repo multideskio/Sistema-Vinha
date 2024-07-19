@@ -84,6 +84,16 @@
                             <i class="far fa-envelope"></i> Transações do usuário
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
+                            <i class="far fa-envelope"></i> Transações do usuário
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#logs" role="tab">
+                            <i class="far fa-envelope"></i> Transações do usuário
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="card-body p-4">
@@ -194,7 +204,15 @@
 
                     <!--end tab-pane-->
                     <div class="tab-pane" id="transacoes" role="tabpanel">
-                        <?= $this->include('admin/pages/pastores/transacoes.php') ?>
+                        <?= $this->include('admin/pages/includes/transacoes.php') ?>
+                    </div>
+                    <!--end tab-pane-->
+                    <div class="tab-pane" id="preferencias" role="tabpanel">
+                        <?= $this->include('dev/nvModulo') ?>
+                    </div>
+                    <!--end tab-pane-->
+                    <div class="tab-pane" id="logs" role="tabpanel">
+                        <?= $this->include('dev/nvModulo') ?>
                     </div>
                     <!--end tab-pane-->
                 </div>
@@ -209,5 +227,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js" integrity="sha512-Rdk63VC+1UYzGSgd3u2iadi0joUrcwX0IWp2rTh6KXFoAmgOjRS99Vynz1lJPT8dLjvo6JZOqpAHJyfCEZ5KoA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/pastoresUpdate.min.js?v=1"></script>
+<script src="/assets/js/custom/pastoresUpdate.js?v=1"></script>
+<script src="/assets/js/custom/listaTransacoes.js"></script>
 <?= $this->endSection() ?>
