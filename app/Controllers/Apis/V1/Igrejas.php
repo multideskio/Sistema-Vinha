@@ -46,10 +46,10 @@ class Igrejas extends ResourceController
         //
         $search = $this->modelIgrejas
             ->select('igrejas.*')
-            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp')
+            ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp, usuarios.id AS id_login')
             ->join('usuarios', 'usuarios.id_perfil = igrejas.id')
             ->join('supervisores', 'supervisores.id = igrejas.id_supervisor')
-            ->where('usuarios.tipo', 'igreja')
+            ->where('usuarios.tipo', 'igreja') 
             ->find($id);
 
         if ($search) {
@@ -57,6 +57,7 @@ class Igrejas extends ResourceController
                 "id" => $search['id'],
                 "razaoSocial"  => $search['razao_social'],
                 "nomeFantazia" => $search['fantasia'],
+                "id_login" => $search['id_login'],
                 "idSupervisor" => $search['id_supervisor'],
                 "nomeTesoureiro" => $search['nome_tesoureiro'],
                 "sobrenomeTesoureiro" => $search['sobrenome_tesoureiro'],

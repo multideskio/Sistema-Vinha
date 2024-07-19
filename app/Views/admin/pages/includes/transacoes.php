@@ -1,6 +1,5 @@
 <?= $this->include('admin/pages/includes/search.php') ?>
 <div class="table-responsive">
-    <!-- style="display: none" -->
     <div id="cardResult" style="display: none">
         <div class="page-link" id="numResults"></div>
         <table class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
@@ -55,7 +54,7 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="descRembolso">Descrição do reembolso</label>
-                    <textarea required name="desc" id="descRembolso" class="form-control" placeholder="Descreva o motivo para esse reembolso"></textarea>
+                    <textarea required name="desc" id="descRembolso" class="form-control" placeholder="Descreva o motivo para esse reembolso" rows="5"></textarea>
                 </div>
                 <div class="mb-3">
                     <label for="valor">Valor para reembolso</label>
@@ -64,8 +63,8 @@
                 <input type="hidden" id="id_transacao" name="id_transacao" class="form-control">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Understood</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Devolver dinheiro</button>
             </div>
 </form>
         </div>
