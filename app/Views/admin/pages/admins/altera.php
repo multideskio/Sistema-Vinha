@@ -78,8 +78,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#privacy" role="tab">
-                            <i class="far fa-envelope"></i> Transações do usuário
+                        <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
+                            <i class="far fa-envelope"></i> Preferências
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
+                            <i class="far fa-envelope"></i> Logs
                         </a>
                     </li>
                 </ul>
@@ -180,8 +185,12 @@
                         </form>
                     </div>
                     <!--end tab-pane-->
-                    <div class="tab-pane" id="privacy" role="tabpanel">
-
+                    <div class="tab-pane" id="preferencias" role="tabpanel">
+                        <?= $this->include('dev/nvModulo') ?>
+                    </div>
+                    <!--end tab-pane-->
+                    <div class="tab-pane" id="preferencias" role="tabpanel">
+                        <?= $this->include('dev/nvModulo') ?>
                     </div>
                     <!--end tab-pane-->
                 </div>
