@@ -1,4 +1,4 @@
-<?= $this->extend('igrejas/template') ?>
+<?= $this->extend('gerentes/template') ?>
 
 <?= $this->section('page') ?>
 <div class="p-0 m-0">
@@ -222,5 +222,5 @@
         );
     }
 </script>
-<?= $this->include('igrejas/pages/js/pagamentos.php') ?>
+<?= $this->include('gerentes/pages/js/pagamentos.php') ?>
 <?= $this->endSection() ?>

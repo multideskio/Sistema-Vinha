@@ -152,6 +152,7 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
 
 $routes->group('gerente', ['filter' => 'gerente'],static function ($routes) {
     $routes->get('', 'Gerente::index');
+    $routes->get('pagamentos', 'Gerente::pagamentos');
     $routes->get('(:any)', 'Gerente::index');
 });
 

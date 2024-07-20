@@ -9,7 +9,7 @@ class Gerente extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-        $this->data['rowConfig'] = $this->modelConfig->cacheData();
+
     }
     
     public function index()
@@ -17,5 +17,12 @@ class Gerente extends BaseController
         //
         $data['titlePage'] = "Dashboard";
         return view('gerentes/pages/home', $data);
+    }
+
+    public function pagamentos(): string
+    {
+        $data['titlePage'] = "Dashboard";
+        return view('gerentes/pages/gerar', $data);
+        
     }
 }

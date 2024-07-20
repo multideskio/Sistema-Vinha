@@ -35,13 +35,13 @@
                     <span>Menu</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('igreja') ?>">
+                    <a class="nav-link menu-link" href="<?= site_url('gerente') ?>">
                         <i class="ri-dashboard-2-line"></i> <span>Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('igreja/pagamentos') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Pagamentos</span>
+                    <a class="nav-link menu-link" href="<?= site_url('gerente/pagamentos') ?>">
+                        <i class="ri-dashboard-2-line"></i> <span>Dízimo e oferta</span>
                     </a>
                 </li>
                 <li class="nav-item">

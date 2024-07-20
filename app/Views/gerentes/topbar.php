@@ -657,7 +657,7 @@
                             <img class="rounded-circle header-profile-user" src="<?= (session('data')['foto']) ? session('data')['foto'] : placehold(null, null, session('data')['name'], false, "fff") ?>" alt="Header Avatar">
                             <span class="text-start ms-xl-2">
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?= session('data')['name'] ?></span>
-                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Verificado</span>
+                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Gerente</span>
                             </span>
                         </span>
                     </button>
