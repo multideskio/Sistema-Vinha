@@ -98,7 +98,7 @@
     <footer class="text-muted py-5 text-center">
         <div class="container">
             <p class="float-end mb-1">
-                <a href="#">Voltar ao topo</a> - {elapsed_time}
+                <a href="#">Voltar ao topo</a> - Time: {elapsed_time} - Memory: {memory_usage}
             </p>
         </div>
     </footer>
