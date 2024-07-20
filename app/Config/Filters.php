@@ -19,21 +19,50 @@ class Filters extends BaseConfig
      *                                                     or [filter_name => [classname1, classname2, ...]]
      */
     public array $aliases = [
-        'forcehttps'    => \CodeIgniter\Filters\ForceHTTPS::class,
-        'pagecache'     => \CodeIgniter\Filters\PageCache::class,
-        'performance'   => \CodeIgniter\Filters\PerformanceMetrics::class,
         'csrf'          => CSRF::class,
         'toolbar'       => DebugToolbar::class,
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
+        //'cors'        => Cors::class,
+        'forcehttps'    => \CodeIgniter\Filters\ForceHTTPS::class,
+        'pagecache'     => \CodeIgniter\Filters\PageCache::class,
+        'performance'   => \CodeIgniter\Filters\PerformanceMetrics::class,
+
         'cors'          => \App\Filters\Cors::class,
+        //'cors'          => Cors::class,
         'logged'        => \App\Filters\Loggedin::class,
         'igreja'        => \App\Filters\Igreja::class,
         'admin'         => \App\Filters\Admin::class,
         'supervisor'    => \App\Filters\Supervisor::class,
         'gerente'       => \App\Filters\Gerente::class,
         'verifyLogged'  => \App\Filters\VerifyLoggedIn::class
+    ];
+
+    /**
+     * List of special required filters.
+     *
+     * The filters listed here are special. They are applied before and after
+     * other kinds of filters, and always applied even if a route does not exist.
+     *
+     * Filters set by default provide framework functionality. If removed,
+     * those functions will no longer work.
+     *
+     * @see https://codeigniter.com/user_guide/incoming/filters.html#provided-filters
+     *
+     * @var array{before: list<string>, after: list<string>}
+     */
+    public array $required = [
+        'before' => [
+            'cors',
+            'forcehttps', // Force Global Secure Requests
+            'pagecache',  // Web Page Caching
+        ],
+        'after' => [
+            'pagecache',   // Web Page Caching
+            'performance', // Performance Metrics
+            'toolbar',     // Debug Toolbar
+        ],
     ];
 
     /**
@@ -44,14 +73,14 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
-            'cors'
+            //'cors'
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
         ],
         'after' => [
-            'toolbar',
-            'performance'
+            //'toolbar',
+            //'performance'
             // 'honeypot',
             // 'secureheaders',
         ],

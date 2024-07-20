@@ -43,6 +43,11 @@ class Database extends Config
         'failover'     => [],
         'port'         => 3306,
         'numberNative' => false,
+        'dateFormat'   => [
+            'date'     => 'Y-m-d',
+            'datetime' => 'Y-m-d H:i:s',
+            'time'     => 'H:i:s',
+        ],
     ];
 
     /**
@@ -60,7 +65,7 @@ class Database extends Config
         'pConnect'    => false,
         'DBDebug'     => true,
         'charset'     => 'utf8',
-        'DBCollat'    => 'utf8_general_ci',
+        'DBCollat'    => '',
         'swapPre'     => '',
         'encrypt'     => false,
         'compress'    => false,
@@ -69,6 +74,11 @@ class Database extends Config
         'port'        => 3306,
         'foreignKeys' => true,
         'busyTimeout' => 1000,
+        'dateFormat'   => [
+            'date'     => 'Y-m-d',
+            'datetime' => 'Y-m-d H:i:s',
+            'time'     => 'H:i:s',
+        ],
     ];
 
     public function __construct()
