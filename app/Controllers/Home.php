@@ -30,7 +30,7 @@ class Home extends BaseController
 
     public function busca_ajuda()
     {
-        $this->cachePage(getCacheExpirationTimeInSeconds(60));
+        //$this->cachePage(getCacheExpirationTimeInSeconds(60));
         $modelAjuda = new AjudaModel();
         if ($this->request->getGet('search')) {
             $rows = $modelAjuda->groupStart()
