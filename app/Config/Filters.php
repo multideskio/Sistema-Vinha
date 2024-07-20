@@ -48,6 +48,7 @@ class Filters extends BaseConfig
         ],
         'after' => [
             'toolbar',
+            'performance'
             // 'honeypot',
             // 'secureheaders',
         ],
