@@ -19,6 +19,9 @@ class Filters extends BaseConfig
      *                                                     or [filter_name => [classname1, classname2, ...]]
      */
     public array $aliases = [
+        'forcehttps'    => \CodeIgniter\Filters\ForceHTTPS::class,
+        'pagecache'     => \CodeIgniter\Filters\PageCache::class,
+        'performance'   => \CodeIgniter\Filters\PerformanceMetrics::class,
         'csrf'          => CSRF::class,
         'toolbar'       => DebugToolbar::class,
         'honeypot'      => Honeypot::class,
