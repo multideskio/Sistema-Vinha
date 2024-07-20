@@ -129,9 +129,9 @@ function atualizarTabela(search = false, page = 1) {
                             <a href="#" class="btn btn-dark btn-sm" onclick="update('${regiao.id}', '${regiao.nome}', '${regiao.descricao}')">
                                 <i class="ri-pencil-line"></i>
                             </a>
-                            <a href="#" class="btn btn-danger btn-sm sa-warning" onclick="excluir('${regiao.id}', 'regioes')">
+                            <!-- <a href="#" class="btn btn-danger btn-sm sa-warning" onclick="excluir('${regiao.id}', 'regioes')">
                                 <i class="ri-delete-bin-6-line"></i>
-                            </a>
+                            </a> -->
                             </div>
                         </td>
                     </tr>
