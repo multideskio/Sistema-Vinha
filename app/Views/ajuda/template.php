@@ -95,10 +95,10 @@
             </div>
         </div>
     </main>
-    <footer class="text-muted py-5">
+    <footer class="text-muted py-5 text-center">
         <div class="container">
             <p class="float-end mb-1">
-                <a href="#">Voltar ao topo - {elapsed_time}</a>
+                <a href="#">Voltar ao topo</a> - {elapsed_time}
             </p>
         </div>
     </footer>
