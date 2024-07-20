@@ -1,8 +1,24 @@
 $(document).ready(function () {
     statisticas()
-
     $("#btnSearchDash").on('click', function () {
-        statisticas($("#testDate").val());
+        var search = $("#testDate").val();
+
+        if (search) {
+            Swal.fire({
+                text: 'Atualizando painel...',
+                icon: 'info'
+            });
+
+            statisticas(search);
+
+        } else {
+
+            Swal.fire({
+                text: 'Defina uma data para gerar o relatório...',
+                icon: 'error'
+            });
+
+        }
     });
 });
 
@@ -19,9 +35,7 @@ function applyGrowthRate(elementId, growthRate) {
 
 function statisticas(search = null) {
 
-
-
-    var url = `${_baseUrl}/api/v1/transacoes/dashboard?`;
+    var url = `${_baseUrl}api/v1/transacoes/dashboard?`;
     if (search) {
         var dates = search.split(" to ")
         var dateIn = dates[0];
@@ -50,7 +64,21 @@ function statisticas(search = null) {
         applyGrowthRate('debitoGrowth', data.debito.crescimento);
         applyGrowthRate('anualGrowth', data.totalAnual.crescimento);
         applyGrowthRate('totalGrowth', data.totalGeral.crescimento);
+
+        if (search) {
+            Swal.fire({
+                text: 'Atualizado...',
+                icon: 'success'
+            });
+        }
+
+    }).fail(() => {
+        Swal.fire({
+            text: 'Houve um erro ao atualizar...',
+            icon: 'error'
+        });
     });
+
 }
 
 

@@ -279,6 +279,6 @@
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
 
-<script src="/assets/js/custom/dashboard.js"></script>
+<script src="/assets/js/custom/dashboard.min.js"></script>
 
 <?= $this->endSection() ?>
