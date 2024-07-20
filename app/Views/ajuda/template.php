@@ -98,7 +98,7 @@
     <footer class="text-muted py-5">
         <div class="container">
             <p class="float-end mb-1">
-                <a href="#">Voltar ao topo</a>
+                <a href="#">Voltar ao topo - {elapsed_time}</a>
             </p>
         </div>
     </footer>
