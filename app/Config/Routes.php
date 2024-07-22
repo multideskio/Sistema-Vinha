@@ -76,6 +76,8 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->post('igrejas/update/upload/(:num)', 'Igrejas::foto/$1');
     $routes->put('igrejas/update/links/(:num)', 'Igrejas::links/$1');
 
+
+    $routes->get('igrejas/dashboard', 'Igrejas::dashboard',['filter' => 'igreja']);
     $routes->get('igrejas/list', 'Igrejas::list');
     $routes->resource('igrejas', ['filter' => 'logged']);
 
@@ -91,10 +93,12 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->resource('supervisores', ['filter' => 'logged']);
 
 
-    $routes->post('pastores/update/upload/(:num)', 'Pastores::foto/$1');
-    $routes->put('pastores/update/links/(:num)', 'Pastores::links/$1');
+    $routes->get('pastores/dashboard', 'Pastores::Dashboard', ['filter' => 'igreja']);
 
-    $routes->resource('pastores', ['filter' => 'logged']);
+    
+    $routes->post('pastores/update/upload/(:num)', 'Pastores::foto/$1', ['filter' => ['logged']]);
+    $routes->put('pastores/update/links/(:num)', 'Pastores::links/$1', ['filter' => ['logged']]);
+    $routes->resource('pastores', ['filter' => ['admin']]);
 
     $routes->get('cielo/cron', 'Cielo::cron');
     $routes->post('cielo/credit-card-charge', 'Cielo::createCreditCardCharge');

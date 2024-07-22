@@ -101,9 +101,7 @@ function atualizarTabela(search = '', page = 1) {
 <p class="text-muted mb-0"><strong>Telefone:</strong> ${row.telefone}</p>
 </div>
 </div>
-<a href="${_baseUrl}admin/pastor/${row.id}" class="btn text-white bg-primary card-footer">
-<i class="ri-pencil-line"></i> EDITAR
-</a>
+<a href="${_baseUrl}admin/pastor/${row.id}" class="btn text-white bg-primary card-footer"><i class="ri-pencil-line"></i> DADOS</a>
 </div>
 </div>`)
 				});

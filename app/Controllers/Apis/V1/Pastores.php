@@ -229,8 +229,6 @@ class Pastores extends ResourceController
         }
     }
 
-
-
     /**
      * Add or update a model resource, from "posted" properties.
      *
@@ -279,5 +277,9 @@ class Pastores extends ResourceController
     public function delete($id = null)
     {
         //
+    }
+
+    public function dashboard(){
+        
     }
 }
