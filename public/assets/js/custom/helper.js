@@ -133,7 +133,7 @@ function deletarPost(id) {
     Swal.fire({
         title: "Tem certeza?",
         text: "Você não poderá reverter isso!",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sim, exclua-o!",
         confirmButtonClass: 'btn btn-primary w-xs me-2 mt-2',
@@ -153,7 +153,7 @@ function deletarPost(id) {
                 Swal.fire({
                     title: 'Excluído!',
                     text: 'O registro foi excluído com sucesso.',
-                    type: 'success',
+                    icon: 'success',
                     confirmButtonClass: 'btn btn-primary w-xs mt-2',
                     buttonsStyling: false,
                 });
@@ -164,7 +164,7 @@ function deletarPost(id) {
                 Swal.fire({
                     title: "Erro ao excluir",
                     text: "Ocorreu um erro ao tentar excluir o registro.",
-                    type: "error",
+                    icon: "error",
                     confirmButtonClass: "btn btn-primary w-xs mt-2",
                     buttonsStyling: false,
                 });

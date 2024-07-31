@@ -67,7 +67,7 @@ class Ajuda extends ResourceController
         $data = [
             "id_admin"  => session('data')['idAdm'],
             "id_user"   => session('data')['id'],
-            "slug"      => createSlug($title."-".time(), '-', true),
+            "slug"      => createSlug($title . "-" . time(), '-', true),
             "titulo"    => $title,
             "conteudo"  => $conteudo,
             "tags"      => $tags
@@ -121,9 +121,8 @@ class Ajuda extends ResourceController
             if ($status === false) {
                 return $this->fail($this->modelAjuda->errors());
             }
-    
-            return $this->respondCreated(['msg' => 'Post atualizado com sucesso.', 'id' => $status]);
 
+            return $this->respondCreated(['msg' => 'Post atualizado com sucesso.', 'id' => $status]);
         } else {
             return $this->fail('Erro ID');
         }
@@ -139,10 +138,18 @@ class Ajuda extends ResourceController
     public function delete($id = null)
     {
         if ($id) {
-            $this->modelAjuda->delete($id);
-            return $this->respond(['msg' => 'Conteúdo excluído com sucesso.']);
+            $row = $this->modelAjuda->select('slug')->find($id);
+
+            if ($row) {
+                $cache = service('cache');
+                $cache->delete($row['slug']);
+                $this->modelAjuda->delete($id);
+                return $this->respond(['msg' => 'Conteúdo excluído com sucesso.']);
+            }else{
+                return $this->fail('[002] Error ID');
+            }
         } else {
-            return $this->fail('Erro ID');
+            return $this->fail('[001] Error ID');
         }
     }
 }
