@@ -4,6 +4,8 @@
 </button>
 <!--end back-to-top-->
 
+
+<?php /*
 <!--preloader-->
 <div id="preloader">
     <div id="status">
@@ -19,7 +21,7 @@
     </div>
 </div>
 
-<?php /*
+
 <!-- Theme Settings -->
 <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">
     <div class="d-flex align-items-center bg-primary bg-gradient p-3 offcanvas-header">
