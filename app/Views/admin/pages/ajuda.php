@@ -76,5 +76,5 @@
 <!-- quill js -->
 <script src="/assets/libs/quill/quill.min.js"></script>
 <!-- inserir linha -->
-<script src="/assets/js/custom/helper.min.js"></script>
+<script src="/assets/js/custom/helper.min.js?v=1"></script>
 <?= $this->endSection(); ?>
