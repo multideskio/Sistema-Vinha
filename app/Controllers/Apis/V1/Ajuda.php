@@ -139,7 +139,6 @@ class Ajuda extends ResourceController
     {
         if ($id) {
             $row = $this->modelAjuda->select('slug')->find($id);
-
             if ($row) {
                 $cache = service('cache');
                 $cache->delete($row['slug']);

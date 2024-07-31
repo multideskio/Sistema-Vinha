@@ -67,9 +67,11 @@ class Home extends BaseController
         } else {
             $row = $cache->get($slug);
         }
-        if (!count($row) == 1) {
+
+        if (!$row) {
             throw PageNotFoundException::forPageNotFound();
         }
+        
         $this->data['result'] = $row;
         return view('ajuda/post', $this->data);
     }
