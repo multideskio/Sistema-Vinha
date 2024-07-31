@@ -36,7 +36,9 @@ class Filters extends BaseConfig
         'admin'         => \App\Filters\Admin::class,
         'supervisor'    => \App\Filters\Supervisor::class,
         'gerente'       => \App\Filters\Gerente::class,
-        'verifyLogged'  => \App\Filters\VerifyLoggedIn::class
+        'verifyLogged'  => \App\Filters\VerifyLoggedIn::class,
+
+        'htmlminify'    => \App\Filters\HtmlMinify::class,
     ];
 
     /**
@@ -62,6 +64,7 @@ class Filters extends BaseConfig
             'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
             'toolbar',     // Debug Toolbar
+            'htmlminify'
         ],
     ];
 
