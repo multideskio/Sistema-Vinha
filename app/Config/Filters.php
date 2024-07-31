@@ -64,7 +64,7 @@ class Filters extends BaseConfig
             'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
             'toolbar',     // Debug Toolbar
-            'htmlminify'
+            //'htmlminify'
         ],
     ];
 
