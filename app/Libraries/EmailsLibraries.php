@@ -40,7 +40,7 @@ class EmailsLibraries
             'SMTPHost' => $data['smtp_host'],
             'SMTPUser' => $data['smtp_user'],
             'SMTPPass' => $data['smtp_pass'],
-            'SMTPPort' => $data['smtp_port'],
+            'SMTPPort' => intval($data['smtp_port']),
             'SMTPCrypto' => $data['smtp_crypt'], // Adicionado o campo SMTPCrypto
             'e-remetente' => $data['email_remetente'],
             'n-remetente' => $data['nome_remetente'],
