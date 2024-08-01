@@ -160,17 +160,10 @@
 
             },
             success: function(responseText, statusText, xhr, $form) {
-                // Exibir mensagem de sucesso
-                if (responseText.Payment.ReturnMessage === 'Operation Successful') {
-                    Swal.fire({
-                        title: 'Pagamento aprovado!',
-                        type: 'success',
-                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                        buttonsStyling: false,
-                    });
+                var returnCode = responseText.Payment.ReturnCode;
+                var successCodes = [4, 6, '00']; // Lista de códigos de sucesso
 
-                    $('.formCredit')[0].reset();
-                } else if (responseText.Payment.ReturnMessage === 'Transacao autorizada') {
+                if (successCodes.includes(parseInt(returnCode))) {
                     Swal.fire({
                         title: 'Pagamento aprovado!',
                         type: 'success',
@@ -188,7 +181,6 @@
                         buttonsStyling: false,
                     });
                 }
-                //exibirMensagem('success', 'Sucesso: ' + responseText);
             },
             error: function(xhr, status, error) {
                 // Verifica se a resposta é um JSON
