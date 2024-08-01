@@ -22,7 +22,7 @@ class CieloCreditCard extends CieloBase
                 "Type" => "CreditCard",
                 "Amount" => $valor, // valor em centavos, 10000 = R$ 100,00
                 "Installments" => 1,
-                "Capture" => false,
+                "Capture" => true,
                 "CreditCard" => [
                     "CardNumber" => $cartao,
                     "Holder" => strtoupper($nome),
@@ -38,40 +38,57 @@ class CieloCreditCard extends CieloBase
     private function createCreditCardCharge($params, $descricao, $desc_l = null)
     {
         try {
-            // Valida os parâmetros obrigatórios
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
 
             $endPoint = '/1/sales/';
 
-            // Faz a requisição ao endpoint
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
 
-            // Salva a transação do cartão de crédito
+            // Salvar a transação do cartão de crédito
             $this->saveTransactionCreditCard($params, $response, $descricao, 'Crédito', $desc_l);
 
-            // Verifica se o código de retorno é um código de erro
-            $codigoRetorno = $response['Payment']['ReturnCode'];
-
             // Lista de códigos de erro conhecidos
-            $codigosErro = [
-                05 => 'Não Autorizada',
-                57 => 'Cartão Expirado',
-                78 => 'Cartão Bloqueado',
-                99 => 'Time Out',
-                77 => 'Cartão Cancelado',
-                70 => 'Problemas com o Cartão de Crédito'
-            ];
+            $codigosErro = [5, 57, 78, 99, 77, 70];
 
-            if (!in_array($codigoRetorno, [4, 6])) {
-                $mensagemErro = isset($codigosErro[$codigoRetorno]) ? $codigosErro[$codigoRetorno] : 'Erro desconhecido';
-                throw new Exception('Transação não autorizada: ' . $mensagemErro.' </br> Code: '. $response['Payment']['ReturnCode'], 1);
+            // Adiciona código `00` à lista de sucesso
+            $codigosSucesso = [4, 6, 00];
+
+            // Verificar se o código de retorno está na lista de erros
+            if (in_array($response['Payment']['ReturnCode'], $codigosErro)) {
+                $errorMessage = 'Transação não autorizada: ' . $this->getErrorMessage($response['Payment']['ReturnCode']);
+                throw new Exception($errorMessage . ' | Resposta: ' . $response['Payment']['ReturnMessage'], 1);
+            }
+
+            // Verificar se o código de retorno é um sucesso
+            if (!in_array($response['Payment']['ReturnCode'], $codigosSucesso)) {
+                $errorMessage = 'Transação não autorizada';
+                throw new Exception($errorMessage . ' | Resposta: ' . $response['Payment']['ReturnMessage'], 1);
             }
 
             return $response;
         } catch (Exception $e) {
-            // Lança uma exceção com uma mensagem mais específica
-            throw new Exception("Erro ao criar cobrança de cartão de crédito <br>" . $e->getMessage());
+            throw new Exception("Erro ao criar cobrança de cartão de crédito: " . $e->getMessage(), 1);
         }
+    }
+
+    /**
+     * Obtém a mensagem de erro com base no código de retorno.
+     *
+     * @param int $codigoRetorno
+     * @return string
+     */
+    private function getErrorMessage($codigoRetorno)
+    {
+        $mensagensErro = [
+            5 => 'Não Autorizada',
+            57 => 'Cartão Expirado',
+            78 => 'Cartão Bloqueado',
+            99 => 'Time Out',
+            77 => 'Cartão Cancelado',
+            70 => 'Problemas com o Cartão de Crédito'
+        ];
+
+        return isset($mensagensErro[$codigoRetorno]) ? $mensagensErro[$codigoRetorno] : 'Erro desconhecido';
     }
 
 
