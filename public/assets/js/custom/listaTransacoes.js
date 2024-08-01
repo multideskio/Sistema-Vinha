@@ -62,21 +62,17 @@ function atualizarTabela(search = false, page = 1) {
             }
             $.each(data.rows, function (index, row) {
                 var status;
-                var btn;
+                var btn = `<button class="btn btn-danger btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}', '${row.valor}')">Reembolsar</button><button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 var desc;
 
                 if (row.status == 'Pago') {
                     status = `<span class="badge bg-success">${row.status}</span>`;
-                    btn = `<button class="btn btn-danger btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}', '${row.valor}')">Reembolsar</button><button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else if (row.status == 'Cancelado') {
                     status = `<span class="badge bg-danger">${row.status}</span>`;
-                    btn = '';//`<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else if (row.status == 'Reembolsado') {
                     status = `<span class="badge bg-dark">${row.status}</span>`;
-                    btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else {
                     status = `<span class="badge bg-warning">${row.status}</span>`;
-                    btn = `<button class="btn btn-danger btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}', '${row.valor}')">Reembolsar</button><button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 }
 
 
