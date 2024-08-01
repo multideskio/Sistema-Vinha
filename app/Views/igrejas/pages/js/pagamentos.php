@@ -161,9 +161,9 @@
             },
             success: function(responseText, statusText, xhr, $form) {
                 var returnCode = responseText.Payment.ReturnCode;
-                var successCodes = [4, 6, '00']; // Lista de códigos de sucesso
+                var successCodes = ['4', '6', '00']; // Lista de códigos de sucesso
 
-                if (successCodes.includes(parseInt(returnCode))) {
+                if (successCodes.includes(returnCode)) {
                     Swal.fire({
                         title: 'Pagamento aprovado!',
                         type: 'success',
