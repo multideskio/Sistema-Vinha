@@ -38,21 +38,39 @@ class CieloCreditCard extends CieloBase
     private function createCreditCardCharge($params, $descricao, $desc_l = null)
     {
         try {
+            // Valida os parâmetros obrigatórios
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
 
             $endPoint = '/1/sales/';
 
+            // Faz a requisição ao endpoint
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
 
+            // Salva a transação do cartão de crédito
             $this->saveTransactionCreditCard($params, $response, $descricao, 'Crédito', $desc_l);
 
-            if ($response['Payment']['ReturnCode'] != 4 && $response['Payment']['ReturnCode'] != 6) {
-                throw new Exception('Transação não autorizada', 1);
+            // Verifica se o código de retorno é um código de erro
+            $codigoRetorno = $response['Payment']['ReturnCode'];
+
+            // Lista de códigos de erro conhecidos
+            $codigosErro = [
+                05 => 'Não Autorizada',
+                57 => 'Cartão Expirado',
+                78 => 'Cartão Bloqueado',
+                99 => 'Time Out',
+                77 => 'Cartão Cancelado',
+                70 => 'Problemas com o Cartão de Crédito'
+            ];
+
+            if (!in_array($codigoRetorno, [4, 6])) {
+                $mensagemErro = isset($codigosErro[$codigoRetorno]) ? $codigosErro[$codigoRetorno] : 'Erro desconhecido';
+                throw new Exception('Transação não autorizada: ' . $mensagemErro, 1);
             }
 
             return $response;
         } catch (Exception $e) {
-            throw new Exception("Erro ao criar cobrança de cartão de crédito: " . $e->getMessage());
+            // Lança uma exceção com uma mensagem mais específica
+            throw new Exception("Erro ao criar cobrança de cartão de crédito <br>" . $e->getMessage());
         }
     }
 

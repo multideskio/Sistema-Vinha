@@ -224,7 +224,7 @@
         // Exibe a mensagem de erro formatada
         Swal.fire({
             title: "Erro ao incluir registro",
-            text: `${errorMessage}`,
+            html: `${errorMessage}`,
             type: type,
             confirmButtonClass: "btn btn-primary w-xs mt-2",
             buttonsStyling: false,
