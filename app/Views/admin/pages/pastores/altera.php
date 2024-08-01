@@ -228,5 +228,5 @@
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
 <script src="/assets/js/custom/pastoresUpdate.js?v=1"></script>
-<script src="/assets/js/custom/listaTransacoes.js"></script>
+<script src="/assets/js/custom/listaTransacoes.js?V=1"></script>
 <?= $this->endSection() ?>

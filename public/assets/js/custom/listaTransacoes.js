@@ -76,7 +76,7 @@ function atualizarTabela(search = false, page = 1) {
                     btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 } else {
                     status = `<span class="badge bg-warning">${row.status}</span>`;
-                    btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
+                    btn = `<button class="btn btn-danger btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}', '${row.valor}')">Reembolsar</button><button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`;
                 }
 
 
