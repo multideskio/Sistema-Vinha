@@ -64,7 +64,7 @@ class CieloCreditCard extends CieloBase
 
             if (!in_array($codigoRetorno, [4, 6])) {
                 $mensagemErro = isset($codigosErro[$codigoRetorno]) ? $codigosErro[$codigoRetorno] : 'Erro desconhecido';
-                throw new Exception('Transação não autorizada: ' . $mensagemErro, 1);
+                throw new Exception('Transação não autorizada: ' . $mensagemErro.' </br> Code: '. $response['Payment']['ReturnCode'], 1);
             }
 
             return $response;
