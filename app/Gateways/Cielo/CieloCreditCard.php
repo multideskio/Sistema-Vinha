@@ -22,7 +22,7 @@ class CieloCreditCard extends CieloBase
                 "Type" => "CreditCard",
                 "Amount" => $valor, // valor em centavos, 10000 = R$ 100,00
                 "Installments" => 1,
-                "Capture" => true,
+                "Capture" => false,
                 "CreditCard" => [
                     "CardNumber" => $cartao,
                     "Holder" => strtoupper($nome),
