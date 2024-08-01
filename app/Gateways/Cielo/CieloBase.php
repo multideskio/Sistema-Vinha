@@ -326,79 +326,55 @@ class CieloBase
      */
     protected function saveTransactionCreditCard(array $params, array $response, string $descricao, string $tipo, string $desc_l = null): bool
     {
+        // Obter o código de retorno e a mensagem de retorno
+        $returnCode = $response['Payment']['ReturnCode'];
+        $returnMessage = $response['Payment']['ReturnMessage'];
 
-        if ($response['Payment']['ReturnMessage'] == 'Operation Successful') {
+        // Lista de códigos e mensagens de sucesso
+        $successCodes = ['4', '6', '00']; // Códigos de sucesso
+        $successMessages = ['Operation Successful', 'Transacao autorizada', 'Transacao capturada com sucesso'];
+
+        // Verificar se o código ou a mensagem de retorno indica sucesso
+        if (in_array($returnCode, $successCodes) || in_array($returnMessage, $successMessages)) {
             $status_text = 'Pago';
             $status = 1;
             $datePg = $response['Payment']['ReceivedDate'];
 
-            if (session('data')['tipo'] == 'pastor') {
-                $builderPerfil = new PastoresModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+            // Obter o perfil do usuário baseado no tipo de sessão
+            switch (session('data')['tipo']) {
+                case 'pastor':
+                    $builderPerfil = new PastoresModel();
+                    break;
+                case 'igreja':
+                    $builderPerfil = new IgrejasModel();
+                    break;
+                case 'supervisor':
+                    $builderPerfil = new SupervisoresModel();
+                    break;
+                case 'gerente':
+                    $builderPerfil = new GerentesModel();
+                    break;
+                case 'superadmin':
+                    $builderPerfil = new AdminModel();
+                    break;
+                default:
+                    $builderPerfil = null;
+                    break;
             }
 
-            if (session('data')['tipo'] == 'igreja') {
-                $builderPerfil = new IgrejasModel();
+            if ($builderPerfil) {
                 $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
+                $sendCieloWhatsApp = new CieloWhatsApp();
+                $sendCieloWhatsApp->pago($rowPastor, '');
             }
-
-            if (session('data')['tipo'] == 'supervisor') {
-                $builderPerfil = new SupervisoresModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            if (session('data')['tipo'] == 'gerente') {
-                $builderPerfil = new GerentesModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            if (session('data')['tipo'] == 'superadmin') {
-                $builderPerfil = new AdminModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            $sendCieloWhatsApp = new CieloWhatsApp;
-
-            $sendCieloWhatsApp->pago($rowPastor, '');
-        } elseif ($response['Payment']['ReturnMessage'] == 'Transacao autorizada') {
-            $status_text = 'Pago';
-            $status = 1;
-            $datePg = $response['Payment']['ReceivedDate'];
-
-            if (session('data')['tipo'] == 'pastor') {
-                $builderPerfil = new PastoresModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            if (session('data')['tipo'] == 'igreja') {
-                $builderPerfil = new IgrejasModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            if (session('data')['tipo'] == 'supervisor') {
-                $builderPerfil = new SupervisoresModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            if (session('data')['tipo'] == 'gerente') {
-                $builderPerfil = new GerentesModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            if (session('data')['tipo'] == 'superadmin') {
-                $builderPerfil = new AdminModel();
-                $rowPastor = $builderPerfil->find(session('data')['id_perfil']);
-            }
-
-            $sendCieloWhatsApp = new CieloWhatsApp;
-
-            $sendCieloWhatsApp->pago($rowPastor, '');
         } else {
+            // Para outros códigos e mensagens, a transação é considerada cancelada
             $status_text = 'Cancelado';
             $status = 0;
             $datePg = null;
         }
 
+        // Preparar os dados para inserção
         $data = [
             'id_pedido' => $response['MerchantOrderId'],
             'id_adm' => session('data')['idAdm'],
@@ -416,11 +392,14 @@ class CieloBase
             'descricao_longa' => $desc_l
         ];
 
+        // Verificar se a transação já existe antes de inserir
         if (!$this->transactionsModel->where('id_transacao', $response['Payment']['PaymentId'])->countAllResults()) {
             $this->transactionsModel->insert($data);
         }
+
         return true;
     }
+
     /**
      * Saves the transaction.
      *
