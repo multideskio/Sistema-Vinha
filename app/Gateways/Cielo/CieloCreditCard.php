@@ -46,9 +46,9 @@ class CieloCreditCard extends CieloBase
 
             $this->saveTransactionCreditCard($params, $response, $descricao, 'Crédito', $desc_l);
 
-            if (!$response['Payment']['ReturnMessage'] == 'Operation Successful') {
-                throw new Exception('Tranzação não autorizada', 1);
-            };
+            if ($response['Payment']['ReturnCode'] != 4 && $response['Payment']['ReturnCode'] != 6) {
+                throw new Exception('Transação não autorizada', 1);
+            }
 
             return $response;
         } catch (Exception $e) {
@@ -56,7 +56,7 @@ class CieloCreditCard extends CieloBase
         }
     }
 
-    
+
     public function refundCreditCard($paymentId, $amount)
     {
         try {

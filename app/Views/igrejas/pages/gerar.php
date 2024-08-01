@@ -101,7 +101,7 @@
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label for="card-expiry-input" class="form-label">Expiração</label>
-                                                        <input class="form-control form-control-lg" placeholder="MM/YY" type="tel" id="card-expiry-input" name="data">
+                                                        <input class="form-control form-control-lg" placeholder="MM/YYYY" type="text" id="card-expiry-input" name="data">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
