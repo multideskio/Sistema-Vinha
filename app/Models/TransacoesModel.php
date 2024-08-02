@@ -64,31 +64,18 @@ class TransacoesModel extends Model
     {
         helper('auxiliar');
         $page = $input['page'] ?? false;
-        /*if ($page) {
-            $cache = \Config\Services::cache();
 
-            $search = $input['search'] ?? false;
-            $currentPage = $page;
-            $userId = session('data')['id_perfil'];
-            $cacheKey = "transacoes_adm_{$userId}_{$search}_{$limit}_{$order}_{$currentPage}";
-
-            // Check if the cache exists
-            if ($cacheData = $cache->get($cacheKey)) {
-                return $cacheData;
-            }
-        }*/
-
-        $data = array();
+        $data = [];
         $currentPageTotal = 0; // Soma dos valores da página atual
         $allPagesTotal = 0; // Soma dos valores de todas as páginas da consulta atual
 
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
 
+        // Prepara a consulta
         $this->select("transacoes.*")
             ->select('usuarios.tipo AS tipo_user')
             ->where('transacoes.id_user', $id)
-            //->where('transacoes.id_user', session('data')['id'])
             ->join('usuarios', 'usuarios.id = transacoes.id_user')
             ->orderBy('transacoes.id', $order);
 
@@ -102,13 +89,14 @@ class TransacoesModel extends Model
                 ->groupEnd();
         }
 
+        // Pagina os resultados
         $transacoes = $this->paginate($limit);
 
+        // Instancia os modelos
         $modelPastor = new PastoresModel();
         $modelIgreja = new IgrejasModel();
 
         foreach ($transacoes as $transacao) {
-
             if ($transacao['tipo_user'] == 'pastor') {
                 $rowPastor = $modelPastor->find($transacao['id_cliente']);
                 $data[] = [
@@ -127,19 +115,19 @@ class TransacoesModel extends Model
                     'descricao_lg' => $transacao['descricao_longa']
                 ];
 
-                // Adiciona o valor da transação à soma da página atual
-                $currentPageTotal += $transacao['valor'];
-            }
-
-            if ($transacao['tipo_user'] == 'igreja') {
-                $rowPastor = $modelIgreja->find($transacao['id_cliente']);
+                if ($transacao['status_text'] == 'Pago') {
+                    // Adiciona o valor da transação à soma da página atual
+                    $currentPageTotal += $transacao['valor'];
+                }
+            } elseif ($transacao['tipo_user'] == 'igreja') {
+                $rowIgreja = $modelIgreja->find($transacao['id_cliente']);
                 $data[] = [
                     'id'          => intval($transacao['id']),
-                    'nome'        => $rowPastor['razao_social'],
+                    'nome'        => $rowIgreja['razao_social'],
                     'tipo'        => 'Igreja',
                     'id_transacao' => $transacao['id_transacao'],
-                    'uf'          => $rowPastor['uf'],
-                    'cidade'      => $rowPastor['cidade'],
+                    'uf'          => $rowIgreja['uf'],
+                    'cidade'      => $rowIgreja['cidade'],
                     'desc'        => $transacao['descricao'],
                     'data_criado' => formatDate($transacao['created_at']),
                     'data_pag'    => formatDate($transacao['data_pagamento']),
@@ -149,17 +137,19 @@ class TransacoesModel extends Model
                     'descricao_lg' => $transacao['descricao_longa']
                 ];
 
-                // Adiciona o valor da transação à soma da página atual
-                $currentPageTotal += $transacao['valor'];
+                if ($transacao['status_text'] == 'Pago') {
+                    // Adiciona o valor da transação à soma da página atual
+                    $currentPageTotal += $transacao['valor'];
+                }
             }
-        };
+        }
 
         // Calcula a soma dos valores de todas as páginas da consulta atual
-        $allPagesTotalQuery = $this->where('transacoes.id_cliente', session('data')['id_perfil']);
-        $allPagesTotal = $allPagesTotalQuery->selectSum('valor')->find();
+        $this->resetQuery(); // Reseta a consulta para calcular a soma de todas as páginas
+        $allPagesTotal = $this->selectSum('valor')->where('transacoes.id_user', $id)->get()->getRow()->valor;
 
         // Paginação dos resultados
-        $totalResults = $this->where('transacoes.id_cliente', session('data')['id_perfil'])->countAllResults();
+        $totalResults = $this->where('transacoes.id_user', $id)->countAllResults();
         $currentPage = $this->pager->getCurrentPage();
         $start = ($currentPage - 1) * $limit + 1;
         $end = min($currentPage * $limit, $totalResults);
@@ -167,11 +157,7 @@ class TransacoesModel extends Model
         // Lógica para definir a mensagem de resultados
         $resultCount = count($transacoes);
         if ($search) {
-            if ($resultCount === 1) {
-                $numMessage = "1 resultado encontrado.";
-            } else {
-                $numMessage = "{$resultCount} resultados encontrados.";
-            }
+            $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "{$resultCount} resultados encontrados.";
         } else {
             $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
         }
@@ -181,17 +167,12 @@ class TransacoesModel extends Model
             'pager' => $this->pager->links('default', 'paginate'),
             'num' => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
-            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal[0]['valor'])
+            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal) // Certifique-se de formatar a soma total
         ];
-
-        /*if ($page) {
-            // Save the result to cache
-            $cache->save($cacheKey, $result, 3600); // Cache for 1 hour
-        }*/
-
 
         return $result;
     }
+
 
     public function listSearchUsers($input = false, $limit = 10, $order = 'DESC')
     {
