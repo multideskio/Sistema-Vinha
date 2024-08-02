@@ -298,17 +298,17 @@ class Usuarios extends ResourceController
                         $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
                     }
                     // Crie um serviço para a API do Google Oauth2
-                    $oauth2Service = new \Google\Service\Oauth2($client);
+                    //$oauth2Service = new \Google\Service\Oauth2($client);
                     // Obtenha as informações do perfil do usuário
-                    $userInfo = $oauth2Service->userinfo->get();
-                    $data = [
+                    //$userInfo = $oauth2Service->userinfo->get();
+                    /*$data = [
                         "nome"  => $userInfo->name,
                         "email" => $userInfo->email,
                         "image" => $userInfo->picture,
                         "id"    => $userInfo->id
-                    ];
+                    ];*/
 
-                    return $this->modelUsuarios->google($data);
+                    //return $this->modelUsuarios->google($data);
                 } else {
                     // Houve um erro ao obter os tokens de acesso
                     // Trate o erro conforme necessário
