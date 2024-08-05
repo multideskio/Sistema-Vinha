@@ -62,35 +62,7 @@
                     </div><!-- end card -->
                 </div><!-- end col -->
 
-                <div class="col-xl-3 col-md-6">
-                    <!-- card -->
-                    <div class="card card-animate">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Boletos</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <h5 class="text-danger fs-14 mb-0" id="boletosGrowth">
-                                        <i class="ri-arrow-right-down-line fs-13 align-middle"></i> 0%
-                                    </h5>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                <div>
-                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                        <span id="dashBoletos" class="counter-value">0</span>
-                                    </h4>
-                                </div>
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-primary-subtle rounded fs-3">
-                                        <i class="bx bx-dollar-circle text-primary"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col -->
+
 
                 <div class="col-xl-3 col-md-6">
                     <!-- card -->
@@ -140,39 +112,6 @@
                                 <div>
                                     <h4 class="fs-22 fw-semibold ff-secondary mb-4">
                                         <span class="counter-value" id="dashCredito">R$ 0,00</span>
-                                    </h4>
-                                </div>
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-primary-subtle rounded fs-3">
-                                        <i class="bx bx-credit-card-alt text-primary"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col -->
-            </div> <!-- end row-->
-
-
-            <div class="row">
-                <div class="col-xl-3 col-md-6">
-                    <!-- card -->
-                    <div class="card card-animate">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Débito</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <h5 class="fs-14 mb-0" id="debitoGrowth">
-                                        <i class="ri-arrow-right-up-line fs-13 align-middle"></i> 0%
-                                    </h5>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                <div>
-                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                        <span class="counter-value" id="dashDebito">R$ 0,00</span>
                                     </h4>
                                 </div>
                                 <div class="avatar-sm flex-shrink-0">
@@ -235,34 +174,6 @@
                                 <div class="avatar-sm flex-shrink-0">
                                     <span class="avatar-title bg-primary-subtle rounded fs-3">
                                         <i class="bx bx-dollar-circle text-primary"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div><!-- end col -->
-
-                <div class="col-xl-3 col-md-6">
-                    <!-- card -->
-                    <div class="card card-animate">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Usuários</p>
-                                </div>
-                                <div class="flex-shrink-0">
-
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                <div>
-                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                        <span class="counter-value" id="dashUsers"></span>
-                                    </h4>
-                                </div>
-                                <div class="avatar-sm flex-shrink-0">
-                                    <span class="avatar-title bg-primary-subtle rounded fs-3">
-                                        <i class="bx bx-group text-primary"></i>
                                     </span>
                                 </div>
                             </div>
