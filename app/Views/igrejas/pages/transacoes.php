@@ -46,17 +46,21 @@
                         <p class="text-muted mb-0">Cadastre supervisores...</p>
                     </div>
                 </div>
+
+                <div class="loadResult">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mt-2">Carregando registros</h5>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="loadResult">
-        <div class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <h5 class="mt-2">Carregando registros</h5>
-        </div>
-    </div>
+
+
+
 </div>
 <?= $this->endSection() ?>
 <?= $this->section("js") ?>
@@ -97,6 +101,7 @@
 
 
     function atualizarTabela(search = false, page = 1) {
+        $('.noresult').hide();
         $('#tabela-dados').empty(); // Limpa o conteúdo da tabela antes de atualizar
         $('#cardResult').hide();
         $('.loadResult').show();
@@ -130,7 +135,7 @@
                         status = `<span class="badge bg-success">${row.status}</span>`;
                     } else if (row.status == 'Cancelado') {
                         status = `<span class="badge bg-danger">${row.status}</span>`;
-                    } else if (row.status == 'Reembolsado'){
+                    } else if (row.status == 'Reembolsado') {
                         status = `<span class="badge bg-dark">${row.status}</span>`;
                     } else {
                         status = `<span class="badge bg-warning">${row.status}</span>`;
@@ -152,9 +157,11 @@
                 });
 
                 $("#pager").html(data.pager);
+                $('.loadResult').hide();
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
                 console.error("Erro ao carregar os dados:", textStatus, errorThrown);
+                $('.loadResult').hide();
             });
     }
 </script>
