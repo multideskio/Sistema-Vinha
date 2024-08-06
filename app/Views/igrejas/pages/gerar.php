@@ -4,6 +4,11 @@
 <div class="p-0 m-0">
     <div class="col-xxl-12">
         <h1 class="mb-3 fw-bolder">FAZER PAGAMENTO</h1>
+    </div>
+</div>
+
+<div class="p-0 m-0">
+    <div class="col-xxl-12">
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -19,13 +24,14 @@
                                 <i class="ri-mail-line d-block fs-20 mb-1"></i> CARTÃO DE DÉBITO
                             </a> -->
                         </div>
-                    </div> <!-- end col-->
+                    </div>
+                    <!-- end col-->
                     <div class="col-lg-9">
                         <div class="tab-content text-muted mt-3 mt-lg-0">
                             <div class="tab-pane fade active show" id="pix-tab" role="tabpanel" aria-labelledby="pix-tab-tab">
                                 <div class="row">
 
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-8">
                                         <?= form_open('/api/v1/cielo/pix-charge', ['id' => 'formPix']) ?>
                                         <h4>Realizando pagamento com o PIX</h4>
                                         <div class="alert alert-info">
@@ -62,14 +68,6 @@
                                             <button class="btn btn-lg btn-primary" type="submit">GERAR PIX</button>
                                         </div>
                                         </form>
-                                    </div>
-                                    <div class="col-lg-6 text-center">
-                                        <div id="areaStatusPixNo">
-                                            <h5>Os dados para realizar o pix apareceram aqui:</h5>
-                                            <img src="<?= base_url("assets/images/file.png") ?>" id="qrCodeGer" alt="Multidesk.io" width="250px">
-                                            <input type="text" class="form-control mt-2" id="copiaColaPix" readonly style="display: none;">
-                                            <button class="btn btn-info mt-2" style="display: none;" id="btnCopiaColaPix">COPIAR CÓDIGO DE PAGAMENTO</button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -139,18 +137,17 @@
                                                 <div class="card-wrapper mb-3"></div>
                                                 <div class="mt-3 text-center">
                                                     <img src="/assets/images/sistema/cards.png" class="img-fluid rounded-top" alt="" width="250px" />
-
                                                 </div>
                                             </div>
                                             <!-- end card-body -->
                                         </div>
                                     </div>
-
-
-
                                 </div>
                             </div>
                         </div>
+
+
+
                         <!--end tab-pane-->
                         <div class="tab-pane fade" id="custom-v-pills-messages" role="tabpanel" aria-labelledby="custom-v-pills-messages-tab">
                             <div class="d-flex mb-4">
@@ -180,6 +177,32 @@
 </div>
 <!--end col-->
 </div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPix">
+    Launch static backdrop modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modalPix" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalPixLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPixLabel">Dados para realizar o pagamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="<?= base_url("assets/images/file.png") ?>" id="qrCodeGer" alt="Multidesk.io" width="250px">
+                <input type="text" class="form-control mt-2" id="copiaColaPix" readonly style="display: none;">
+                <button class="btn btn-info mt-2" style="display: none;" id="btnCopiaColaPix">COPIAR CÓDIGO DE PAGAMENTO</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <?= $this->endSection() ?>
 
@@ -222,5 +245,7 @@
         );
     }
 </script>
+
+
 <?= $this->include('igrejas/pages/js/pagamentos.php') ?>
 <?= $this->endSection() ?>

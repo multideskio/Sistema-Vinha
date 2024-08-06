@@ -13,6 +13,8 @@
             $("#btnCopiaColaPix").show();
         }
 
+        $("#modalPix").modal("show");
+
         $('#btnCopiaColaPix').click(function() {
             // Seleciona o texto do input
             $('#copiaColaPix').select();
@@ -63,26 +65,29 @@
             beforeSubmit: function(formData, jqForm, options) {
                 // Executar ações antes de enviar o formulário (se necessário)
                 Swal.fire({
-                    title: 'Gerando PIX...',
+                    html: 'Gerando PIX<br>Aguarde aparecer as informações na tela',
                     type: 'info',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false,
+                    //confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                    //buttonsStyling: false,
                 });
             },
             success: function(responseText, statusText, xhr, $form) {
                 mostrarDadosPix(responseText);
+                Swal.close(); // Fecha o alerta
+
                 // Limpar o formulário
                 //$('#formCad')[0].reset();
                 // Exibir mensagem de sucesso
                 //exibirMensagem('success', 'Sucesso: ' + responseText);
-                Swal.fire({
+                /*Swal.fire({
                     title: 'Pix Gerado!',
                     type: 'success',
                     confirmButtonClass: 'btn btn-primary w-xs mt-2',
                     buttonsStyling: false,
-                });
+                });*/
             },
             error: function(xhr, status, error) {
+                Swal.close();
                 // Verifica se a resposta é um JSON
                 if (xhr.responseJSON && xhr.responseJSON.messages) {
                     // Exibir mensagem de erro vinda do servidor

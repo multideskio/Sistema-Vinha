@@ -320,38 +320,6 @@
     </div>
 </div>
 
-<!--<div class="col-xxl-6">
-    <div class="card">
-        <div class="card-header d-flex align-items-center">
-            <h6 class="card-title mb-0 flex-grow-1">History of Bids</h6>
-            <a class="text-muted" href="apps-nft-item-details.html">
-                See All <i class="ri-arrow-right-line align-bottom"></i>
-            </a>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive table-card">
-                <div data-simplebar style="max-height: 365px;">
-                    <ul class="list-group list-group-flush">
-                    <li class="list-group-item list-group-item-action">
-                            <div class="d-flex align-items-center">
-                                <img src="assets/images/users/avatar-10.jpg" alt="" class="avatar-xs object-fit-cover rounded-circle">
-                                <div class="ms-3 flex-grow-1">
-                                    <a href="#!" class="stretched-link">
-                                        <h6 class="fs-14 mb-1">Herbert Stokes</h6>
-                                    </a>
-                                    <p class="mb-0 text-muted">@herbert10</p>
-                                </div>
-                                <div>
-                                    <h6>174.36 ETH</h6>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>end col-->
 
 
 <?= $this->endSection() ?>
