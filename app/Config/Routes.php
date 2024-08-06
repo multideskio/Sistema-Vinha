@@ -8,9 +8,8 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
 
-$routes->get('/health', function() {
-    return "OK";
-});
+$routes->get('health', 'Health::index');
+
 
 $routes->get('nova-conta', 'Login::novaconta', ['filter' => 'csrf']);
 $routes->get('recuperacao', 'Login::recuperacao', ['filter' => 'csrf']);
