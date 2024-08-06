@@ -2,34 +2,36 @@
 
 <?= $this->section('page') ?>
 
+<div class="row mb-3 pb-1">
+    <div class="col-12">
+        <div class="d-flex align-items-lg-center flex-lg-row flex-column">
+            <div class="flex-grow-1">
+                <h1 class="fw-bolder">PAINEL DE ACOMPANHAMENTO</h1>
+            </div>
+            <div class="mt-3 mt-lg-0">
+                <div class="row g-3 mb-0 align-items-center">
+                    <div class="col-sm-auto">
+                        <div class="input-group">
+                            <input id="testDate" name="testDate" type="text" class="form-control border-0 shadow" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true">
+                            <button class="input-group-text bg-primary border-primary text-white" id="btnSearchDash">
+                                <i class="ri-calendar-2-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!--end col-->
+                </div>
+                <!--end row-->
+            </div>
+        </div><!-- end card header -->
+    </div>
+    <!--end col-->
+</div>
+<!--end row-->
+
+
 <div class="row">
     <div class="col">
         <div class="h-100">
-            <div class="row mb-3 pb-1">
-                <div class="col-12">
-                    <div class="d-flex align-items-lg-center flex-lg-row flex-column">
-                        <div class="flex-grow-1">
-                            <h1 class="fw-bolder">PAINEL DE ACOMPANHAMENTO</h1>
-                        </div>
-                        <div class="mt-3 mt-lg-0">
-                            <div class="row g-3 mb-0 align-items-center">
-                                <div class="col-sm-auto">
-                                    <div class="input-group">
-                                        <input id="testDate" name="testDate" type="text" class="form-control border-0 shadow" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true">
-                                        <button class="input-group-text bg-primary border-primary text-white" id="btnSearchDash">
-                                            <i class="ri-calendar-2-line"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <!--end col-->
-                            </div>
-                            <!--end row-->
-                        </div>
-                    </div><!-- end card header -->
-                </div>
-                <!--end col-->
-            </div>
-            <!--end row-->
 
             <div class="row">
                 <div class="col-xl-4 col-md-6">

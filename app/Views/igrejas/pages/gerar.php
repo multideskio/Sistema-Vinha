@@ -3,7 +3,7 @@
 <?= $this->section('page') ?>
 <div class="p-0 m-0">
     <div class="col-xxl-12">
-        <h1 class="mb-3">Ralizar um pagamento</h1>
+        <h1 class="mb-3 fw-bolder">Ralizar um pagamento</h1>
         <div class="card">
             <div class="card-body">
                 <div class="row">

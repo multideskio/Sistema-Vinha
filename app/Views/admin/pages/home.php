@@ -8,7 +8,7 @@
                 <div class="col-12">
                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                         <div class="flex-grow-1">
-                            <h1 class="fw-bolder">UPDATE TESTE - PAINEL DE ACOMPANHAMENTO</h1>
+                            <h1 class="fw-bolder">PAINEL DE ACOMPANHAMENTO</h1>
                         </div>
                         <div class="mt-3 mt-lg-0">
                             <div class="row g-3 mb-0 align-items-center">
