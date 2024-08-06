@@ -63,12 +63,15 @@ class SupervisoresModel extends Model
     protected $afterDelete    = ["updateCache"];
 
 
-    protected function updateCache()
+    protected function updateCache(array $data)
     {
+
         $cache = \Config\Services::cache();
         $cache->delete("supervisores_Cache");
         $cache->delete("public_supervisores");
         $cache->delete("select_supervisores");
+
+        return $data;
     }
     protected function filterHtml(array $data)
     {
