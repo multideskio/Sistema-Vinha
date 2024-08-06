@@ -89,6 +89,7 @@ class CieloDebitCard extends CieloBase {
             $this->transactionsModel->insert($data);
         } else {
             $logger = service('logger');
+            // Caso o status não seja 'Aprovado', pode-se tratar o erro aqui
             $logger->warning('Cobrança de cartão de débito não aprovada.', ['response' => $response]);
         }
     }
