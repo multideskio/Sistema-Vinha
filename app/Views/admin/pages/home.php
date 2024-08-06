@@ -1,10 +1,6 @@
 <?= $this->extend('admin/template') ?>
 
 <?= $this->section('page') ?>
-
-
-
-
 <div class="row">
     <div class="col">
         <div class="h-100">
@@ -18,7 +14,7 @@
                             <div class="row g-3 mb-0 align-items-center">
                                 <div class="col-sm-auto">
                                     <div class="input-group">
-                                        <input id="testDate" name="testDate" type="text" class="form-control border-0 shadow" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true">
+                                        <input id="testDate" name="testDate" type="text" class="form-control border-0 shadow" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true" placeholder="<?php echo date("Y-m-d"); ?>">
                                         <button class="input-group-text bg-primary border-primary text-white" id="btnSearchDash">
                                             <i class="ri-calendar-2-line"></i>
                                         </button>
