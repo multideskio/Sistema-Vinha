@@ -55,7 +55,7 @@ class SupervisoresModel extends Model
     protected $allowCallbacks = true;
     protected $beforeInsert   = ["filterHtml", "limpaStrings"];
     protected $afterInsert    = ["updateCache"];
-    protected $beforeUpdate   = ["limpaStrings", "filterHtml"];
+    protected $beforeUpdate   = ["limpaStrings", "filterHtml", "updateCache"];
     protected $afterUpdate    = ["updateCache"];
     protected $beforeFind     = [];
     protected $afterFind      = [];
@@ -68,6 +68,7 @@ class SupervisoresModel extends Model
         $cache = \Config\Services::cache();
         $cache->delete("supervisores_Cache");
         $cache->delete("public_supervisores");
+        $cache->delete("select_supervisores");
     }
     protected function filterHtml(array $data)
     {
