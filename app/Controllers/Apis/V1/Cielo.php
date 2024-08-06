@@ -10,7 +10,7 @@ use App\Gateways\Cielo\CieloCron;
 use App\Gateways\Cielo\CieloPix;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
-use Exception;
+use Exception; 
 
 class Cielo extends ResourceController
 {
@@ -25,7 +25,7 @@ class Cielo extends ResourceController
     public function __construct()
     {
         $this->creditCardGateway = new CieloCreditCard();
-        $this->debitCardGateway = new CieloDebitCard();
+        //$this->debitCardGateway = new CieloDebitCard();
         $this->boletoGateway = new CieloBoleto();
         $this->pixGateway = new CieloPix();
         $this->cieloBase = new CieloBase();

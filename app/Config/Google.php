@@ -6,7 +6,7 @@ use CodeIgniter\Config\BaseConfig;
 
 /* The Google class extends BaseConfig and provides methods to create a Google client with specified
 client ID and client secret. */
-class Google extends BaseConfig
+/*class Google extends BaseConfig
 {
     public $clientId = null;
     public $clientSecret = null;
@@ -15,7 +15,7 @@ class Google extends BaseConfig
      * The above function is a PHP constructor that initializes the clientId and clientSecret
      * properties with values retrieved from environment variables.
      */
-    public function __construct()
+    /*public function __construct()
     {
         $this->clientId = getenv('Google.Client.Id');
         $this->clientSecret = getenv('Google.Client.Secret');
@@ -27,7 +27,7 @@ class Google extends BaseConfig
      * @return An instance of the Google_Client class with the specified client ID, client secret, and
      * added scopes for 'openid', 'profile', and 'email'.
      */
-    public function createGoogleClient()
+    /*public function createGoogleClient()
     {
         $client = new \Google_Client();
         $client->setClientId($this->clientId);

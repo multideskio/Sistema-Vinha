@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2409b5f4621af65b1c003894763db232",
+    "content-hash": "5bc3547985a1963eb9404f07ff25d497",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.316.4",
+            "version": "3.317.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "2fffbb675e6af34a4a0ff42bbac04d17ab033142"
+                "reference": "890ca1841a49317db884d1b87f7c08613213f852"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2fffbb675e6af34a4a0ff42bbac04d17ab033142",
-                "reference": "2fffbb675e6af34a4a0ff42bbac04d17ab033142",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/890ca1841a49317db884d1b87f7c08613213f852",
+                "reference": "890ca1841a49317db884d1b87f7c08613213f852",
                 "shasum": ""
             },
             "require": {
@@ -79,9 +79,9 @@
                 "ext-json": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
-                "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5 <7.9.0",
+                "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
                 "guzzlehttp/promises": "^1.4.0 || ^2.0",
-                "guzzlehttp/psr7": "^1.9.1 || ^2.4.5 <2.7.0",
+                "guzzlehttp/psr7": "^1.9.1 || ^2.4.5",
                 "mtdowling/jmespath.php": "^2.6",
                 "php": ">=7.2.5",
                 "psr/http-message": "^1.0 || ^2.0"
@@ -151,22 +151,22 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.316.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.317.2"
             },
-            "time": "2024-07-18T19:22:56+00:00"
+            "time": "2024-08-05T18:08:05+00:00"
         },
         {
             "name": "codeigniter4/framework",
-            "version": "v4.5.3",
+            "version": "v4.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codeigniter4/framework.git",
-                "reference": "be27314371eece7ff3ac7c13d5b2f39f95038dfa"
+                "reference": "336e0781a0e5f6e0a72a5ebc1c76d99f1a8bd408"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codeigniter4/framework/zipball/be27314371eece7ff3ac7c13d5b2f39f95038dfa",
-                "reference": "be27314371eece7ff3ac7c13d5b2f39f95038dfa",
+                "url": "https://api.github.com/repos/codeigniter4/framework/zipball/336e0781a0e5f6e0a72a5ebc1c76d99f1a8bd408",
+                "reference": "336e0781a0e5f6e0a72a5ebc1c76d99f1a8bd408",
                 "shasum": ""
             },
             "require": {
@@ -227,20 +227,20 @@
                 "slack": "https://codeigniterchat.slack.com",
                 "source": "https://github.com/codeigniter4/CodeIgniter4"
             },
-            "time": "2024-06-25T02:18:23+00:00"
+            "time": "2024-07-27T08:31:38+00:00"
         },
         {
             "name": "codeigniter4/translations",
-            "version": "v4.5.2",
+            "version": "v4.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codeigniter4/translations.git",
-                "reference": "e72d876fa024fcb453d6ca40b16c44b4396a5091"
+                "reference": "78af662a0a304b7f628c088e73ddf61f18783880"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codeigniter4/translations/zipball/e72d876fa024fcb453d6ca40b16c44b4396a5091",
-                "reference": "e72d876fa024fcb453d6ca40b16c44b4396a5091",
+                "url": "https://api.github.com/repos/codeigniter4/translations/zipball/78af662a0a304b7f628c088e73ddf61f18783880",
+                "reference": "78af662a0a304b7f628c088e73ddf61f18783880",
                 "shasum": ""
             },
             "require": {
@@ -278,7 +278,7 @@
                 "slack": "https://codeigniterchat.slack.com",
                 "source": "https://github.com/codeigniter4/translations"
             },
-            "time": "2024-07-01T17:10:07+00:00"
+            "time": "2024-07-25T15:45:28+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -491,16 +491,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.6.3",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "6de29867b18790c0d2c846af4c13a24cc3ad56f3"
+                "reference": "a70f5c95fb43bc83f07c9c948baa0dc1829bf201"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/6de29867b18790c0d2c846af4c13a24cc3ad56f3",
-                "reference": "6de29867b18790c0d2c846af4c13a24cc3ad56f3",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/a70f5c95fb43bc83f07c9c948baa0dc1829bf201",
+                "reference": "a70f5c95fb43bc83f07c9c948baa0dc1829bf201",
                 "shasum": ""
             },
             "require": {
@@ -587,7 +587,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.6.3"
+                "source": "https://github.com/guzzle/psr7/tree/2.7.0"
             },
             "funding": [
                 {
@@ -603,7 +603,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-18T09:59:12+00:00"
+            "time": "2024-07-18T11:15:46+00:00"
         },
         {
             "name": "laminas/laminas-escaper",
@@ -1809,16 +1809,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.28",
+            "version": "10.5.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "ff7fb85cdf88131b83e721fb2a327b664dbed275"
+                "reference": "8e9e80872b4e8064401788ee8a32d40b4455318f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ff7fb85cdf88131b83e721fb2a327b664dbed275",
-                "reference": "ff7fb85cdf88131b83e721fb2a327b664dbed275",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e9e80872b4e8064401788ee8a32d40b4455318f",
+                "reference": "8e9e80872b4e8064401788ee8a32d40b4455318f",
                 "shasum": ""
             },
             "require": {
@@ -1890,7 +1890,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.28"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.29"
             },
             "funding": [
                 {
@@ -1906,7 +1906,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-18T14:54:16+00:00"
+            "time": "2024-07-30T11:08:00+00:00"
         },
         {
             "name": "psr/container",

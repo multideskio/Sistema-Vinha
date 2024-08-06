@@ -10,15 +10,15 @@ class Admin extends BaseController
     public function __construct()
     {
         $this->modelConfig = new \App\Models\AdminModel;
-      //  $this->data['rowConfig'] = $this->modelConfig->cacheData();
+        //  $this->data['rowConfig'] = $this->modelConfig->cacheData();
     }
 
     public function index(): string
     {
 
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Dashboard';
-        
+
         //
         return view('admin/pages/home', $data);
     }
@@ -26,7 +26,7 @@ class Admin extends BaseController
     public function regiao(): string
     {
 
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Regiões';
         //
         return view('admin/pages/regiao/regiao', $data);
@@ -35,16 +35,16 @@ class Admin extends BaseController
     public function gerentes(): string
     {
 
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Gerentes';
 
         //
         return view('admin/pages/gerentes/lista', $data);
     }
-    
+
     public function gerente($id): string
     {
-        $data['idSearch']  = $id ;
+        $data['idSearch']  = $id;
         $data['titlePage'] = 'Alterando Gerente';
 
         //
@@ -53,7 +53,7 @@ class Admin extends BaseController
 
     public function supervisores(): string
     {
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Supervisores';
         //
         return view('admin/pages/supervisores/lista', $data);
@@ -61,7 +61,7 @@ class Admin extends BaseController
 
     public function supervisor($id): string
     {
-        $data['idSearch']  = $id ;
+        $data['idSearch']  = $id;
         $data['titlePage'] = 'Alterando supervisores';
         //
         return view('admin/pages/supervisores/altera', $data);
@@ -69,7 +69,7 @@ class Admin extends BaseController
 
     public function pastores(): string
     {
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Pastores';
 
         //
@@ -86,7 +86,7 @@ class Admin extends BaseController
 
     public function igrejas(): string
     {
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Igrejas';
 
         //
@@ -95,7 +95,7 @@ class Admin extends BaseController
 
     public function igreja($id): string
     {
-        $data['idSearch']  = $id ;
+        $data['idSearch']  = $id;
         $data['titlePage'] = 'Alterando Igreja';
         //
         return view('admin/pages/igrejas/altera', $data);
@@ -103,18 +103,18 @@ class Admin extends BaseController
 
     public function admins(): string
     {
-        $data['idSearch']  = null ;
+        $data['idSearch']  = null;
         $data['titlePage'] = 'Administradores';
-        
+
         //
         return view('admin/pages/admins/lista', $data);
     }
 
     public function admin($id): string
     {
-        $data['idSearch']  = $id ;
+        $data['idSearch']  = $id;
         $data['titlePage'] = 'Administradores';
-        
+
         //
         return view('admin/pages/admins/altera', $data);
     }
@@ -141,26 +141,30 @@ class Admin extends BaseController
         return view('admin/pages/home', $data);
     }*/
 
-    public function gateways():string{
-        $data['idSearch']  = null ;
+    public function gateways(): string
+    {
+        $data['idSearch']  = null;
         $data['titlePage'] = "Gateways";
         return view('admin/pages/gateways', $data);
     }
 
-    public function ajuda():string{
-        $data['idSearch']  = null ;
+    public function ajuda(): string
+    {
+        $data['idSearch']  = null;
         $data['titlePage'] = "Ajuda";
         return view('admin/pages/ajuda', $data);
     }
 
-    public function config():string{
-        $data['idSearch']  = session('data')['idAdm'] ;
+    public function config(): string
+    {
+        $data['idSearch']  = session('data')['idAdm'];
         $data['titlePage'] = "Configurações gerais";
         return view('admin/pages/admin/config', $data);
     }
 
-    public function perfil():string{
-        $data['idSearch']  = session('data')['idAdm'] ;
+    public function perfil(): string
+    {
+        $data['idSearch']  = session('data')['idAdm'];
         $data['titlePage'] = "Meu perfil";
         $data['tipo']      = session('data')['tipo'];
         return view('admin/pages/user/perfil', $data);

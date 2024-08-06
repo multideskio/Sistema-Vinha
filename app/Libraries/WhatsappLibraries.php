@@ -22,12 +22,14 @@ class WhatsappLibraries
     {
         try {
             $this->modelAdmin = $modelAdmin ?? new AdminModel();
-            $this->client = $client ?? new Client();
+            $this->client = $client ?? new Client;
             $this->logger = $logger ?? \Config\Services::logger();
+
+            $this->logger->info('Construtor chamado.');
 
             $dataSettings = $this->data();
             if (!$dataSettings) {
-                throw new Exception('Nenhuma configuração da api Multidesk encontrada.');
+                throw new Exception('Nenhuma configuração da API Multidesk encontrada.');
             }
 
             $this->apiUrl = rtrim($dataSettings['apiUrl'], '/');
@@ -38,7 +40,11 @@ class WhatsappLibraries
                 'Content-Type' => 'application/json'
             ];
 
-            $this->logger->info('Configurações da API carregadas.', ['dataSettings' => $dataSettings]);
+            $this->logger->info('Configuração carregada com sucesso.', [
+                'apiUrl' => $this->apiUrl,
+                'instance' => $this->instance
+            ]);
+
         } catch (Exception $e) {
             $this->logger->error('Erro no construtor: ' . $e->getMessage());
         }
@@ -46,11 +52,13 @@ class WhatsappLibraries
 
     public function data(): ?array
     {
+        $this->logger->info('Método data chamado.');
         try {
             $row = $this->modelAdmin->first();
+            $this->logger->info('Dados obtidos do modelo Admin.');
 
             if ($row && isset($row['url_api'], $row['instance_api'], $row['key_api'])) {
-                $this->logger->info('Dados da API obtidos do banco de dados.', ['row' => $row]);
+                $this->logger->info('Dados da API encontrados.', $row);
                 return [
                     'apiUrl' => $row['url_api'],
                     'instance' => $row['instance_api'],
@@ -58,7 +66,7 @@ class WhatsappLibraries
                 ];
             }
 
-            $this->logger->warning('Dados da API não encontrados no banco de dados.');
+            $this->logger->warning('Dados da API não encontrados.');
             return null;
         } catch (Exception $e) {
             $this->logger->error('Erro ao obter dados: ' . $e->getMessage());
@@ -68,9 +76,13 @@ class WhatsappLibraries
 
     public function verifyNumber($message, $number, $tipo)
     {
-        try {
-            $this->logger->info('Verificando número.', ['number' => $number, 'tipo' => $tipo]);
+        $this->logger->info('Método verifyNumber chamado.', [
+            'number' => $number,
+            'tipo' => $tipo
+        ]);
 
+        try {
+            $this->logger->info('Enviando requisição para verificar número.');
             $body = $this->postRequest('/chat/whatsappNumbers/' . $this->instance, [
                 "numbers" => [$number]
             ]);
@@ -80,7 +92,7 @@ class WhatsappLibraries
             }
 
             if ($body[0]['exists']) {
-                $this->logger->info('Número verificado com sucesso.', ['number' => $number]);
+                $this->logger->info('Número verificado com sucesso.');
 
                 if ($tipo == 'text') {
                     return $this->sendMessageText($message, $number);
@@ -99,9 +111,12 @@ class WhatsappLibraries
 
     public function sendMessageImage(array $message, $number)
     {
-        try {
-            $this->logger->info('Enviando mensagem de imagem.', ['number' => $number]);
+        $this->logger->info('Método sendMessageImage chamado.', [
+            'number' => $number,
+            'message' => $message
+        ]);
 
+        try {
             $params = [
                 "number" => $number,
                 "mediaMessage" => [
@@ -111,13 +126,14 @@ class WhatsappLibraries
                 ]
             ];
 
+            $this->logger->info('Enviando imagem.', $params);
             $body = $this->postRequest('/message/sendMedia/' . $this->instance, $params);
 
             if (isset($body['Code'], $body['Message'])) {
                 throw new Exception("Erro {$body['Code']}: {$body['Message']}");
             }
 
-            $this->logger->info('Mensagem de imagem enviada com sucesso.', ['number' => $number]);
+            $this->logger->info('Imagem enviada com sucesso.');
             return true;
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -129,9 +145,12 @@ class WhatsappLibraries
 
     public function sendMessageText($message, $number)
     {
-        try {
-            $this->logger->info('Enviando mensagem de texto.', ['number' => $number]);
+        $this->logger->info('Método sendMessageText chamado.', [
+            'number' => $number,
+            'message' => $message
+        ]);
 
+        try {
             $params = [
                 "number" => $number,
                 "textMessage" => [
@@ -144,13 +163,14 @@ class WhatsappLibraries
                 ]
             ];
 
+            $this->logger->info('Enviando texto.', $params);
             $body = $this->postRequest('/message/sendText/' . $this->instance, $params);
 
             if (isset($body['Code'], $body['Message'])) {
                 throw new Exception("Erro {$body['Code']}: {$body['Message']}");
             }
 
-            $this->logger->info('Mensagem de texto enviada com sucesso.', ['number' => $number]);
+            $this->logger->info('Texto enviado com sucesso.');
             return true;
         } catch (RequestException $e) {
             $response = $e->getResponse();
@@ -162,19 +182,22 @@ class WhatsappLibraries
 
     protected function postRequest($endpoint, array $data)
     {
-        try {
-            $this->logger->info('Realizando POST request.', ['endpoint' => $endpoint, 'data' => $data]);
+        $this->logger->info('Método postRequest chamado.', [
+            'endpoint' => $endpoint,
+            'data' => $data
+        ]);
 
+        try {
             $options = [
                 'headers' => $this->headers,
                 'json' => $data
             ];
 
+            $this->logger->info('Enviando requisição POST para ' . $endpoint);
             $response = $this->client->post($this->apiUrl . $endpoint, $options);
-            $body = json_decode($response->getBody(), true);
-
-            $this->logger->info('POST request realizado com sucesso.', ['response' => $body]);
-            return $body;
+            $responseBody = json_decode($response->getBody(), true);
+            $this->logger->info('Resposta da requisição recebida.', $responseBody);
+            return $responseBody;
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';

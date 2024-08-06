@@ -13,15 +13,20 @@ class CieloWhatsApp
     {
         helper('auxiliar');
         $this->logger = service('logger');
+        $this->logger->info('Construtor de CieloWhatsApp chamado.');
     }
 
     public function pixGerado($row, $response)
     {
-        try {
-            $this->logger->info('Iniciando pixGerado.');
+        $this->logger->info('Método pixGerado iniciado.', ['row' => $row, 'response' => $response]);
 
+        try {
             $builderWa = new ConfigMensagensModel();
-            $rowMessage = $builderWa->where(['id_adm' => session('data')['idAdm'], 'tipo' => 'cobranca_gerada_pix', 'status' => true])->first();
+            $rowMessage = $builderWa->where([
+                'id_adm' => session('data')['idAdm'],
+                'tipo' => 'cobranca_gerada_pix',
+                'status' => true
+            ])->first();
             $this->logger->info('Configuração da mensagem carregada.', ['rowMessage' => $rowMessage]);
 
             if ($rowMessage) {
@@ -40,30 +45,37 @@ class CieloWhatsApp
                 $this->logger->info('Mensagem final preparada.', ['mensagem_final' => $mensagem_final]);
 
                 $whatsapp = new WhatsappLibraries();
+                $this->logger->info('Instância de WhatsappLibraries criada.');
 
-                $this->logger->info('Enviando mensagem com imagem via WhatsApp.');
+                $this->logger->info('Enviando mensagem com imagem via WhatsApp.', [
+                    'number' => $data['number'],
+                    'image' => $response['Payment']['QrCodeBase64Image']
+                ]);
                 $whatsapp->verifyNumber([
                     'message' => $mensagem_final,
                     'image' => $response['Payment']['QrCodeBase64Image']
                 ], $data['number'], 'image');
 
-                $this->logger->info('Enviando mensagem de texto via WhatsApp.');
+                $this->logger->info('Enviando mensagem de texto via WhatsApp.', [
+                    'number' => $data['number'],
+                    'textMessage' => $response['Payment']['QrCodeString']
+                ]);
                 $whatsapp->verifyNumber([
                     'message' => $response['Payment']['QrCodeString']
                 ], $data['number'], 'text');
             } else {
-                $this->logger->warning('Configuração de mensagem não encontrada.');
+                $this->logger->warning('Configuração de mensagem não encontrada para tipo "cobranca_gerada_pix".');
             }
         } catch (\Exception $e) {
-            $this->logger->error('Erro em pixGerado: ' . $e->getMessage());
+            $this->logger->error('Erro no método pixGerado: ' . $e->getMessage(), ['exception' => $e]);
         }
     }
 
     public function pago($client, $response)
     {
-        try {
-            $this->logger->info('Iniciando pago.');
+        $this->logger->info('Método pago iniciado.', ['client' => $client, 'response' => $response]);
 
+        try {
             $builderWa = new ConfigMensagensModel();
             $rowMessage = $builderWa->where([
                 'id_adm' => session('data')['idAdm'],
@@ -87,17 +99,21 @@ class CieloWhatsApp
                 $this->logger->info('Mensagem final preparada.', ['mensagem_final' => $mensagem_final]);
 
                 $whatsapp = new WhatsappLibraries();
+                $this->logger->info('Instância de WhatsappLibraries criada.');
 
-                $this->logger->info('Enviando mensagem de texto via WhatsApp.');
+                $this->logger->info('Enviando mensagem de texto via WhatsApp.', [
+                    'number' => $data['number'],
+                    'textMessage' => $mensagem_final
+                ]);
                 $whatsapp->verifyNumber([
                     'message' => $mensagem_final
                 ], $data['number'], 'text');
             } else {
-                $this->logger->warning('Configuração de mensagem não encontrada.');
+                $this->logger->warning('Configuração de mensagem não encontrada para tipo "pagamento_realizado".');
                 return false;
             }
         } catch (\Exception $e) {
-            $this->logger->error('Erro em pago: ' . $e->getMessage());
+            $this->logger->error('Erro no método pago: ' . $e->getMessage(), ['exception' => $e]);
         }
     }
 }

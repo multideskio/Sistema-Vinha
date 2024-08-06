@@ -1,5 +1,6 @@
 <?php namespace App\Gateways\Cielo;
 
+use App\Models\TransactionsModel; // Certifique-se de que o modelo de transações está importado corretamente
 use Exception;
 
 /**
@@ -9,21 +10,7 @@ use Exception;
  */
 class CieloDebitCard extends CieloBase {
 
-    /**
-     * Cria uma cobrança no cartão de débito.
-     *
-     * @param string $nome       Nome do cliente.
-     * @param int $valor         Valor da cobrança em centavos.
-     * @param string $cartao     Número do cartão de débito.
-     * @param string $securicode Código de segurança do cartão.
-     * @param string $data       Data de expiração do cartão (MM/AA).
-     * @param string $brand      Bandeira do cartão (padrão: 'Visa').
-     * @param string $urlRetorno URL de retorno para a autenticação.
-     * 
-     * @return array             Resposta da API da Cielo.
-     * @throws Exception         Se a cobrança por cartão de débito não estiver ativa ou se ocorrer um erro na requisição.
-     */
-    public function debito( $nome,  $valor,  $cartao,  $securicode,  $data,  $brand = 'Visa',  $urlRetorno): array
+    public function debito($nome, $valor, $cartao, $securicode, $data, $brand = 'Visa', $urlRetorno): array
     {
         $cielo = $this->data();
         if (!$cielo['active_debito']) {
@@ -68,10 +55,41 @@ class CieloDebitCard extends CieloBase {
             $params['Payment']['Authenticate'] = true;
             $endPoint = '/1/sales/';
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
+
             $this->saveTransaction($params, $response);
+
+            // Limpeza de cache
+            $cache = service('cache');
+            $cache->deleteMatching('transacoes_*');
+            $cache->deleteMatching('*_transacoes_*');
+            $cache->deleteMatching('*_transacoes');
+
             return $response;
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança de cartão de débito: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Salva a transação de cartão de débito no banco de dados.
+     *
+     * @param array $params      Parâmetros da transação.
+     * @param array $response    Resposta da API da Cielo.
+     */
+    private function saveTransaction(array $params, array $response)
+    {
+        if (isset($response['Payment']['Status']) && $response['Payment']['Status'] == 'Approved') {
+            $data = [
+                'id_transacao' => $response['Payment']['Tid'],
+                'valor' => $params['Payment']['Amount'],
+                'log' => json_encode($response),
+                'status_text' => 'Aprovado'
+            ];
+
+            $this->transactionsModel->insert($data);
+        } else {
+            $logger = service('logger');
+            $logger->warning('Cobrança de cartão de débito não aprovada.', ['response' => $response]);
         }
     }
 }
