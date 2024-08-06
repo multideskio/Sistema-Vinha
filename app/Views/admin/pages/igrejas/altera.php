@@ -97,7 +97,7 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/igrejas/' . $idSearch, 'class="formGeral"') ?>
+                        <?= form_open('api/v1/igrejas/' . $idSearch, 'class="formGeral" autocomplete="off"') ?>
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="mb-3">
