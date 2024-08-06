@@ -72,7 +72,7 @@ class TransacoesModel extends Model
 
         // Constrói a consulta para transações com paginação
         $this->select("transacoes.*")
-            ->select('usuarios.tipo AS tipo_user')
+            ->select('usuarios.tipo AS tipo_user, usuarios.email')
             ->join('usuarios', 'usuarios.id = transacoes.id_user')
             ->orderBy('transacoes.id', $order)
             ->limit($limit);
@@ -89,6 +89,7 @@ class TransacoesModel extends Model
                 $data[] = [
                     'id'          => $transacao['id'],
                     'nome'        => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
+                    'email'       => $transacao['email'],
                     'tipo'        => 'pastor',
                     'id_transacao' => $transacao['id_transacao'],
                     'uf'          => $rowPastor['uf'],
@@ -112,6 +113,7 @@ class TransacoesModel extends Model
                 $data[] = [
                     'id'          => intval($transacao['id']),
                     'nome'        => $rowIgreja['razao_social'],
+                    'email'       => $transacao['email'],
                     'tipo'        => 'igreja',
                     'id_transacao' => $transacao['id_transacao'],
                     'uf'          => $rowIgreja['uf'],
@@ -157,7 +159,7 @@ class TransacoesModel extends Model
         $result = [
             'rows' => $data,
             'pager' => $this->pager->links('default', 'paginate'),
-            'num' => $numMessage,
+            'num' => $this->countAllResults(). ' transações encontrados',
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
             'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal) // Certifique-se de formatar a soma total
         ];

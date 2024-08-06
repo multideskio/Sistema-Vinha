@@ -213,7 +213,7 @@
         <div class="card card-height-100">
             <div class="card-header align-items-center d-flex">
                 <h4 class="card-title mb-0 flex-grow-1">Gráfico geral</h4>
-                <div class="flex-shrink-0">
+                <!-- <div class="flex-shrink-0">
                     <div class="dropdown card-header-dropdown">
                         <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
@@ -224,7 +224,7 @@
                             <a class="dropdown-item" href="#">Import</a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div><!-- end card header -->
 
             <div class="card-body">
@@ -236,13 +236,13 @@
 
 <div class="row">
     <div class="col-xl-6 col-lg-6">
-        <div class="card card-dark">
+        <div class="card">
             <div class="card-header">
                 <span>Últimos cadastros</span>
             </div>
             <div class="card-body">
                 <div class="page-link" id="numResultsUsers"></div>
-                <div class="table-responsive">
+                <div class="table-responsive" id="tableUsers" style="display: none;">
                     <!-- Small Tables -->
                     <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
                         <thead>
@@ -254,23 +254,35 @@
                             </tr>
                         </thead>
                         <tbody id="listaUsuarios">
-
                         </tbody>
                     </table>
+                    <div id="pagerUser" class="mt-2"></div>
                 </div>
-                <div id="pagerUser" class="mt-2"></div>
+                <div class="noresult" style="display: none">
+                    <div class="text-center">
+                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                        <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
+                    </div>
+                </div>
+                <div id="loadResultUsers">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mt-2">Buscando registros</h5>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
     <div class="col-xl-6 col-lg-6">
-        <div class="card card-dark">
+        <div class="card">
             <div class="card-header">
                 <span>Últimas transações</span>
             </div>
             <div class="card-body">
                 <div class="page-link" id="numResults"></div>
-                <div class="table-responsive">
+                <div class="table-responsive" id="tableTransacoes" style="display: none;">
                     <!-- Small Tables -->
                     <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
                         <thead>
@@ -287,13 +299,59 @@
 
                         </tbody>
                     </table>
+                    <div id="pager" class="mt-2"></div>
                 </div>
-                <div id="pager" class="mt-2"></div>
+                <div class="noresult" style="display: none">
+                    <div class="text-center">
+                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                        <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
+                    </div>
+                </div>
+                <div id="loadResult">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mt-2">Buscando registros</h5>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!--<div class="col-xxl-6">
+    <div class="card">
+        <div class="card-header d-flex align-items-center">
+            <h6 class="card-title mb-0 flex-grow-1">History of Bids</h6>
+            <a class="text-muted" href="apps-nft-item-details.html">
+                See All <i class="ri-arrow-right-line align-bottom"></i>
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table-card">
+                <div data-simplebar style="max-height: 365px;">
+                    <ul class="list-group list-group-flush">
+                    <li class="list-group-item list-group-item-action">
+                            <div class="d-flex align-items-center">
+                                <img src="assets/images/users/avatar-10.jpg" alt="" class="avatar-xs object-fit-cover rounded-circle">
+                                <div class="ms-3 flex-grow-1">
+                                    <a href="#!" class="stretched-link">
+                                        <h6 class="fs-14 mb-1">Herbert Stokes</h6>
+                                    </a>
+                                    <p class="mb-0 text-muted">@herbert10</p>
+                                </div>
+                                <div>
+                                    <h6>174.36 ETH</h6>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>end col-->
 
 
 <?= $this->endSection() ?>
@@ -301,5 +359,5 @@
 
 <!-- apexcharts -->
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
-<script src="/assets/js/custom/dashboard.min.js"></script>
+<script src="/assets/js/custom/dashboard.js"></script>
 <?= $this->endSection() ?>

@@ -198,6 +198,9 @@ function search() {
 function listaTransacoes(search = false, page = 1) {
     $('#listaTransacoes').empty();
 
+    $("#tableTransacoes").hide();
+    $("#loadResult").show();
+
     var url = `${_baseUrl}api/v1/transacoes/lista?`;
 
     if (search) {
@@ -209,7 +212,6 @@ function listaTransacoes(search = false, page = 1) {
 
 
     $.getJSON(url, function (data, textStatus, jqXHR) {
-        //console.log(data);
 
         $("#numResults").html(data.num);
         $("#pager").html(data.pager);
@@ -228,15 +230,18 @@ function listaTransacoes(search = false, page = 1) {
 
             $("#listaTransacoes").append(`<tr>
                                 <th scope="row">${row.id}</th>
-                                <td>${row.nome}</td>
+                                <td>${row.nome}<br><small class="text-muted">${row.email}</small></td>
                                 <td>${row.valor}</td>
                                 <td>${status}</td>
                                 <td>${row.forma_pg}</td>
                                 <td>
-                                <a href="${row.url}" class="btn btn-sm bg-light text-dark">ver</a>
+                                <a href="${row.url}" class="btn btn-sm btn-soft-dark waves-effect waves-light">ver</a>
                                 </td>
                             </tr>`);
         });
+
+        $("#tableTransacoes").show();
+        $("#loadResult").hide();
     })
 }
 
@@ -267,6 +272,9 @@ function searchUser() {
 function listaUsuarios(search = false, page = 1) {
     $('#listaUsuarios').empty();
 
+    $("#tableUsers").hide();
+    $("#loadResultUsers").show();
+
     var url = `${_baseUrl}api/v1/usuarios?`;
 
     if (search) {
@@ -278,18 +286,24 @@ function listaUsuarios(search = false, page = 1) {
 
     $.getJSON(url, function (data, textStatus, jqXHR) {
         //console.log(data);
-        $("#numResultsUsers").html(data.num);
-        $("#pagerUser").html(data.pager);
-
         $.each(data.rows, function (indexInArray, row) {
             $("#listaUsuarios").append(`<tr>
                                     <th scope="row">${row.id}</th>
-                                    <td>${row.nome}</td>
+                                    <td>${row.nome}<br><small class="text-muted">${row.email}</small></td>
                                     <td>${row.tipo}</td>
                                     <td>
-                                    <a href="${row.url}" class="btn btn-sm bg-light text-dark">ver</a>
+                                    <a href="${row.url}" class="btn btn-sm btn-soft-dark waves-effect waves-light">ver</a>
                                     </td>
                                 </tr>`);
         });
+
+        $("#tableUsers").show();
+        $("#loadResultUsers").hide();
+
+        $("#numResultsUsers").html(data.num);
+        $("#pagerUser").html(data.pager);
+
+
+
     })
 }
