@@ -92,7 +92,7 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/administradores/' . $idSearch, 'class="formGeral"') ?>
+                        <?= form_open('api/v1/administradores/' . $idSearch, 'class="formGeral" autocomplete="off"') ?>
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-3">
