@@ -5,7 +5,13 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+
 $routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
+
+
+$routes->get('/health', function() {
+    return "OK";
+});
 
 $routes->get('nova-conta',      'Login::novaconta',   ['filter' => 'csrf']);
 $routes->get('recuperacao',     'Login::recuperacao', ['filter' => 'csrf']);
