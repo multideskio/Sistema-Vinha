@@ -164,7 +164,8 @@ class UsuariosModel extends Model
                     'id'    => $row['id'],
                     'tipo'  => 'Administrador',
                     'nome'  => $rowResult['nome'],
-                    'email' => $row['email']
+                    'email' => $row['email'],
+                    'url'   => site_url("admin/admin/{$row['id_perfil']}")
                 ];
             }
 
@@ -174,7 +175,8 @@ class UsuariosModel extends Model
                     'id'    => $row['id'],
                     'tipo'  => 'Gerente',
                     'nome'  => $rowResult['nome'],
-                    'email' => $row['email']
+                    'email' => $row['email'],
+                    'url'   => site_url("admin/gerente/{$row['id_perfil']}")
                 ];
             }
 
@@ -185,7 +187,8 @@ class UsuariosModel extends Model
                     'id'    => $row['id'],
                     'tipo'  => 'Supervisor',
                     'nome'  => $rowResult['nome'],
-                    'email' => $row['email']
+                    'email' => $row['email'],
+                    'url'   => site_url("admin/supervisor/{$row['id_perfil']}")
                 ];
             }
 
@@ -197,7 +200,9 @@ class UsuariosModel extends Model
                             'id'    => $row['id'],
                             'tipo'  => 'Pastor',
                             'nome'  => $rowResult['nome'],
-                            'email' => $row['email']
+                            'email' => $row['email'],
+                            'url'   => site_url("admin/pastor/{$row['id_perfil']}")
+
                         ];
                     }
                 } else {
@@ -206,7 +211,9 @@ class UsuariosModel extends Model
                         'id'    => $row['id'],
                         'tipo'  => 'Igreja',
                         'nome'  => $rowResult['razao_social'],
-                        'email' => $row['email']
+                        'email' => $row['email'],
+                        'url'   => site_url("admin/igreja/{$row['id_perfil']}")
+
                     ];
                 }
             }
@@ -214,7 +221,8 @@ class UsuariosModel extends Model
 
         $dados = [
             'rows' => $data,
-            'pager' => $this->pager->links('default', 'paginate')
+            'pager' => $this->pager->links('default', 'paginate'),
+            'num'   => $this->countAllResults() . ' cadastrastros encontrados'
         ];
 
         /*helper("auxiliar");

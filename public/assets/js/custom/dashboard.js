@@ -1,3 +1,27 @@
+var chartPieBasicColors = ['#008FFB', '#212529']; // Defina as cores do gráfico
+
+var options = {
+    series: [],
+    chart: {
+        height: 200,
+        type: 'pie',
+    },
+    labels: ['CRÉDITO', 'PIX'],
+    legend: {
+        position: 'bottom'
+    },
+    dataLabels: {
+        dropShadow: {
+            enabled: false,
+        }
+    },
+    colors: chartPieBasicColors
+};
+
+var chart = new ApexCharts(document.querySelector("#simple_pie_chart"), options);
+chart.render();
+
+
 $(document).ready(function () {
     statisticas()
     listaTransacoes()
@@ -27,7 +51,6 @@ $(document).ready(function () {
     });
 });
 
-
 function applyGrowthRate(elementId, growthRate) {
     const element = $("#" + elementId);
     const iconClass = growthRate.startsWith('-') ? 'ri-arrow-right-down-line' : 'ri-arrow-right-up-line';
@@ -49,7 +72,7 @@ function statisticas(search = null) {
     }
 
     $.getJSON(url, function (data, textStatus, jqXHR) {
-        console.log(data);
+        //console.log(data);
 
         // Atualizar valores
         $("#mesDash").html(data.mes.valor);
@@ -162,7 +185,7 @@ function search() {
         var page = urlParams.get('page');
         var search = urlParams.get('search');
 
-        console.log(page);
+        //console.log(page);
 
         // Verifica se o parâmetro "page" é um número
         if (!isNaN(page)) {
@@ -186,7 +209,7 @@ function listaTransacoes(search = false, page = 1) {
 
 
     $.getJSON(url, function (data, textStatus, jqXHR) {
-        console.log(data);
+        //console.log(data);
 
         $("#numResults").html(data.num);
         $("#pager").html(data.pager);
@@ -222,7 +245,7 @@ function listaTransacoes(search = false, page = 1) {
 
 
 function searchUser() {
-    
+
     // Paginação
     $("#pagerUser").on("click", "a", function (e) {
         e.preventDefault();
@@ -231,7 +254,7 @@ function searchUser() {
         var page = urlParams.get('page');
         var search = urlParams.get('search');
 
-        console.log(page);
+        //console.log(page);
 
         // Verifica se o parâmetro "page" é um número
         if (!isNaN(page)) {
@@ -254,9 +277,8 @@ function listaUsuarios(search = false, page = 1) {
     }
 
     $.getJSON(url, function (data, textStatus, jqXHR) {
-        console.log(data);
-
-        //$("#numResults").html(data.num);
+        //console.log(data);
+        $("#numResultsUsers").html(data.num);
         $("#pagerUser").html(data.pager);
 
         $.each(data.rows, function (indexInArray, row) {
@@ -265,7 +287,7 @@ function listaUsuarios(search = false, page = 1) {
                                     <td>${row.nome}</td>
                                     <td>${row.tipo}</td>
                                     <td>
-                                    <a href="#" class="btn btn-sm bg-light text-dark">ver</a>
+                                    <a href="${row.url}" class="btn btn-sm bg-light text-dark">ver</a>
                                     </td>
                                 </tr>`);
         });

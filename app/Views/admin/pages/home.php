@@ -241,6 +241,7 @@
                 <span>Últimos cadastros</span>
             </div>
             <div class="card-body">
+                <div class="page-link" id="numResultsUsers"></div>
                 <div class="table-responsive">
                     <!-- Small Tables -->
                     <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
@@ -268,8 +269,8 @@
                 <span>Últimas transações</span>
             </div>
             <div class="card-body">
+                <div class="page-link" id="numResults"></div>
                 <div class="table-responsive">
-                    <div class="page-link" id="numResults"></div>
                     <!-- Small Tables -->
                     <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
                         <thead>
@@ -300,35 +301,5 @@
 
 <!-- apexcharts -->
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
-
-
-
-<script>
-    var chartPieBasicColors = ['#008FFB', '#FF4560']; // Defina as cores do gráfico
-
-    var options = {
-        series: [],
-        chart: {
-            height: 200,
-            type: 'pie',
-        },
-        labels: ['CRÉDITO', 'PIX'],
-        legend: {
-            position: 'bottom'
-        },
-        dataLabels: {
-            dropShadow: {
-                enabled: false,
-            }
-        },
-        colors: chartPieBasicColors
-    };
-
-    var chart = new ApexCharts(document.querySelector("#simple_pie_chart"), options);
-    chart.render();
-</script>
-
-<script src="/assets/js/custom/dashboard.js"></script>
-
-
+<script src="/assets/js/custom/dashboard.min.js"></script>
 <?= $this->endSection() ?>
