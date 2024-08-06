@@ -101,6 +101,7 @@ class Open extends ResourceController
             $dataUser = [
                 'tipo'        => 'pastor',
                 'id_perfil'   => $id,
+                'id_admin'    => 1,
                 'email'       => $input['email'],
                 'password'    => $input['password'],
                 'nivel'       => '4'
@@ -203,6 +204,7 @@ class Open extends ResourceController
             $dataUser = [
                 'tipo'        => 'igreja',
                 'id_perfil'   => $id,
+                'id_admin'    => 1,
                 'email'       => $input['email'],
                 'password'    => $input['password'],
                 'nivel'       => '4'

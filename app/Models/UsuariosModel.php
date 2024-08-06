@@ -955,7 +955,7 @@ class UsuariosModel extends Model
             'isConnected'   => TRUE,
             'id_perfil'     => intval($rowUser[0]['id_perfil']),
             'id'            => intval($rowUser[0]['id']),
-            'idAdm'         => intval($rowUser[0]['id_adm']),
+            'idAdm'         => intval($rowUser[0]['id_adm']) ?? 1,
             'name'          => ($perfil['nome']) ?? ($perfil['nome_tesoureiro']),
             'email'         => $rowUser[0]['email'],
             'celular'       => $perfil['celular'],
@@ -981,6 +981,18 @@ class UsuariosModel extends Model
             return redirect()->to(site_url('admin'));
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function google(array $data)
     {
@@ -1042,6 +1054,12 @@ class UsuariosModel extends Model
 
         return redirect()->to(site_url('admin'));
     }
+
+
+
+
+
+
 
     public function cadUser(string $tipo, array $input): bool
     {

@@ -23,10 +23,11 @@ class CieloWhatsApp
         try {
             $builderWa = new ConfigMensagensModel();
             $rowMessage = $builderWa->where([
-                'id_adm' => session('data')['idAdm'],
+                //'id_adm' => session('data')['idAdm'],
                 'tipo' => 'cobranca_gerada_pix',
                 'status' => true
             ])->first();
+            
             $this->logger->info('Configuração da mensagem carregada.', ['rowMessage' => $rowMessage]);
 
             if ($rowMessage) {
