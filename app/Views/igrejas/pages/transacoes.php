@@ -2,18 +2,13 @@
 <?= $this->section('page') ?>
 <div class="clearfix">
     <p class="text-muted float-start">Suas transações</p>
-    <!-- Button trigger modal -->
 </div>
 <div class="col-12 mt-2">
     <div class="card">
         <div class="card-body">
             <?= $this->include('admin/pages/includes/search.php') ?>
             <div class="table-responsive">
-                <!-- style="display: none" -->
                 <div id="cardResult">
-                    <div class="alert alert-info" role="alert">
-                        <strong>A região é herdada do supervisor</strong>
-                    </div>
                     <div class="page-link" id="numResults"></div>
                     <table class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                         <thead>
@@ -46,7 +41,6 @@
                         <p class="text-muted mb-0">Cadastre supervisores...</p>
                     </div>
                 </div>
-
                 <div class="loadResult">
                     <div class="text-center">
                         <div class="spinner-border" role="status">
@@ -58,9 +52,6 @@
             </div>
         </div>
     </div>
-
-
-
 </div>
 <?= $this->endSection() ?>
 <?= $this->section("js") ?>
@@ -97,8 +88,6 @@
             atualizarTabela(search, page);
         }
     });
-
-
 
     function atualizarTabela(search = false, page = 1) {
         $('.noresult').hide();
@@ -165,6 +154,4 @@
             });
     }
 </script>
-
-
 <?= $this->endSection() ?>

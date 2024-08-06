@@ -32,9 +32,9 @@ class Usuarios extends ResourceController
     {
         //
         if ($this->request->getGet("search") == "false") {
-            $data = $this->modelUsuarios->listSearch();
+            $data = $this->modelUsuarios->listGeral();
         } else {
-            $data = $this->modelUsuarios->listSearch($this->request->getGet());
+            $data = $this->modelUsuarios->listGeral($this->request->getGet());
         }
 
         return $this->respond($data);
@@ -52,8 +52,6 @@ class Usuarios extends ResourceController
             ->select('usuarios.*, perfis.*')
             ->join('perfis', 'usuarios.id = perfis.id_user', 'left')
             ->find($id);
-
-
 
         //$list = $this->modelUsuarios->find($id);
         return $this->respond($list);

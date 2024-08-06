@@ -132,9 +132,95 @@ class UsuariosModel extends Model
     {
         $cache = \Config\Services::cache();
         $cache->delete("user_cache");
+        $cache->delete('listDashboard');
 
         /*$dbutil = \Config\Database::utils();
         $dbutil->optimizeTable("usuarios");*/
+    }
+
+    public function listGeral($input = false, $limit = 10, $order = 'DESC')
+    {
+        $data = array();
+
+        $this->orderBy('id', $order);
+        $rows = $this->paginate($limit);
+
+        $modelAdmin   = new AdministradoresModel();
+        $modelGerente = new GerentesModel();
+        $modelSuper   = new SupervisoresModel();
+        $modelPastor  = new PastoresModel();
+        $modelIgrejas = new IgrejasModel();
+
+        $cache = service('cache');
+
+        /*if($cache->get('listDashboard_')){
+            return $cache->get('listDashboard');
+        }*/
+
+        foreach ($rows as $row) {
+            if ($row['nivel'] == 1) {
+                $rowResult = $modelAdmin->find($row['id_perfil']);
+                $data[] = [
+                    'id'    => $row['id'],
+                    'tipo'  => 'Administrador',
+                    'nome'  => $rowResult['nome'],
+                    'email' => $row['email']
+                ];
+            }
+
+            if ($row['nivel'] == 2) {
+                $rowResult = $modelGerente->find($row['id_perfil']);
+                $data[] = [
+                    'id'    => $row['id'],
+                    'tipo'  => 'Gerente',
+                    'nome'  => $rowResult['nome'],
+                    'email' => $row['email']
+                ];
+            }
+
+            if ($row['nivel'] == 3) {
+                $rowResult = $modelSuper->find($row['id_perfil']);
+
+                $data[] = [
+                    'id'    => $row['id'],
+                    'tipo'  => 'Supervisor',
+                    'nome'  => $rowResult['nome'],
+                    'email' => $row['email']
+                ];
+            }
+
+            if ($row['nivel'] == 4) {
+                if ($row['tipo'] == 'pastor') {
+                    $rowResult = $modelPastor->find($row['id_perfil']);
+                    if ($rowResult) {
+                        $data[] = [
+                            'id'    => $row['id'],
+                            'tipo'  => 'Pastor',
+                            'nome'  => $rowResult['nome'],
+                            'email' => $row['email']
+                        ];
+                    }
+                } else {
+                    $rowResult = $modelIgrejas->find($row['id_perfil']);
+                    $data[] = [
+                        'id'    => $row['id'],
+                        'tipo'  => 'Igreja',
+                        'nome'  => $rowResult['razao_social'],
+                        'email' => $row['email']
+                    ];
+                }
+            }
+        }
+
+        $dados = [
+            'rows' => $data,
+            'pager' => $this->pager->links('default', 'paginate')
+        ];
+
+        /*helper("auxiliar");
+        $cache->save("listDashboard", $dados, getCacheExpirationTimeInSeconds(365));
+        */
+        return $dados;
     }
 
     public function listSearch($input = false, $limit = 10, $order = 'DESC')

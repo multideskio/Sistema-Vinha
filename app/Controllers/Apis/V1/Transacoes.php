@@ -211,6 +211,16 @@ class Transacoes extends ResourceController
         return $this->respond($data);
     }
 
+    public function ultimosCadastros(){
+
+    }
+
+    public function ultimasTransacoes(){
+        
+
+        return $this->respond($this->modelTransacoes->transacoes());
+    }
+
     public function reembolso($id)
     {
         try {

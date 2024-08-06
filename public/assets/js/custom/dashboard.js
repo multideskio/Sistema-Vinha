@@ -1,5 +1,10 @@
 $(document).ready(function () {
     statisticas()
+    listaTransacoes()
+    search()
+    listaUsuarios()
+    searchUser()
+
     $("#btnSearchDash").on('click', function () {
         var search = $("#testDate").val();
 
@@ -65,12 +70,23 @@ function statisticas(search = null) {
         applyGrowthRate('anualGrowth', data.totalAnual.crescimento);
         applyGrowthRate('totalGrowth', data.totalGeral.crescimento);
 
+
+        // Extrair os valores e remover o símbolo "R$"
+        var creditoValue = parseFloat(data.credito.valor.replace('R$', '').replace(',', '.'));
+        var pixValue = parseFloat(data.pix.valor.replace('R$', '').replace(',', '.'));
+
+        // Atualizando a série do gráfico com os novos dados
+        var seriesData = [creditoValue, pixValue];
+        chart.updateSeries(seriesData);
+
         if (search) {
             Swal.fire({
                 text: 'Atualizado...',
                 icon: 'success'
             });
         }
+
+
 
     }).fail(() => {
         Swal.fire({
@@ -119,4 +135,139 @@ function dividirData(inputString) {
         console.error("Formato de entrada inválido.");
         return null;
     }
+}
+
+
+
+function search() {
+    // Clique no botão de pesquisa
+    $("#inSearchBtn").on('click', function (e) {
+        var search = $("#inSearch").val();
+        listaTransacoes(search);
+    });
+
+    // Pressiona Enter no campo de pesquisa
+    $("#inSearch").on('keypress', function (e) {
+        if (e.which === 13) {
+            var search = $("#inSearch").val();
+            listaTransacoes(search);
+        }
+    });
+
+    // Paginação
+    $("#pager").on("click", "a", function (e) {
+        e.preventDefault();
+        var href = $(this).attr("href");
+        var urlParams = new URLSearchParams(href);
+        var page = urlParams.get('page');
+        var search = urlParams.get('search');
+
+        console.log(page);
+
+        // Verifica se o parâmetro "page" é um número
+        if (!isNaN(page)) {
+            listaTransacoes(search, page);
+        }
+    });
+}
+
+
+function listaTransacoes(search = false, page = 1) {
+    $('#listaTransacoes').empty();
+
+    var url = `${_baseUrl}api/v1/transacoes/lista?`;
+
+    if (search) {
+        url += "search=" + encodeURIComponent(search) + "&";
+    }
+    if (page) {
+        url += "page=" + page;
+    }
+
+
+    $.getJSON(url, function (data, textStatus, jqXHR) {
+        console.log(data);
+
+        $("#numResults").html(data.num);
+        $("#pager").html(data.pager);
+
+        $.each(data.rows, function (indexInArray, row) {
+            let status
+            if (row.status === 'Pago') {
+                status = '<span class="badge bg-success-subtle text-success">Pago</span>'
+            } else if (row.status === 'Cancelado') {
+                status = '<span class="badge bg-danger-subtle text-danger">Cancelado</span>'
+            } else if (row.status === 'Rembolsado') {
+                status = '<span class="badge bg-dark-subtle text-dark">Reembolsado</span>'
+            } else {
+                status = '<span class="badge bg-warning-subtle text-warning">Aguardando</span>'
+            }
+
+            $("#listaTransacoes").append(`<tr>
+                                <th scope="row">${row.id}</th>
+                                <td>${row.nome}</td>
+                                <td>${row.valor}</td>
+                                <td>${status}</td>
+                                <td>${row.forma_pg}</td>
+                                <td>
+                                <a href="${row.url}" class="btn btn-sm bg-light text-dark">ver</a>
+                                </td>
+                            </tr>`);
+        });
+    })
+}
+
+
+
+
+
+function searchUser() {
+    
+    // Paginação
+    $("#pagerUser").on("click", "a", function (e) {
+        e.preventDefault();
+        var href = $(this).attr("href");
+        var urlParams = new URLSearchParams(href);
+        var page = urlParams.get('page');
+        var search = urlParams.get('search');
+
+        console.log(page);
+
+        // Verifica se o parâmetro "page" é um número
+        if (!isNaN(page)) {
+            listaUsuarios(search, page);
+        }
+    });
+}
+
+
+function listaUsuarios(search = false, page = 1) {
+    $('#listaUsuarios').empty();
+
+    var url = `${_baseUrl}api/v1/usuarios?`;
+
+    if (search) {
+        url += "search=" + encodeURIComponent(search) + "&";
+    }
+    if (page) {
+        url += "page=" + page;
+    }
+
+    $.getJSON(url, function (data, textStatus, jqXHR) {
+        console.log(data);
+
+        //$("#numResults").html(data.num);
+        $("#pagerUser").html(data.pager);
+
+        $.each(data.rows, function (indexInArray, row) {
+            $("#listaUsuarios").append(`<tr>
+                                    <th scope="row">${row.id}</th>
+                                    <td>${row.nome}</td>
+                                    <td>${row.tipo}</td>
+                                    <td>
+                                    <a href="#" class="btn btn-sm bg-light text-dark">ver</a>
+                                    </td>
+                                </tr>`);
+        });
+    })
 }
