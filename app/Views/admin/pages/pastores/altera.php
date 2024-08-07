@@ -86,12 +86,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
-                            <i class="far fa-envelope"></i> Transações do usuário
+                            <i class="far fa-envelope"></i> Preferências
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#logs" role="tab">
-                            <i class="far fa-envelope"></i> Transações do usuário
+                            <i class="far fa-envelope"></i> Logs
                         </a>
                     </li>
                 </ul>
