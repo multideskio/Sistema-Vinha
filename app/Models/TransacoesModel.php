@@ -77,6 +77,7 @@ class TransacoesModel extends Model
         // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
         $hora = date('H');
         if ($hora < 8 || $hora >= 18) {
+            log_message('info', 'Fora de horário comercial');
             return false;
         }
 
