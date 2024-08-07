@@ -64,6 +64,12 @@ class TransacoesModel extends Model
 
     public function verificarEnvioDeLembretes()
     {
+
+        $hora = date('H');
+        if ($hora < 8 || $hora >= 18) {
+            return false;
+        }
+
         $modelMessages = new ConfigMensagensModel();
 
         $data = $modelMessages
