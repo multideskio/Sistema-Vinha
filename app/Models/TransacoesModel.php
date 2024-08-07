@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\WhatsappLibraries;
 use CodeIgniter\Model;
 
 class TransacoesModel extends Model
@@ -59,6 +60,123 @@ class TransacoesModel extends Model
     {
         return true;
     }
+
+
+    public function verificarEnvioDeLembretes()
+    {
+        $db = \Config\Database::connect();
+        $hoje = date('Y-m-d');
+        $mesAtual = date('Y-m');
+        $pagina = 1;
+        $porPagina = 100; // Número de usuários por página
+
+        do {
+            // Consulta paginada
+            $usuariosQuery = $db->table('usuarios')
+                ->select('usuarios.*')
+                ->where('usuarios.tipo !=', 'superadmin')
+                ->limit($porPagina, ($pagina - 1) * $porPagina)
+                ->get();
+
+            $usuarios = $usuariosQuery->getResultArray();
+            $controleEnviosModel = new \App\Models\ControleEnviosModel();
+
+            foreach ($usuarios as $usuario) {
+                $perfil = $this->obterPerfilUsuario($usuario);
+                if (!$perfil) {
+                    continue; // Pular se o perfil não for encontrado
+                }
+
+                $melhorDia = $perfil['data_dizimo'];
+                $dataPagamento = date('Y-m-' . $melhorDia);
+
+                // Verifica se existe alguma transação paga para o usuário no mês atual
+                $transacoesPagasNoMes = $this->where('id_user', $usuario['id'])
+                    ->where('DATE_FORMAT(data_pagamento, "%Y-%m")', $mesAtual)
+                    ->where('status', 1) // Verifica se a transação está paga
+                    ->findAll();
+
+                if (empty($transacoesPagasNoMes)) {
+                    // Verificar os dias para enviar lembrete
+                    $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+
+                    $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
+
+                    // Se não enviou lembrete hoje e está dentro dos 3 dias antes ou depois do melhor dia de pagamento
+                    if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
+                        $this->enviarLembrete($perfil, $diasDiferenca);
+
+                        //log_message('info', 'DATA: ' . json_encode($usuario));
+
+                        // Registra o envio na tabela controle_envios
+                        $id = $controleEnviosModel->insert([
+                            'id_user' => $usuario['id']
+                        ]);
+
+                        if ($id) {
+                            log_message('info', 'REGISTROU O ENVIO: ' . $perfil['id']);
+                        }
+                    } else {
+                        log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
+                    }
+                }
+                sleep(3);
+            }
+
+            $pagina++;
+            $totalUsuarios = $db->table('usuarios')->where('tipo !=', 'superadmin')->countAllResults();
+        } while (($pagina - 1) * $porPagina < $totalUsuarios);
+    }
+
+    private function obterPerfilUsuario($usuario)
+    {
+        switch ($usuario['tipo']) {
+            case 'gerente':
+                $model = new \App\Models\GerentesModel();
+                break;
+            case 'supervisor':
+                $model = new \App\Models\SupervisoresModel();
+                break;
+            case 'pastor':
+                $model = new \App\Models\PastoresModel();
+                break;
+            case 'igreja':
+                $model = new \App\Models\IgrejasModel();
+                break;
+            default:
+                throw new \ErrorException("Tipo de permissão não definida");
+        }
+        return $model->find($usuario['id_perfil']);
+    }
+
+    private function enviarLembrete($usuario, $diasDiferenca)
+    {
+        // Determina o nome do usuário
+        $nome = !empty($usuario['nome']) ? $usuario['nome'] : (!empty($usuario['razao_social']) ? $usuario['razao_social'] : false);
+
+        if ($nome) {
+            // Mensagem dinâmica informando os dias restantes ou passados para o pagamento
+            if ($diasDiferenca < 0) {
+                $diasRestantes = abs($diasDiferenca);
+                $mensagem = "[[{$usuario['id']}]] - Olá {$nome}, passando para lembrar do nosso compromisso, faltam {$diasRestantes} dias para a data de pagamento que é no dia {$usuario['data_dizimo']}. Qualquer dúvida, estamos à disposição!";
+            } else {
+                $diasPassados = $diasDiferenca;
+                $mensagem = "[[{$usuario['id']}]] - Olá {$nome}, passando para lembrar do nosso compromisso, a data de pagamento foi há {$diasPassados} dias, que foi no dia {$usuario['data_dizimo']}. Qualquer dúvida, estamos à disposição!";
+            }
+
+            // Implementação do envio de lembrete (e.g., envio de email ou WhatsApp)
+            // Exemplo:
+            // mail($usuario['email'], 'Lembrete de Pagamento', $mensagem);
+            $whatsApp = new WhatsappLibraries();
+            $whatsApp->verifyNumber(['message' => $mensagem], '5562981154120', 'text');
+        } else {
+            log_message('info', 'NÃO ENVIOU: Nome ou razão social não disponível para o usuário ' . json_encode($usuario));
+        }
+    }
+
+
 
     public function transacoes($input = false, $limit = 10, $order = 'DESC'): array
     {
@@ -159,7 +277,7 @@ class TransacoesModel extends Model
         $result = [
             'rows' => $data,
             'pager' => $this->pager->links('default', 'paginate'),
-            'num' => $this->countAllResults(). ' transações encontrados',
+            'num' => $this->countAllResults() . ' transações encontrados',
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
             'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal) // Certifique-se de formatar a soma total
         ];
