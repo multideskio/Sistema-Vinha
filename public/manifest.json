@@ -12,7 +12,7 @@
     ],
     "dir": "ltr",
     "short_name": "Vinha",
-    "orientation": "any",
+    "orientation": "portrait-primary",
     "icons": [
         {
             "src": "/assets/pwa/android-chrome-192x192.png",

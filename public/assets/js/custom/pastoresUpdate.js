@@ -29,14 +29,13 @@ $(document).ready(function () {
         success: function (responseText, statusText, xhr, $form) {
             searchUpdate(_idSearch)
             Swal.fire({
-                title: 'OK!',
                 text: 'Atualizado com sucesso!',
                 icon: 'success'
             })
         },
         error: function (xhr, status, error) {
             Swal.fire({
-                title: 'Erro ao atualizar...',
+                text: 'Erro ao atualizar...',
                 icon: 'error',
                 confirmButtonClass: 'btn btn-primary w-xs mt-2',
                 buttonsStyling: false,
@@ -54,7 +53,6 @@ $(document).ready(function () {
         },
         success: function (responseText, statusText, xhr, $form) {
             Swal.fire({
-                title: 'OK!',
                 text: 'Imagem atualizada com sucesso!',
                 icon: 'success'
             })

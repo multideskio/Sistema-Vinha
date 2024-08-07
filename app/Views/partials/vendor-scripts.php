@@ -23,8 +23,12 @@
     }
 
     
-    /*let deferredPrompt;
+    let deferredPrompt;
 
+// Verifica se o PWA já está instalado
+const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+if (!isPWAInstalled) {
     window.addEventListener('beforeinstallprompt', (e) => {
         // Previne o mini-infobar de aparecer no mobile
         e.preventDefault();
@@ -36,14 +40,13 @@
             document.getElementById('pwa-install-banner').style.display = 'block';
         }, 20000);
     });
-document.getElementById('install-button').addEventListener('click', async () => {
+
+    document.getElementById('install-button').addEventListener('click', async () => {
         if (deferredPrompt) {
             // Mostra o prompt de instalação
             deferredPrompt.prompt();
             // Espera pelo usuário responder ao prompt
-            const {
-                outcome
-            } = await deferredPrompt.userChoice;
+            const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
                 console.log('Usuário aceitou a instalação');
             } else {
@@ -54,5 +57,10 @@ document.getElementById('install-button').addEventListener('click', async () => 
         }
         // Esconde o banner após a interação
         document.getElementById('pwa-install-banner').style.display = 'none';
-    });*/
+    });
+} else {
+    console.log('O PWA já está instalado.');
+}
+
+
 </script>
