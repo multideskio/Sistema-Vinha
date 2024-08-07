@@ -132,7 +132,6 @@ class TransacoesModel extends Model
                         }
                     } else {
                         log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
-                        continue; ///
                     }
                 }
                 sleep(3);
