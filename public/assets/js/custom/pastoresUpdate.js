@@ -1,5 +1,6 @@
 $(document).ready(function () {
     searchUpdate(_idSearch)
+
     $(".enviaLinks").on('change', function () {
         $('.formTexts').submit();
     });
@@ -26,6 +27,7 @@ $(document).ready(function () {
             options.type = 'PUT'
         },
         success: function (responseText, statusText, xhr, $form) {
+            searchUpdate(_idSearch)
             Swal.fire({
                 title: 'OK!',
                 text: 'Atualizado com sucesso!',
