@@ -8,6 +8,7 @@ use App\Gateways\Cielo\CieloDebitCard;
 use App\Gateways\Cielo\CieloBoleto;
 use App\Gateways\Cielo\CieloCron;
 use App\Gateways\Cielo\CieloPix;
+use App\Libraries\WhatsappLibraries;
 use App\Models\TransacoesModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
@@ -139,7 +140,23 @@ class Cielo extends ResourceController
     public function cron()
     {
         $cieloCron =  new CieloCron;
+
+        try{
+
+            $whatsApp = new WhatsappLibraries();
+            $msg = "Tarefa cron sendo executada
+
+".date('d/m/Y H:i:s');
+
+            $whatsApp->verifyNumber(['message' => $msg], '5562981154120', 'text');
+
+        }catch(\Exception $e){
+            log_message('error', 'Houve um erro ao tentar enviar o aviso de tarefa cron iniciada: '. $e->getMessage());
+        }
+
         try {
+            
+
             $modelTrans = new TransacoesModel();
             $modelTrans->verificarEnvioDeLembretes();
             return $this->respond($cieloCron->verifyTransaction());
