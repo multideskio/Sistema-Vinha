@@ -67,4 +67,22 @@ class CieloBoleto extends CieloBase
             throw new Exception("Erro ao criar cobrança de boleto: " . $e->getMessage());
         }
     }
+
+    private function saveTransaction(array $params, array $response)
+    {
+        if (isset($response['Payment']['Status']) && $response['Payment']['Status'] == 'Approved') {
+            $data = [
+                'id_transacao' => $response['Payment']['Tid'],
+                'valor' => $params['Payment']['Amount'],
+                'log' => json_encode($response),
+                'status_text' => 'Aprovado'
+            ];
+
+            $this->transactionsModel->insert($data);
+        } else {
+            $logger = service('logger');
+            // Caso o status não seja 'Aprovado', pode-se tratar o erro aqui
+            $logger->warning('Cobrança de cartão de débito não aprovada.', ['response' => $response]);
+        }
+    }
 }

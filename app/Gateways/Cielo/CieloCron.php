@@ -19,6 +19,7 @@ class CieloCron extends CieloBase
         $transactions = $this->getRelevantTransactions(); // Busca transações relevantes
         $now = Time::now(); // Obtém a hora atual
 
+        
         foreach ($transactions as $transaction) {
             try {
                 $createdAt = Time::parse($transaction['created_at']); // Parseia a data de criação da transação
@@ -58,15 +59,32 @@ class CieloCron extends CieloBase
         return ['message' => 'Verificação de transações completa.'];
     }
 
+
+
+
     // Busca transações relevantes para verificação
-    private function getRelevantTransactions()
+    private function getRelevantTransactions(): array
     {
-        return $this->transactionsModel
-            ->where('gateway', 'cielo')
-            ->where('status_text !=', self::STATUS_CANCELED)
-            ->orderBy('id', 'DESC')
-            ->findAll();
+        $threeHoursAgo = Time::now()->subHours(3);
+
+        log_message('info', 'Confirmando time: '.$threeHoursAgo);
+        
+        $data = $this->transactionsModel
+        ->where('gateway', 'cielo')
+        ->where('status_text !=', self::STATUS_CANCELED)
+        ->where('created_at >=', $threeHoursAgo->toDateTimeString()) // Filtra transações criadas nas últimas 3 horas
+        ->orderBy('id', 'DESC')
+        ->findAll();
+
+        if(!count($data)){
+            return [];
+        }
+        //log_message('info', 'Resposta: '.json_encode($data));
+        return $data;
     }
+
+
+
 
     // Atualiza o status da transação com base na resposta do pagamento
     private function updateTransactionStatus($transaction, $dataReturn)
@@ -132,8 +150,11 @@ class CieloCron extends CieloBase
     // Verifica e atualiza o status das transações pagas que foram reembolsadas
     private function checkAndUpdateRefundStatus()
     {
+        $threeHoursAgo = Time::now()->subHours(3);
+
         $paidTransactions = $this->transactionsModel
             ->where('gateway', 'cielo')
+            ->where('created_at >=', $threeHoursAgo->toDateTimeString())
             ->where('status_text', self::STATUS_PAID)
             ->findAll();
 
