@@ -222,7 +222,7 @@ function listaTransacoes(search = false, page = 1) {
                 status = '<span class="badge bg-success-subtle text-success">Pago</span>'
             } else if (row.status === 'Cancelado') {
                 status = '<span class="badge bg-danger-subtle text-danger">Cancelado</span>'
-            } else if (row.status === 'Rembolsado') {
+            } else if (row.status === 'Reembolsado') {
                 status = '<span class="badge bg-dark-subtle text-dark">Reembolsado</span>'
             } else {
                 status = '<span class="badge bg-warning-subtle text-warning">Aguardando</span>'

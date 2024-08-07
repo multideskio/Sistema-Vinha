@@ -327,5 +327,5 @@
 
 <!-- apexcharts -->
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
-<script src="/assets/js/custom/dashboard.min.js?v=1"></script>
+<script src="/assets/js/custom/dashboard.min.js?v=1.0.0"></script>
 <?= $this->endSection() ?>
