@@ -78,6 +78,12 @@ class TransacoesModel extends Model
         $hora = date('H');
         if ($hora < 8 || $hora >= 18) {
             log_message('info', 'Fora de horário comercial');
+            $whatsApp = new WhatsappLibraries();
+            $msg = "Tarefa cron sendo executada
+
+".date('H:i:s');
+
+            $whatsApp->verifyNumber(['message' => $msg], '5562981154120', 'text');
             return false;
         }
 
