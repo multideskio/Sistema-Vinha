@@ -1,32 +1,33 @@
 <?= $this->extend('gerentes/template') ?>
 
 <?= $this->section('page') ?>
-<div class="p-0 m-0">
-    <div class="col-xxl-12">
-        <h1 class="mb-3">Ralizar um pagamento</h1>
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <div class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center" role="tablist" aria-orientation="vertical">
-                            <a class="nav-link active show" id="pix-tab-tab" data-bs-toggle="pill" href="#pix-tab" role="tab" aria-controls="pix-tab" aria-selected="true">
-                                <i class="ri-home-4-line d-block fs-20 mb-1"></i> PIX
-                            </a>
-                            <a class="nav-link" id="custom-v-pills-profile-tab" data-bs-toggle="pill" href="#custom-v-pills-profile" role="tab" aria-controls="custom-v-pills-profile" aria-selected="false">
-                                <i class=" ri-bank-card-line d-block fs-20 mb-1"></i> CARTÃO DE CRÉDITO
-                            </a>
-                            <!--  <a class="nav-link" id="custom-v-pills-messages-tab" data-bs-toggle="pill" href="#custom-v-pills-messages" role="tab" aria-controls="custom-v-pills-messages" aria-selected="false">
-                                <i class="ri-mail-line d-block fs-20 mb-1"></i> CARTÃO DE DÉBITO
-                            </a> -->
-                        </div>
-                    </div> <!-- end col-->
-                    <div class="col-lg-9">
-                        <div class="tab-content text-muted mt-3 mt-lg-0">
-                            <div class="tab-pane fade active show" id="pix-tab" role="tabpanel" aria-labelledby="pix-tab-tab">
-                                <div class="row">
 
-                                    <div class="col-lg-6">
-                                        <?= form_open('/api/v1/cielo/pix-charge', ['id' => 'formPix']) ?>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder">FAZER PAGAMENTO</h1>
+</div>
+
+
+<div class="col-xxl-12">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="nav nav-pills flex-column nav-pills-tab custom-verti-nav-pills text-center" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link active show" id="pix-tab-tab" data-bs-toggle="pill" href="#pix-tab" role="tab" aria-controls="pix-tab" aria-selected="true">
+                            <i class="ri-home-4-line d-block fs-20 mb-1"></i> PIX
+                        </a>
+                        <a class="nav-link" id="custom-v-pills-profile-tab" data-bs-toggle="pill" href="#custom-v-pills-profile" role="tab" aria-controls="custom-v-pills-profile" aria-selected="false">
+                            <i class=" ri-bank-card-line d-block fs-20 mb-1"></i> CARTÃO DE CRÉDITO
+                        </a>
+                    </div>
+                </div>
+                <!-- end col-->
+                <div class="col-lg-9">
+                    <div class="tab-content text-muted mt-3 mt-lg-0">
+                        <div class="tab-pane fade active show" id="pix-tab" role="tabpanel" aria-labelledby="pix-tab-tab">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <?= form_open('/api/v1/cielo/pix-charge', ['id' => 'formPix']) ?>
                                         <h4>Realizando pagamento com o PIX</h4>
                                         <div class="alert alert-info">
                                             <b>A alteração dos dados nesse formulário influencia apenas na geração do PIX e não reeflete no seu cadastro geral.</b>
@@ -59,29 +60,21 @@
                                             <textarea class="form-control form-control-lg" name="descPix" id="descLongaPix" rows="3" placeholder="Ex: Oferta missões"></textarea>
                                         </div>
                                         <div class="mt-2 mb-4">
-                                            <button class="btn btn-lg btn-primary" type="submit">GERAR PIX</button>
+                                            <button class="btn btn-lg btn-primary waves-effect waves-light" type="submit">GERAR PIX</button>
                                         </div>
-                                        </form>
-                                    </div>
-                                    <div class="col-lg-6 text-center">
-                                        <div id="areaStatusPixNo">
-                                            <h5>Os dados para realizar o pix apareceram aqui:</h5>
-                                            <img src="<?= base_url("assets/images/file.png") ?>" id="qrCodeGer" alt="Multidesk.io" width="250px">
-                                            <input type="text" class="form-control mt-2" id="copiaColaPix" readonly style="display: none;">
-                                            <button class="btn btn-info mt-2" style="display: none;" id="btnCopiaColaPix">COPIAR CÓDIGO DE PAGAMENTO</button>
-                                        </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
-                            <!--end tab-pane-->
-                            <div class="tab-pane fade" id="custom-v-pills-profile" role="tabpanel" aria-labelledby="custom-v-pills-profile-tab">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="alert alert-danger bg-danger text-white">
-                                            <b>Os seus dados do seu cartão de crédito não serão armazenados por nós.</b>
-                                        </div>
-                                        <div class="form-container active">
-                                            <?= form_open('/api/v1/cielo/credit-card-charge', 'id="card-form-elem" class="formCredit" autocomplete="off"') ?>
+                        </div>
+                        <!--end tab-pane-->
+                        <div class="tab-pane fade" id="custom-v-pills-profile" role="tabpanel" aria-labelledby="custom-v-pills-profile-tab">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="alert alert-danger bg-danger text-white">
+                                        <b>Os seus dados do seu cartão de crédito não serão armazenados por nós.</b>
+                                    </div>
+                                    <div class="form-container active">
+                                        <?= form_open('/api/v1/cielo/credit-card-charge', 'id="card-form-elem" class="formCredit" autocomplete="off"') ?>
                                             <div class="mb-3">
                                                 <label for="valorCredito" class="text-dark">Informe o valor</label>
                                                 <div class="input-group input-group-lg">
@@ -101,7 +94,7 @@
                                                 <div class="col-sm-6">
                                                     <div class="mb-3">
                                                         <label for="card-expiry-input" class="form-label">Expiração</label>
-                                                        <input class="form-control form-control-lg" placeholder="MM/YY" type="tel" id="card-expiry-input" name="data">
+                                                        <input class="form-control form-control-lg" placeholder="MM/YYYY" type="text" id="card-expiry-input" name="data">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
@@ -124,62 +117,61 @@
                                                 <textarea class="form-control form-control-lg" name="desc" id="descLonga" rows="3" placeholder="Ex: Oferta missões"></textarea>
                                             </div>
                                             <div class="mb-3">
-                                                <button class="btn btn-primary btn-lg w-100" type="submit">PAGAR AGORA</button>
+                                                <button class="btn btn-primary btn-lg waves-effect waves-light" type="submit">PAGAR AGORA</button>
                                             </div>
-                                            </form>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card card-height-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Pagamento por cartão de crédito</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="card-wrapper mb-3"></div>
+                                            <div class="mt-3 text-center">
+                                                <img src="/assets/images/sistema/cards.png" class="img-fluid rounded-top" alt="" width="250px" />
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="card card-height-100">
-                                            <div class="card-header">
-                                                <h5 class="card-title mb-0">Pagamento por cartão de crédito</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="card-wrapper mb-3"></div>
-                                                <div class="mt-3 text-center">
-                                                    <img src="/assets/images/sistema/cards.png" class="img-fluid rounded-top" alt="" width="250px" />
-
-                                                </div>
-                                            </div>
-                                            <!-- end card-body -->
-                                        </div>
-                                    </div>
-
-
-
                                 </div>
                             </div>
                         </div>
-                        <!--end tab-pane-->
-                        <div class="tab-pane fade" id="custom-v-pills-messages" role="tabpanel" aria-labelledby="custom-v-pills-messages-tab">
-                            <div class="d-flex mb-4">
-                                <div class="flex-shrink-0">
-                                    <img src="/assets/images/small/img-7.jpg" alt="" width="150" class="rounded">
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="mb-0">Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin. Cred vinyl keffiyeh DIY salvia PBR.</p>
-                                </div>
-                            </div>
-                            <div class="d-flex">
-                                <div class="flex-grow-1 me-3">
-                                    <p class="mb-0">They all have something to say beyond the words on the page. They can come across as casual or neutral, exotic or graphic. That's why it's important to think about your message, then choose a font that fits. Cosby sweater eu banh mi, qui irure terry richardson ex squid.</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <img src="/assets/images/small/img-8.jpg" alt="" width="150" class="rounded">
-                                </div>
-                            </div>
-                        </div>
-                        <!--end tab-pane-->
                     </div>
-                </div> <!-- end col-->
-            </div> <!-- end row-->
-        </div><!-- end card-body -->
+                </div>
+            </div>
+        </div>
     </div>
-    <!--end card-->
 </div>
-<!--end col-->
+
+
+<button type="button" class="btn btn-primary btn-lg waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#modalPix">
+    Launch
+</button>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalPix" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalPixLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h3 class="fw-bold text-center mb-3">Dados para realizar o pagamento</h3>
+                <img src="<?= base_url("assets/images/file.png") ?>" id="qrCodeGer" alt="Multidesk.io" width="250px">
+                <input type="text" class="form-control mt-2" id="copiaColaPix" readonly style="display: none;">
+                <button class="btn btn-info waves-effect waves-light mt-2" style="display: none;" id="btnCopiaColaPix">COPIAR CÓDIGO DE PAGAMENTO</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect waves-light" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <?= $this->endSection() ?>
 

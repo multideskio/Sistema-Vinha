@@ -35,38 +35,32 @@
                     <span>Menu</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('gerente') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Dashboard
+                    <a class="nav-link menu-link" href="<?= site_url('supervisao') ?>">
+                        <i class="bi bi-speedometer"></i> <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('gerente/pagamentos') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Pagamentos</span>
+                    <a class="nav-link menu-link" href="<?= site_url('supervisao/pagamentos') ?>">
+                        <i class="bi bi-wallet"></i> <span>Pagamentos</span>
+                    </a>
+                </li>
+                <li class="menu-title">
+                    <i class="ri-more-fill"></i> <span>Genrencia</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="<?= site_url('supervisao/pastores') ?>">
+                        <i class="bi bi-person-lines-fill"></i> <span>Meus pastores</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('gerente/pagamentos') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Meus pastores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('gerente/pagamentos') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Minhas igrejas</span>
-                    </a>
-                </li>
-                
-                <!-- end Dashboard Menu -->
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Financeiro</span></li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('igreja/transacoes') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Transações</span>
+                    <a class="nav-link menu-link" href="<?= site_url('supervisao/igrejas') ?>">
+                        <i class="bi bi-building"></i> <span>Minhas igrejas</span>
                     </a>
                 </li>
             </ul>
         </div>
         <!-- Sidebar -->
     </div>
-
     <div class="sidebar-background"></div>
 </div>
 <!-- Left Sidebar End -->

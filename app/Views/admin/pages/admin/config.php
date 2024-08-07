@@ -1,8 +1,10 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
-<div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento do perfil da empresa</p>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder">Gerenciamento do perfil da empresa</h1>
 </div>
+
+
 <div class="row">
     <div class="col-xxl-3">
         <div class="card">
@@ -102,7 +104,7 @@
             <div class="card-body p-4">
                 <div class="tab-content">
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                        <?= form_open('api/v1/administracao/update/info/' . $idSearch, ['class' => 'formGeral']) ?>
+                        <?= form_open('api/v1/administracao/update/info/' . $idSearch, ['class' => 'formGeral', '']) ?>
                         <div class="mb-3 row">
                             <div class="col-md-5">
                                 <label for="cnpj">CNPJ</label>

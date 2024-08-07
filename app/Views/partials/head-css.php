@@ -8,6 +8,10 @@
 <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css">
 <!-- custom Css-->
 <link href="/assets/css/custom.min.css" rel="stylesheet" type="text/css">
+
+<!-- Font bootstrap -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 <!-- Variaveis -->
 <script>
     const _baseUrl = "<?= site_url() ?>"

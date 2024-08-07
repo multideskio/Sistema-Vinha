@@ -1,7 +1,7 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
-<div class="clearfix mb-1">
-    <p class="text-muted float-start">Gerenciamento de portais para pagamentos</p>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder ">Gerenciamento de portais para pagamentos</h1>
 </div>
 
 <div class="row gx-3">

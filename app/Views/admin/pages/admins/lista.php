@@ -1,7 +1,7 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
-<div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de administradores</p>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder float-start">Gerenciamento de administradores</h1>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarAdmin">
         <i class="ri-user-settings-line"></i> Cadastrar administrador

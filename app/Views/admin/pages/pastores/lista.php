@@ -1,7 +1,7 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
-<div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de pastores</p>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder float-start">Gerenciamento de pastores</h1>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarPastor">
         <i class="ri-user-settings-line"></i> Cadastrar pastor
@@ -33,5 +33,5 @@
 <?= $this->endSection(); ?>
 <?= $this->section('js') ?>
 <script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/pastores.js"></script> 
+<script src="/assets/js/custom/pastores.js"></script>
 <?= $this->endSection(); ?>

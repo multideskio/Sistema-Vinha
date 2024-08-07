@@ -36,7 +36,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Dashboards
+                        <i class="bi bi-speedometer"></i> <span>Dashboards</span>
                     </a>
                 </li>
                 <!-- end Dashboard Menu -->
@@ -45,27 +45,27 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/regiao') ?>">
-                        <i class="ri-map-pin-line"></i> <span>Região</span>
+                        <i class="bi bi-geo-alt"></i> <span>Região</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/gerentes') ?>">
-                        <i class="ri-user-settings-line"></i> <span>Gerentes</span>
+                        <i class="bi bi-person-check"></i> <span>Gerentes</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/supervisores') ?>">
-                        <i class="ri-user-location-line"></i> <span>Supervisores</span>
+                        <i class="bi bi-person-badge"></i> <span>Supervisores</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/pastores') ?>">
-                        <i class="ri-shirt-line"></i> <span>Pastores</span>
+                        <i class="bi bi-person-lines-fill"></i> <span>Pastores</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/igrejas') ?>">
-                        <i class="ri-community-line"></i> <span>Igrejas</span>
+                        <i class="bi bi-building"></i> <span>Igrejas</span>
                     </a>
                 </li>
                 <!-- <li class="nav-item">
@@ -94,22 +94,22 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/config') ?>">
-                        <i class="ri-settings-5-line"></i> <span>Plataforma</span>
+                        <i class="bi bi-display"></i> <span>Plataforma</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/gateways') ?>">
-                        <i class="ri-settings-2-line"></i> <span>Gateways</span>
+                        <i class="bi bi-plug"></i> <span>Gateways</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/admins') ?>">
-                        <i class="ri-shield-user-line"></i> <span>Administradores</span>
+                        <i class="bi bi-person-badge-fill"></i> <span>Administradores</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/ajuda') ?>">
-                        <i class="ri-question-line"></i> <span>Ajuda</span>
+                        <i class="bi bi-question-circle"></i> <span>Ajuda</span>
                     </a>
                 </li>
             </ul>

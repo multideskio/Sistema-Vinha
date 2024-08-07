@@ -1,7 +1,7 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
-<div class="clearfix">
-    <p class="text-muted float-start">Gerenciamento de igrejas</p>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder float-start">Gerenciamento de igrejas</h1>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarIgreja">
         <i class="ri-user-settings-line"></i> Cadastrar igreja

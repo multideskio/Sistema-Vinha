@@ -1,18 +1,18 @@
 <script>
+    $(document).ready(function() {
+        forms();
+    });
+
     function mostrarDadosPix(data) {
-        //console.log(data);
-
         atualizarStatusPix(data.Payment.PaymentId);
-
         $("#qrCodeGer").removeAttr('src');
         $("#qrCodeGer").attr("src", "data:image/png;base64," + data.Payment.QrCodeBase64Image)
         $("#copiaColaPix").val(data.Payment.QrCodeString);
-
         if (data.Payment.QrCodeString) {
             $("#copiaColaPix").show();
             $("#btnCopiaColaPix").show();
         }
-
+        $("#modalPix").modal("show");
         $('#btnCopiaColaPix').click(function() {
             // Seleciona o texto do input
             $('#copiaColaPix').select();
@@ -30,7 +30,21 @@
         });
     }
 
+    let requestCount = 0;
+    const maxRequests = 50;
+
     function atualizarStatusPix(code) {
+        if (requestCount >= maxRequests) {
+            Swal.fire({
+                title: 'Limite de requisições atingido',
+                html: 'Limite de verificação atingido.<br>Se você ainda realizar o pagamento utilizando esse QrCode, vamos te enviar o comprovante pelo e-mail.',
+                type: 'error',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false,
+            });
+            return;
+        }
+        requestCount++;
         $.getJSON(_baseUrl + "/api/v1/cielo/payment-status/" + code,
             function(data, textStatus, jqXHR) {
                 //console.log(data)
@@ -55,34 +69,84 @@
             }
         );
     }
-</script>
 
-<script>
-    $(document).ready(function() {
+    function validateExpiryDate(expiryDate) {
+        // Expressão regular para validar MM / YYYY
+        const regex = /^(0[1-9]|1[0-2]) \/\ 20\d{2}$/;
+
+        if (!regex.test(expiryDate)) {
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Por favor, insira uma data válida no formato MM / YYYY.',
+                type: 'error',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false,
+            });
+            return false; // Data inválida
+        }
+
+        // Obter mês e ano da data de expiração
+        const [inputMonth, inputYear] = expiryDate.split(' / ').map(Number);
+
+        // Obter mês e ano atuais
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1; // Janeiro é 0
+        const currentYear = currentDate.getFullYear();
+
+        // Verificar se a data de expiração é no futuro
+        if (inputYear < currentYear || (inputYear === currentYear && inputMonth <= currentMonth)) {
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Por favor, insira uma data futura.',
+                type: 'error',
+                confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                buttonsStyling: false,
+            });
+            return false; // Data não é futura
+        }
+
+        return true; // Data válida e futura
+    }
+
+    function exibirMensagem(type, error) {
+        // Extrai as mensagens de erro do objeto 'error'
+        let messages = error.messages;
+
+        // Inicializa uma string para armazenar as mensagens formatadas
+        let errorMessage = '';
+
+        // Itera sobre as mensagens de erro e as formata
+        for (let key in messages) {
+            errorMessage += `${messages[key]}\n`;
+        }
+
+        // Exibe a mensagem de erro formatada
+        Swal.fire({
+            title: "Erro ao incluir registro",
+            html: `${errorMessage}`,
+            type: type,
+            confirmButtonClass: "btn btn-primary w-xs mt-2",
+            buttonsStyling: false,
+        });
+    }
+
+    function forms() {
         $('#formPix').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
                 // Executar ações antes de enviar o formulário (se necessário)
                 Swal.fire({
-                    title: 'Gerando PIX...',
+                    html: 'Gerando PIX<br>Aguarde aparecer as informações na tela',
                     type: 'info',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false,
+                    //confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                    //buttonsStyling: false,
                 });
             },
             success: function(responseText, statusText, xhr, $form) {
                 mostrarDadosPix(responseText);
-                // Limpar o formulário
-                //$('#formCad')[0].reset();
-                // Exibir mensagem de sucesso
-                //exibirMensagem('success', 'Sucesso: ' + responseText);
-                Swal.fire({
-                    title: 'Pix Gerado!',
-                    type: 'success',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false,
-                });
+                Swal.close(); // Fecha o alerta
             },
             error: function(xhr, status, error) {
+                Swal.close();
                 // Verifica se a resposta é um JSON
                 if (xhr.responseJSON && xhr.responseJSON.messages) {
                     // Exibir mensagem de erro vinda do servidor
@@ -97,14 +161,15 @@
                 }
             }
         });
-    });
-</script>
-
-
-<script>
-    $(document).ready(function() {
         $('.formCredit').ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {
+
+                const expiryDate = $('#card-expiry-input').val();
+
+                if (!validateExpiryDate(expiryDate)) {
+                    return false; // Impede o envio do formulário se a validação falhar
+                }
+
                 // Executar ações antes de enviar o formulário (se necessário)
                 Swal.fire({
                     title: 'Realizando Operação Financeira...',
@@ -112,19 +177,13 @@
                     confirmButtonClass: 'btn btn-primary w-xs mt-2',
                     buttonsStyling: false,
                 });
+
             },
             success: function(responseText, statusText, xhr, $form) {
-                // Exibir mensagem de sucesso
-                if (responseText.Payment.ReturnMessage === 'Operation Successful') {
-                    Swal.fire({
-                        title: 'Pagamento aprovado!',
-                        type: 'success',
-                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                        buttonsStyling: false,
-                    });
+                var returnCode = responseText.Payment.ReturnCode;
+                var successCodes = ['4', '6', '00']; // Lista de códigos de sucesso
 
-                    $('.formCredit')[0].reset();
-                } else if (responseText.Payment.ReturnMessage === 'Transacao autorizada') {
+                if (successCodes.includes(returnCode)) {
                     Swal.fire({
                         title: 'Pagamento aprovado!',
                         type: 'success',
@@ -142,7 +201,6 @@
                         buttonsStyling: false,
                     });
                 }
-                //exibirMensagem('success', 'Sucesso: ' + responseText);
             },
             error: function(xhr, status, error) {
                 // Verifica se a resposta é um JSON
@@ -158,30 +216,6 @@
                     });
                 }
             }
-        });
-    });
-</script>
-
-<script>
-    function exibirMensagem(type, error) {
-        // Extrai as mensagens de erro do objeto 'error'
-        let messages = error.messages;
-
-        // Inicializa uma string para armazenar as mensagens formatadas
-        let errorMessage = '';
-
-        // Itera sobre as mensagens de erro e as formata
-        for (let key in messages) {
-            errorMessage += `${messages[key]}\n`;
-        }
-
-        // Exibe a mensagem de erro formatada
-        Swal.fire({
-            title: "Erro ao incluir registro",
-            text: `${errorMessage}`,
-            type: type,
-            confirmButtonClass: "btn btn-primary w-xs mt-2",
-            buttonsStyling: false,
         });
     }
 </script>

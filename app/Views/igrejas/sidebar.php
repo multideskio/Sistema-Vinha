@@ -36,19 +36,21 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('igreja') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Dashboard
+                        <i class="bi bi-speedometer"></i> <span>Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('igreja/pagamentos') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Pagamentos</span>
+                        <i class="bi bi-wallet"></i> <span>Pagamentos</span>
                     </a>
                 </li>
-                <!-- end Dashboard Menu -->
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Financeiro</span></li>
+                
+                <li class="menu-title">
+                    <i class="ri-more-fill"></i> <span>Financeiro</span>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('igreja/transacoes') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Transações</span>
+                        <i class="bi bi-bank"></i> <span>Transações</span>
                     </a>
                 </li>
             </ul>

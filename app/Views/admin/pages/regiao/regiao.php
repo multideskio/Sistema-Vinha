@@ -1,7 +1,9 @@
 <?= $this->extend('admin/template') ?>
 <?= $this->section('page') ?>
 
-<h4 class="text-muted mb-0">Gerenciamento de regiões</h4>
+<div class="col-xxl-12">
+    <h1 class="mb-3 fw-bolder">Gerenciamento de regiões</h1>
+</div>
 <div class="row mt-3 gx-1">
     <div class="col-lg-4">
         <div class="card h-100">

@@ -1,13 +1,11 @@
 <?= $this->extend('igrejas/template') ?>
 
 <?= $this->section('page') ?>
-<div class="p-0 m-0">
+
     <div class="col-xxl-12">
         <h1 class="mb-3 fw-bolder">FAZER PAGAMENTO</h1>
     </div>
-</div>
 
-<div class="p-0 m-0">
     <div class="col-xxl-12">
         <div class="card">
             <div class="card-body">
@@ -145,9 +143,6 @@
                                 </div>
                             </div>
                         </div>
-
-
-
                         <!--end tab-pane-->
                         <div class="tab-pane fade" id="custom-v-pills-messages" role="tabpanel" aria-labelledby="custom-v-pills-messages-tab">
                             <div class="d-flex mb-4">
@@ -175,29 +170,31 @@
     </div>
     <!--end card-->
 </div>
-<!--end col-->
-</div>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPix">
-    Launch static backdrop modal
+
+
+<button type="button" class="btn btn-primary btn-lg waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#modalPix">
+    Launch
 </button>
+
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="modalPix" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalPixLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalPixLabel">Dados para realizar o pagamento</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
+                <h3 class="fw-bold text-center mb-3">Dados para realizar o pagamento</h3>
                 <img src="<?= base_url("assets/images/file.png") ?>" id="qrCodeGer" alt="Multidesk.io" width="250px">
                 <input type="text" class="form-control mt-2" id="copiaColaPix" readonly style="display: none;">
-                <button class="btn btn-info mt-2" style="display: none;" id="btnCopiaColaPix">COPIAR CÓDIGO DE PAGAMENTO</button>
+                <button class="btn btn-info waves-effect waves-light mt-2" style="display: none;" id="btnCopiaColaPix">COPIAR CÓDIGO DE PAGAMENTO</button>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-secondary waves-effect waves-light" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
