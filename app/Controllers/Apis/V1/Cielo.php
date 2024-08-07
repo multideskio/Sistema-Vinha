@@ -8,6 +8,7 @@ use App\Gateways\Cielo\CieloDebitCard;
 use App\Gateways\Cielo\CieloBoleto;
 use App\Gateways\Cielo\CieloCron;
 use App\Gateways\Cielo\CieloPix;
+use App\Models\TransacoesModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
 use Exception; 
@@ -139,6 +140,8 @@ class Cielo extends ResourceController
     {
         $cieloCron =  new CieloCron;
         try {
+            $modelTrans = new TransacoesModel();
+            $modelTrans->verificarEnvioDeLembretes();
             return $this->respond($cieloCron->verifyTransaction());
         } catch (Exception $e) {
             return $this->fail([

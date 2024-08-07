@@ -97,6 +97,7 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->resource('pastores', ['filter' => ['admin']]);
 
     $routes->get('cielo/cron', 'Cielo::cron');
+
     $routes->post('cielo/credit-card-charge', 'Cielo::createCreditCardCharge');
     $routes->post('cielo/debit-card-charge', 'Cielo::createDebitCardCharge');
     $routes->post('cielo/boleto-charge', 'Cielo::createBoletoCharge');

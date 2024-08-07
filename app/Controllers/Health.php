@@ -8,12 +8,6 @@ class Health extends Controller
     public function index()
     {
         //
-        $modelTrans = new TransacoesModel();
-        
-        return $modelTrans->verificarEnvioDeLembretes();
-        
-        
-        
-        //return $this->response->setStatusCode(200)->setBody('OK');
+        return $this->response->setStatusCode(200)->setBody('OK');
     }
 }
