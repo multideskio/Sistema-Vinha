@@ -62,26 +62,40 @@ class TransacoesModel extends Model
     }
 
 
+    /**
+     * Verifica e envia lembretes de pagamento aos usuários.
+     *
+     * Este método verifica se o horário atual está dentro do intervalo permitido
+     * (entre 08:00 e 18:00), busca as mensagens de lembrete de pagamento ativas e,
+     * em seguida, envia lembretes de pagamento para usuários que não efetuaram
+     * pagamentos no mês atual. Os lembretes são enviados via WhatsApp.
+     *
+     * @return bool Retorna false se o envio de lembrete está desativado ou fora do horário permitido, true caso contrário.
+     */
     public function verificarEnvioDeLembretes()
     {
-
+        // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
         $hora = date('H');
         if ($hora < 8 || $hora >= 18) {
             return false;
         }
 
+        // Instancia o modelo de mensagens de configuração
         $modelMessages = new ConfigMensagensModel();
 
+        // Busca a mensagem de pagamento atrasado ativa
         $data = $modelMessages
             ->where('status', 1)
-            ->where('tipo', 'pagamento_atrasado')->first();
+            ->where('tipo', 'pagamento_atrasado')
+            ->first();
 
+        // Verifica se a mensagem de lembrete de pagamento atrasado está ativa
         if (!$data) {
             log_message('info', 'envio de lembrete desativado');
             return false;
         }
 
-
+        // Conecta ao banco de dados
         $db = \Config\Database::connect();
         $hoje = date('Y-m-d');
         $mesAtual = date('Y-m');
@@ -89,7 +103,7 @@ class TransacoesModel extends Model
         $porPagina = 100; // Número de usuários por página
 
         do {
-            // Consulta paginada
+            // Consulta paginada para buscar os usuários
             $usuariosQuery = $db->table('usuarios')
                 ->select('usuarios.*')
                 ->where('usuarios.tipo !=', 'superadmin')
@@ -100,11 +114,13 @@ class TransacoesModel extends Model
             $controleEnviosModel = new \App\Models\ControleEnviosModel();
 
             foreach ($usuarios as $usuario) {
+                // Obtém o perfil do usuário
                 $perfil = $this->obterPerfilUsuario($usuario);
                 if (!$perfil) {
-                    continue; // Pular se o perfil não for encontrado
+                    continue; // Pula se o perfil não for encontrado
                 }
 
+                // Determina a melhor data de pagamento para o usuário
                 $melhorDia = $perfil['data_dizimo'];
                 $dataPagamento = date('Y-m-' . $melhorDia);
 
@@ -115,18 +131,16 @@ class TransacoesModel extends Model
                     ->findAll();
 
                 if (empty($transacoesPagasNoMes)) {
-                    // Verificar os dias para enviar lembrete
+                    // Verifica a data do último envio de lembrete
                     $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])
                         ->orderBy('created_at', 'desc')
                         ->first();
 
                     $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
 
-                    // Se não enviou lembrete hoje e está dentro dos 3 dias antes ou depois do melhor dia de pagamento
+                    // Envia lembrete se não foi enviado hoje e está dentro de 3 dias antes ou depois da melhor data de pagamento
                     if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
                         $this->enviarLembrete($perfil, $diasDiferenca);
-
-                        //log_message('info', 'DATA: ' . json_encode($usuario));
 
                         // Registra o envio na tabela controle_envios
                         $id = $controleEnviosModel->insert([
@@ -140,13 +154,14 @@ class TransacoesModel extends Model
                         log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
                     }
                 }
-                sleep(3);
+                sleep(3); // Espera de 3 segundos antes de processar o próximo usuário
             }
 
             $pagina++;
             $totalUsuarios = $db->table('usuarios')->where('tipo !=', 'superadmin')->countAllResults();
         } while (($pagina - 1) * $porPagina < $totalUsuarios);
     }
+
 
     private function obterPerfilUsuario($usuario)
     {
@@ -204,7 +219,7 @@ class TransacoesModel extends Model
                 $dados = [
                     '{nome}' => $nome,
                     'number' => $usuario['celular'],
-                    '{dias}' => ($diasRestantes > 1 ) ? $diasRestantes. ' dias' : $diasRestantes.' dia',
+                    '{dias}' => ($diasRestantes > 1) ? $diasRestantes . ' dias' : $diasRestantes . ' dia',
                     '{data}' => $usuario['data_dizimo'],
                     '{site}' => site_url()
                 ];
@@ -214,7 +229,7 @@ class TransacoesModel extends Model
                 $dados = [
                     '{nome}' => $nome,
                     'number' => $usuario['celular'],
-                    '{dias}' => ($diasPassados > 1 ) ? $diasPassados. ' dias' : $diasPassados.' dia',
+                    '{dias}' => ($diasPassados > 1) ? $diasPassados . ' dias' : $diasPassados . ' dia',
                     '{data}' => $usuario['data_dizimo'],
                     '{site}' => site_url()
                 ];
