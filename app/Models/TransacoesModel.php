@@ -64,6 +64,18 @@ class TransacoesModel extends Model
 
     public function verificarEnvioDeLembretes()
     {
+        $modelMessages = new ConfigMensagensModel();
+
+        $data = $modelMessages
+            ->where('status', 1)
+            ->where('tipo', 'pagamento_atrasado')->first();
+
+        if (!$data) {
+            log_message('info', 'envio de lembrete desativado');
+            return false;
+        }
+
+
         $db = \Config\Database::connect();
         $hoje = date('Y-m-d');
         $mesAtual = date('Y-m');
@@ -120,6 +132,7 @@ class TransacoesModel extends Model
                         }
                     } else {
                         log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
+                        continue; ///
                     }
                 }
                 sleep(3);
@@ -153,6 +166,29 @@ class TransacoesModel extends Model
 
     private function enviarLembrete($usuario, $diasDiferenca)
     {
+        $modelMessages = new ConfigMensagensModel();
+
+        /**BUSCA MENSAGEM DE LEMBRETE DE PAGAMENTO */
+        $lembrete_pagamento = $modelMessages
+            ->where('status', 1)
+            ->where('tipo', 'lembrete_pagamento')->first();
+
+        if (!$lembrete_pagamento) {
+            log_message('info', 'envio de lembrete desativado');
+            return false;
+        }
+
+        /** BUSCA MENSAGEM DE PAGAMENTO EM ATRASO */
+        $pagamento_atrasado = $modelMessages
+            ->where('status', 1)
+            ->where('tipo', 'pagamento_atrasado')->first();
+
+        if (!$pagamento_atrasado) {
+            log_message('info', 'envio de lembrete desativado');
+            return false;
+        }
+
+
         // Determina o nome do usuário
         $nome = !empty($usuario['nome']) ? $usuario['nome'] : (!empty($usuario['razao_social']) ? $usuario['razao_social'] : false);
 
@@ -160,10 +196,24 @@ class TransacoesModel extends Model
             // Mensagem dinâmica informando os dias restantes ou passados para o pagamento
             if ($diasDiferenca < 0) {
                 $diasRestantes = abs($diasDiferenca);
-                $mensagem = "[[{$usuario['id']}]] - Olá {$nome}, passando para lembrar do nosso compromisso, faltam {$diasRestantes} dias para a data de pagamento que é no dia {$usuario['data_dizimo']}. Qualquer dúvida, estamos à disposição!";
+                $dados = [
+                    '{nome}' => $nome,
+                    'number' => $usuario['celular'],
+                    '{dias}' => ($diasRestantes > 1 ) ? $diasRestantes. ' dias' : $diasRestantes.' dia',
+                    '{data}' => $usuario['data_dizimo'],
+                    '{site}' => site_url()
+                ];
+                $mensagem = str_replace(array_keys($dados), array_values($dados), $lembrete_pagamento['mensagem']);
             } else {
                 $diasPassados = $diasDiferenca;
-                $mensagem = "[[{$usuario['id']}]] - Olá {$nome}, passando para lembrar do nosso compromisso, a data de pagamento foi há {$diasPassados} dias, que foi no dia {$usuario['data_dizimo']}. Qualquer dúvida, estamos à disposição!";
+                $dados = [
+                    '{nome}' => $nome,
+                    'number' => $usuario['celular'],
+                    '{dias}' => ($diasPassados > 1 ) ? $diasPassados. ' dias' : $diasPassados.' dia',
+                    '{data}' => $usuario['data_dizimo'],
+                    '{site}' => site_url()
+                ];
+                $mensagem = str_replace(array_keys($dados), array_values($dados), $pagamento_atrasado['mensagem']);
             }
 
             // Implementação do envio de lembrete (e.g., envio de email ou WhatsApp)
