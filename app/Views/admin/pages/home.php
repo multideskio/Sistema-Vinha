@@ -242,20 +242,21 @@
             </div>
             <div class="card-body">
                 <div class="page-link" id="numResultsUsers"></div>
-                <div class="table-responsive" id="tableUsers" style="display: none;">
-                    <!-- Small Tables -->
-                    <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
-                        <thead>
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Nome</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaUsuarios">
-                        </tbody>
-                    </table>
+                <div id="tableUsers" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaUsuarios">
+                            </tbody>
+                        </table>
+                    </div>
                     <div id="pagerUser" class="mt-2"></div>
                 </div>
                 <div class="noresult" style="display: none">
@@ -282,23 +283,25 @@
             </div>
             <div class="card-body">
                 <div class="page-link" id="numResults"></div>
-                <div class="table-responsive" id="tableTransacoes" style="display: none;">
-                    <!-- Small Tables -->
-                    <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
-                        <thead>
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Nome</th>
-                                <th scope="col">Valor</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaTransacoes">
+                <div id="tableTransacoes" style="display: none;">
+                    <div class="table-responsive">
+                        <!-- Small Tables -->
+                        <table class="table table-sm table-nowrap" style="max-height: 50px !important;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaTransacoes">
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                     <div id="pager" class="mt-2"></div>
                 </div>
                 <div class="noresult" style="display: none">
