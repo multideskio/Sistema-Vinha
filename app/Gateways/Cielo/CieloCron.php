@@ -16,14 +16,19 @@ class CieloCron extends CieloBase
     // Método principal para verificar e atualizar o status das transações
     public function verifyTransaction()
     {
+        log_message('info', 'Iniciando verificação de transações.');
+
         $transactions = $this->getRelevantTransactions(); // Busca transações relevantes
         $now = Time::now(); // Obtém a hora atual
 
-        
+        log_message('info', 'Número de transações relevantes encontradas: ' . count($transactions));
+
         foreach ($transactions as $transaction) {
             try {
                 $createdAt = Time::parse($transaction['created_at']); // Parseia a data de criação da transação
                 $hoursDifference = $createdAt->difference($now)->getHours(); // Calcula a diferença em horas
+
+                log_message('info', "Processando transação ID {$transaction['id']}, diferença em horas: $hoursDifference");
 
                 if ($hoursDifference < 2) {
                     $dataReturn = $this->checkPaymentStatus($transaction['id_transacao']); // Verifica o status do pagamento
@@ -31,6 +36,7 @@ class CieloCron extends CieloBase
                     // Verifica se a resposta não é um erro antes de atualizar o status da transação
                     if ($this->isValidDataReturn($dataReturn)) {
                         $this->updateTransactionStatus($transaction, $dataReturn);
+                        log_message('info', "Status da transação ID {$transaction['id']} atualizado com sucesso.");
                     } else {
                         // Loga a mensagem de erro se a resposta for um erro
                         log_message('error', "Falha ao atualizar status da transação ID {$transaction['id']}: " . $dataReturn['message']);
@@ -39,6 +45,7 @@ class CieloCron extends CieloBase
                     // Verifica se deve cancelar a transação baseada no status
                     if ($this->shouldCancelTransaction($transaction['status_text'])) {
                         $this->cancelTransaction($transaction);
+                        log_message('info', "Transação ID {$transaction['id']} cancelada.");
                     }
                 }
             } catch (Exception $e) {
@@ -51,40 +58,34 @@ class CieloCron extends CieloBase
         // Verifica transações pagas para possível reembolso
         $this->checkAndUpdateRefundStatus();
 
-        $cache = service('cache');
+        /*$cache = service('cache');
         $cache->deleteMatching('transacoes_*');
         $cache->deleteMatching('*_transacoes_*');
-        $cache->deleteMatching('*_transacoes');
+        $cache->deleteMatching('*_transacoes');*/
+
+        log_message('info', 'Verificação de transações completa.');
 
         return ['message' => 'Verificação de transações completa.'];
     }
-
-
-
 
     // Busca transações relevantes para verificação
     private function getRelevantTransactions(): array
     {
         $threeHoursAgo = Time::now()->subHours(3);
 
-        log_message('info', 'Confirmando time: '.$threeHoursAgo);
-        
-        $data = $this->transactionsModel
-        ->where('gateway', 'cielo')
-        ->where('status_text !=', self::STATUS_CANCELED)
-        ->where('created_at >=', $threeHoursAgo->toDateTimeString()) // Filtra transações criadas nas últimas 3 horas
-        ->orderBy('id', 'DESC')
-        ->findAll();
+        log_message('info', 'Confirmando time: ' . $threeHoursAgo->toDateTimeString());
 
-        if(!count($data)){
-            return [];
-        }
-        //log_message('info', 'Resposta: '.json_encode($data));
+        $data = $this->transactionsModel
+            ->where('gateway', 'cielo')
+            ->where('status_text !=', self::STATUS_CANCELED)
+            ->where('created_at >=', $threeHoursAgo->toDateTimeString()) // Filtra transações criadas nas últimas 3 horas
+            ->orderBy('id', 'DESC')
+            ->findAll();
+
+        log_message('info', 'Número de transações relevantes encontradas: ' . count($data));
+
         return $data;
     }
-
-
-
 
     // Atualiza o status da transação com base na resposta do pagamento
     private function updateTransactionStatus($transaction, $dataReturn)
@@ -128,6 +129,7 @@ class CieloCron extends CieloBase
         }
 
         $this->transactionsModel->update($transaction['id'], $updateData);
+        log_message('info', "Transação ID {$transaction['id']} atualizada para status: {$updateData['status_text']}");
     }
 
     // Verifica se a transação deve ser cancelada com base no texto do status
@@ -145,6 +147,7 @@ class CieloCron extends CieloBase
             'status_text' => self::STATUS_CANCELED
         ];
         $this->transactionsModel->update($transaction['id'], $dataUpdate);
+        log_message('info', "Transação ID {$transaction['id']} foi cancelada.");
     }
 
     // Verifica e atualiza o status das transações pagas que foram reembolsadas
@@ -158,22 +161,30 @@ class CieloCron extends CieloBase
             ->where('status_text', self::STATUS_PAID)
             ->findAll();
 
+        log_message('info', 'Número de transações pagas encontradas para verificação de reembolso: ' . count($paidTransactions));
+
         foreach ($paidTransactions as $transaction) {
             try {
                 $dataReturn = $this->checkPaymentStatus($transaction['id_transacao']);
                 if ($this->isValidDataReturn($dataReturn) && $dataReturn['statusName'] === 'Refunded') {
                     $this->updateTransactionStatus($transaction, $dataReturn);
+                    log_message('info', "Transação ID {$transaction['id']} foi reembolsada.");
                 }
             } catch (Exception $e) {
                 log_message('error', "Erro ao verificar reembolso da transação ID {$transaction['id']}: " . $e->getMessage());
                 continue;
             }
         }
+
     }
 
     // Verifica se a resposta de checkPaymentStatus é válida
     private function isValidDataReturn($dataReturn)
     {
-        return isset($dataReturn['status']) && isset($dataReturn['statusName']) && isset($dataReturn['full']['Payment']);
+        $isValid = isset($dataReturn['status']) && isset($dataReturn['statusName']) && isset($dataReturn['full']['Payment']);
+        if (!$isValid) {
+            log_message('error', 'Resposta inválida recebida de checkPaymentStatus: ' . json_encode($dataReturn));
+        }
+        return $isValid;
     }
 }
