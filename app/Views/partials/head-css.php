@@ -12,12 +12,12 @@
 <!-- Font bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+<!-- Load -->
 <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
-<link src="/assets/css/custom/load.min.css?v=1.0.0">
+<link href="/assets/css/custom/load.css" rel="stylesheet" type="text/css">
 
 <!-- Variaveis -->
 <script>
     const _baseUrl = "<?= site_url() ?>"
 </script>
-
