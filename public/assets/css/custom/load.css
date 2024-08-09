@@ -1,0 +1,48 @@
+#pwa-install-banner {
+  display: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #4CAF50;
+  color: #ffffff;
+  text-align: center;
+  padding: 1em;
+  z-index: 1000;
+}
+#pwa-install-banner button {
+  background-color: #ffffff;
+  color: #4CAF50;
+  border: none;
+  padding: 0.5em 1em;
+  margin-left: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+#pwa-install-banner button:hover {
+  background-color: #3d8b40;
+  color: #ffffff;
+}
+#pwa-install-banner button:focus {
+  outline: none;
+  box-shadow: 0 0 2px 2px rgba(76, 175, 80, 0.5);
+}
+
+.pace {
+  pointer-events: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.pace.pace-inactive {
+  display: none;
+}
+.pace .pace-progress {
+  background: #229fdd;
+  position: fixed;
+  top: 0;
+  right: 100%;
+  width: 100%;
+  height: 2px;
+  z-index: 2000;
+  transition: right 0.4s ease-out;
+}/*# sourceMappingURL=load.css.map */
