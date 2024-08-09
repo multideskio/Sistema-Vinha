@@ -6,9 +6,7 @@
     <title>Comprovante de Pagamento</title>
 </head>
 <body style="font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px;">
-
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
-        <table style="width: 100%; border-collapse: collapse;">
+        <table style="width: 100%; border-collapse: collapse; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
             <tr style="background-color: #000; color: #fff; height: 30px;">
                 <td colspan="2" style="padding: 10px; text-align: center;">
                     <h2 style="margin: 0;">Comprovante de Pagamento</h2>
@@ -39,7 +37,5 @@
                 </td>
             </tr>
         </table>
-    </div>
-
 </body>
 </html>
