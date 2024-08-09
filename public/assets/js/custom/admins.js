@@ -1,7 +1,3 @@
-
-
-
-
 function formata() {
     // Formatação de inputs com Cleave.js
     var cleaveCpf = new Cleave('.cpf', {
@@ -130,8 +126,7 @@ function atualizarTabela(search = false, page = 1) {
 
             data.rows.forEach(row => {
                 var randomColor = Math.floor(Math.random() * 16777215).toString(16);
-                $('#perfilCards').append(`
-                    <div class="col-xl-3">
+                $('#perfilCards').append(`<div class="col-xl-3">
                     <div class="card shadow-sm h-100">
                     <div class="card-body text-center">
                     <div class="mx-auto avatar-md mb-3">
