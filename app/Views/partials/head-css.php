@@ -13,12 +13,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
-
 <link src="/assets/css/custom/load.min.css">
 
 <!-- Variaveis -->
+
 <script>
     const _baseUrl = "<?= site_url() ?>"
 </script>
