@@ -244,7 +244,7 @@ class CieloBase
                 
                 $rows = $this->transactionsModel->where([
                     'id_transacao' => $response['Payment']['PaymentId'],
-                    'status !='    => 'Pago'
+                    //'status !='    => 'Pago'
                     ])->findAll();
                 
                 if (count($rows)) {
