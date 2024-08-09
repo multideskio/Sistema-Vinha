@@ -140,23 +140,14 @@ class Cielo extends ResourceController
     public function cron()
     {
         $cieloCron =  new CieloCron;
-
         try{
-
             $whatsApp = new WhatsappLibraries();
-            $msg = "Tarefa cron sendo executada
-
-".date('d/m/Y H:i:s');
-
+            $msg = "Tarefa cron sendo executada \n".date('d/m/Y H:i:s');
             $whatsApp->verifyNumber(['message' => $msg], '5562981154120', 'text');
-
         }catch(\Exception $e){
             log_message('error', 'Houve um erro ao tentar enviar o aviso de tarefa cron iniciada: '. $e->getMessage());
         }
-
         try {
-            
-
             $modelTrans = new TransacoesModel();
             $modelTrans->verificarEnvioDeLembretes();
             return $this->respond($cieloCron->verifyTransaction());

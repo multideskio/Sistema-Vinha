@@ -2,6 +2,7 @@
 
 namespace App\Gateways\Cielo;
 
+use App\Libraries\EmailsLibraries;
 use App\Models\AdminModel;
 use App\Models\GatewaysModel;
 use App\Models\GerentesModel;
@@ -142,19 +143,23 @@ class CieloBase
     protected function makeRequest(string $method, string $endPoint, array $params, string $responseHandler, bool $useQueryUrl = false)
     {
         try {
+            
             $url = ($useQueryUrl ? $this->apiUrlQuery : $this->apiUrl) . $endPoint;
+            
             $options = [
                 'headers' => $this->headers,
                 'json' => $params
             ];
+            
             $response = $this->client->request($method, $url, $options);
             $body = json_decode($response->getBody(), true);
-
+            
             if (isset($body['Code']) && isset($body['Message'])) {
                 throw new Exception("Erro {$body['Code']}: {$body['Message']}");
             }
 
             return $this->$responseHandler($body);
+
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
@@ -234,8 +239,14 @@ class CieloBase
     protected function handleCheckPaymentStatusResponsePix(array $response): array
     {
         if ($response['Payment']['Status'] === 2) {
+
             try {
-                $rows = $this->transactionsModel->where('id_transacao', $response['Payment']['PaymentId'])->findAll();
+                
+                $rows = $this->transactionsModel->where([
+                    'id_transacao' => $response['Payment']['PaymentId'],
+                    'status !='    => 'Pago'
+                    ])->findAll();
+                
                 if (count($rows)) {
                     $row = $rows[0];
                     $status = $this->transactionsModel->update($row['id'], [
@@ -243,11 +254,14 @@ class CieloBase
                         'status' => 1,
                         'status_text' => 'Pago'
                     ]);
+                    
+                    $email = new EmailsLibraries;
+                    $html = 'Recebemos seu pagamento';
+                    $email->envioEmail(session('data')['email'], 'Comprovante de pagamento', $html);
 
                     if ($status === false) {
                         return $this->transactionsModel->errors();
                     }
-
                     $whatsApp = new CieloWhatsApp;
                     $dataClient = $this->buscaDadosMembro($rows);
                     $whatsApp->pago($dataClient, '');
@@ -484,11 +498,15 @@ class CieloBase
     public function checkPaymentStatusPix(string $paymentId): array
     {
         try {
+            
             if (empty($paymentId)) {
                 throw new Exception('O ID do pagamento é obrigatório.');
             }
+            
             $endPoint = "/1/sales/{$paymentId}";
+            
             return $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponsePix', true);
+
         } catch (Exception $e) {
             // Logar o erro e retornar uma resposta de erro padrão
             log_message('error', "Erro ao verificar status do pagamento para ID {$paymentId}: " . $e->getMessage());

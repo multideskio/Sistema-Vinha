@@ -8,6 +8,7 @@
         "aws/aws-sdk-php": "^3.315",
         "codeigniter4/framework": "^4.0",
         "codeigniter4/translations": "^4.4",
+        "dompdf/dompdf": "^3.0",
         "guzzlehttp/guzzle": "7.8.2"
     },
     "require-dev": {
