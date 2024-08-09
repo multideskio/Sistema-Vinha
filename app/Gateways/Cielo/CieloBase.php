@@ -220,7 +220,7 @@ class CieloBase
                     ]);
 
                     $email = new EmailsLibraries;
-                    $html  = view('emails/recibo', $response);
+                    $html  = view('emails/recibo', ['response' => $response]);
                     $email->envioEmail(session('data')['email'], 'Comprovante de pagamento', $html);
 
                     if ($status === false) {
@@ -270,7 +270,7 @@ class CieloBase
                     ]);
 
                     $email = new EmailsLibraries;
-                    $html  = view('emails/recibo', $response);
+                    $html  = view('emails/recibo', ['response' => $response]);
                     $email->envioEmail(session('data')['email'], 'Comprovante de pagamento', $html);
 
                     if ($status === false) {
