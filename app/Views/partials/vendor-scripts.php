@@ -21,7 +21,6 @@
             });
         });
     }
-
     
     let deferredPrompt;
 
@@ -61,6 +60,4 @@ if (!isPWAInstalled) {
 } else {
     console.log('O PWA já está instalado.');
 }
-
-
 </script>

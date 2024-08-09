@@ -14,10 +14,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
-<link src="/assets/css/custom/load.min.css">
+<link src="/assets/css/custom/load.min.css?v=1.0.0">
 
 <!-- Variaveis -->
-
 <script>
     const _baseUrl = "<?= site_url() ?>"
 </script>
