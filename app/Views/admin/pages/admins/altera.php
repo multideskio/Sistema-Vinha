@@ -4,7 +4,6 @@
     <h1 class="mb-3 fw-bolder">Gerenciamento de administradores</h1>
 </div>
 
-
 <div class="row">
     <div class="col-xxl-3">
         <div class="card">

@@ -204,7 +204,10 @@ class CieloBase
         if ($response['Payment']['Status'] === 2) {
             try {
 
-                $rows = $this->transactionsModel->where('id_transacao', $response['Payment']['PaymentId'])->findAll();
+                $rows = $this->transactionsModel->where([
+                    'id_transacao' => $response['Payment']['PaymentId'],
+                    'status !='    => 'Pago'
+                ])->findAll();
 
                 if (count($rows)) {
 
@@ -217,7 +220,35 @@ class CieloBase
                     ]);
 
                     $email = new EmailsLibraries;
-                    $html  = "<h1>Comprovante de Pagamento</h1><p>Pagamento ID: " . $response['Payment']['PaymentId'] . "</p><p>Data do Pagamento: " . $response['Payment']['CapturedDate'] . "</p><p>Status: Pago</p>";
+                    $html  = '<table style="width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr style="background-color: #000; color: #fff; height: 30px;">
+            <td colspan="2" style="padding: 10px; text-align: center;">
+                <h2>Comprovante de Pagamento</h2>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; font-weight: bold;">ID do Pagamento:</td>
+            <td style="padding: 10px;">' . $response['Payment']['PaymentId'] . '</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 10px; font-weight: bold;">Data do Pagamento:</td>
+            <td style="padding: 10px;">' . $response['Payment']['CapturedDate'] . '</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; font-weight: bold;">Status:</td>
+            <td style="padding: 10px;">Pago</td>
+        </tr>
+    </table>
+
+    <p style="text-align: center; margin-top: 20px;">
+        Obrigado pelo seu pagamento. <br>
+        Caso tenha alguma dúvida, entre em contato conosco.
+    </p>
+
+    <p style="text-align: center; margin-top: 10px;">
+        Atenciosamente,<br>
+        <strong>Sua Empresa</strong>
+    </p>';
                     $email->envioEmail(session('data')['email'], 'Comprovante de pagamento', $html);
 
                     if ($status === false) {
@@ -255,7 +286,7 @@ class CieloBase
 
                 $rows = $this->transactionsModel->where([
                     'id_transacao' => $response['Payment']['PaymentId'],
-                    //'status !='    => 'Pago'
+                    'status !='    => 'Pago'
                 ])->findAll();
 
                 if (count($rows)) {
@@ -267,7 +298,35 @@ class CieloBase
                     ]);
 
                     $email = new EmailsLibraries;
-                    $html  = "<h1>Comprovante de Pagamento</h1><p>Pagamento ID: " . $response['Payment']['PaymentId'] . "</p><p>Data do Pagamento: " . $response['Payment']['CapturedDate'] . "</p><p>Status: Pago</p>";
+                    $html  = '<table style="width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr style="background-color: #000; color: #fff; height: 30px;">
+            <td colspan="2" style="padding: 10px; text-align: center;">
+                <h2>Comprovante de Pagamento</h2>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; font-weight: bold;">ID do Pagamento:</td>
+            <td style="padding: 10px;">' . $response['Payment']['PaymentId'] . '</td>
+        </tr>
+        <tr style="background-color: #f9f9f9;">
+            <td style="padding: 10px; font-weight: bold;">Data do Pagamento:</td>
+            <td style="padding: 10px;">' . $response['Payment']['CapturedDate'] . '</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; font-weight: bold;">Status:</td>
+            <td style="padding: 10px;">Pago</td>
+        </tr>
+    </table>
+
+    <p style="text-align: center; margin-top: 20px;">
+        Obrigado pelo seu pagamento. <br>
+        Caso tenha alguma dúvida, entre em contato conosco.
+    </p>
+
+    <p style="text-align: center; margin-top: 10px;">
+        Atenciosamente,<br>
+        <strong>Sua Empresa</strong>
+    </p>';
                     $email->envioEmail(session('data')['email'], 'Comprovante de pagamento', $html);
 
                     if ($status === false) {
