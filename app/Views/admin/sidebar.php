@@ -83,12 +83,12 @@
                     <a class="nav-link menu-link" href="<?= site_url('admin/retorno') ?>">
                         <i class="ri-dashboard-2-line"></i> <span>Retorno</span>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= site_url('admin/remessa') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Remessa</span>
-                    </a>
                 </li>-->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="<?= site_url('admin/relatorio') ?>">
+                        <i class="ri-dashboard-2-line"></i> <span>Relatório</span>
+                    </a>
+                </li>
                 <li class="menu-title">
                     <span>Configurações</span>
                 </li>
