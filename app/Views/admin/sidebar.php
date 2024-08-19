@@ -84,9 +84,12 @@
                         <i class="ri-dashboard-2-line"></i> <span>Retorno</span>
                     </a>
                 </li>-->
+                <li class="menu-title">
+                    <span>Relatório</span>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/relatorio') ?>">
-                        <i class="ri-dashboard-2-line"></i> <span>Relatório</span>
+                        <i class="ri-dashboard-2-line"></i> <span>Gerar relatórios</span>
                     </a>
                 </li>
                 <li class="menu-title">
