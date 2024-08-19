@@ -93,6 +93,15 @@ class Admin extends BaseController
         return view('admin/pages/igrejas/lista', $data);
     }
 
+    public function relatorio(): string
+    {
+        $data['idSearch']  = null;
+        $data['titlePage'] = 'Igrejas';
+
+        //
+        return view('admin/pages/relatorios/geral', $data);
+    }
+
     public function igreja($id): string
     {
         $data['idSearch']  = $id;
@@ -118,28 +127,6 @@ class Admin extends BaseController
         //
         return view('admin/pages/admins/altera', $data);
     }
-    /*
-
-    public function recebimento(): string
-    {
-        $data['titlePage'] = 'Recebimentos';
-        //
-        return view('admin/pages/home', $data);
-    }
-
-    public function retorno(): string
-    {
-        $data['titlePage'] = 'Retorno';
-        //
-        return view('admin/pages/home', $data);
-    }
-
-    public function remessa(): string
-    {
-        $data['titlePage'] = 'Remessa';
-        //
-        return view('admin/pages/home', $data);
-    }*/
 
     public function gateways(): string
     {
