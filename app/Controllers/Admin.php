@@ -96,7 +96,7 @@ class Admin extends BaseController
     public function relatorio(): string
     {
         $data['idSearch']  = null;
-        $data['titlePage'] = 'Igrejas';
+        $data['titlePage'] = 'Relatório';
 
         //
         return view('admin/pages/relatorios/geral', $data);
