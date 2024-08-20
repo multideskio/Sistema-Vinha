@@ -137,9 +137,11 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('admins', 'Admin::admins');
     $routes->get('admin/(:num)', 'Admin::admin/$1');
 
-    $routes->get('recebimento', 'Admin::recebimento');
+    /*$routes->get('recebimento', 'Admin::recebimento');
     $routes->get('retorno', 'Admin::retorno');
-    $routes->get('remessa', 'Admin::remessa');
+    $routes->get('remessa', 'Admin::remessa');*/
+
+    $routes->get('relatorio', 'Admin::relatorio');
 
     $routes->get('gateways', 'Admin::gateways');
     $routes->get('ajuda', 'Admin::ajuda');
@@ -147,8 +149,6 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     $routes->get('config', 'Admin::config');
 
     $routes->get('perfil', 'Admin::perfil');
-
-    $routes->get('relatorio', 'Admin::relatorio');
 });
 
 $routes->group('gerente', ['filter' => 'gerente'], static function ($routes) {
