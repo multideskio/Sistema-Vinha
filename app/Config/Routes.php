@@ -148,7 +148,7 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
 
     $routes->get('perfil', 'Admin::perfil');
 
-    $routes->get('relatorio', 'Admin::index');
+    $routes->get('relatorio', 'Admin::relatorio');
 });
 
 $routes->group('gerente', ['filter' => 'gerente'], static function ($routes) {
