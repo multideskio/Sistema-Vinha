@@ -128,3 +128,4 @@ nb-configuration.xml
 
 
 /public/assets/css/custom/*.scss
+/public/uploads
