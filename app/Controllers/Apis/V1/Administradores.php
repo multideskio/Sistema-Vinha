@@ -145,11 +145,10 @@ class Administradores extends ResourceController
             }
 
             $this->modelAdmin->transComplete();
-            
+
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
-        
         } catch (\Exception $e) {
-            
+
             $this->modelAdmin->transRollback();
 
             return $this->fail($e->getMessage());
@@ -229,32 +228,42 @@ class Administradores extends ResourceController
     {
         $request = service('request');
         $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+
+        if (!$file || !$file->isValid()) {
+            return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
+        }
+
         try {
-            $uploadLibraries = new UploadsLibraries;
-            $upload = $uploadLibraries->uploadCI($file, $id, 'admin');
+            $fileUploader = new UploadsLibraries();
+            $path = "admin/{$id}/" . $file->getRandomName();
+            $uploadPath = $fileUploader->upload($file, $path);
+
             $data = [
-                'foto' => $upload['foto']
+                'foto' => $uploadPath
             ];
-            $status = $this->modelAdmin->update($id, $data);
-            if ($status === false) {
+
+            if (!$this->modelAdmin->update($id, $data)) {
                 return $this->fail($this->modelAdmin->errors());
             }
 
             $session = session();
-            $data = $session->get('data');
-            if (is_array($data)) {
-                $data['foto'] = $upload['foto'];
-                $session->set('data', $data);
+            $sessionData = $session->get('data');
+
+            if (is_array($sessionData)) {
+                $sessionData['foto'] = $uploadPath;
             } else {
-                $data = ['foto' => $upload['foto']];
-                $session->set('data', $data);
+                $sessionData = ['foto' => $uploadPath];
             }
-            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+
+            $session->set('data', $sessionData);
+
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
-        
     }
+
+
 
     /**
      * Delete the designated resource object from the model.

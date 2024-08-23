@@ -29,7 +29,6 @@ class Pastores extends ResourceController
         //
         $data = $this->modelPastores->listSearch($this->request->getGet());
         return $this->respond($data);
-        
     }
 
     /**
@@ -54,7 +53,7 @@ class Pastores extends ResourceController
             if ($search) {
                 $data = [
                     "id" => $search['id'],
-                    "id_login" => $search['id_login'], 
+                    "id_login" => $search['id_login'],
                     "nome" => $search['nome'],
                     "sobrenome" => $search['sobrenome'],
                     "idSupervisor" => $search['id_supervisor'],
@@ -150,7 +149,7 @@ class Pastores extends ResourceController
                 return $this->fail($modelUser->errors());
             }
 
-            if (!empty($input['filepond'])) {
+            /*if (!empty($input['filepond'])) {
                 $librariesUpload = new UploadsLibraries();
                 $upload = $librariesUpload->filePond('pastor', $id, $input);
                 if (file_exists($upload['file'])) {
@@ -165,7 +164,7 @@ class Pastores extends ResourceController
                     // Ocorreu um erro ao salvar a imagem
                     throw new Exception('Erro ao salvar a imagem.');
                 }
-            }
+            }*/
 
             $this->modelPastores->transComplete();
 
@@ -212,22 +211,45 @@ class Pastores extends ResourceController
     public function foto($id = null)
     {
         $request = service('request');
-        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        $file = $request->getFile('foto');
+
+        if (!$file || !$file->isValid()) {
+            log_message('error', 'Nenhum arquivo foi enviado ou o arquivo é inválido.');
+            return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
+        }
+
+        $fileUploader = new UploadsLibraries();
+
         try {
-            $uploadLibraries = new UploadsLibraries;
-            $upload = $uploadLibraries->uploadCI($file, $id, 'pastores');
+            $this->modelPastores->db->transBegin();
+
+            // Realiza o upload, seja para S3 ou local
+            $path = "pastores/{$id}/" . $file->getRandomName();
+            $uploadPath = $fileUploader->upload($file, $path);
+
             $data = [
-                'foto' => $upload['foto']
+                'foto' => $uploadPath
             ];
-            $status = $this->modelPastores->update($id, $data);
-            if ($status === false) {
+
+            if (!$this->modelPastores->update($id, $data)) {
+                $this->modelPastores->db->transRollback();
+                log_message('error', 'Erro ao atualizar o registro no banco de dados: ' . implode(', ', $this->modelPastores->errors()));
                 return $this->fail($this->modelPastores->errors());
             }
-            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+
+            $this->modelPastores->db->transCommit();
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
         } catch (\Exception $e) {
+            if ($this->modelPastores->db->transStatus() === false) {
+                $this->modelPastores->db->transRollback();
+            }
+
+            log_message('error', 'Erro ao enviar a imagem: ' . $e->getMessage());
             return $this->fail($e->getMessage());
         }
     }
+
+
 
     /**
      * Add or update a model resource, from "posted" properties.
@@ -279,7 +301,5 @@ class Pastores extends ResourceController
         //
     }
 
-    public function dashboard(){
-        
-    }
+    public function dashboard() {}
 }

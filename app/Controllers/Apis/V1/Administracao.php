@@ -84,26 +84,32 @@ class Administracao extends ResourceController
 
     public function foto($id = null)
     {
-
-
         $request = service('request');
         $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
-        try {
-            $uploadLibraries = new UploadsLibraries;
-            $upload = $uploadLibraries->uploadCI($file, $id, 'admin_geral');
-            $data = [
-                'logo' => $upload['foto']
-            ];
-            $status = $this->modelAdmin->update($id, $data);
 
-            if ($status === false) {
+        if (!$file || !$file->isValid()) {
+            return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
+        }
+
+        try {
+            $uploadLibraries = new UploadsLibraries();
+            $path = "admin_geral/{$id}/" . $file->getRandomName();
+            $uploadPath = $uploadLibraries->upload($file, $path);
+
+            $data = [
+                'logo' => $uploadPath
+            ];
+
+            if (!$this->modelAdmin->update($id, $data)) {
                 return $this->fail($this->modelAdmin->errors());
             }
-            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
+
 
 
     public function links($id = null)
@@ -250,13 +256,19 @@ class Administracao extends ResourceController
 
     public function testeS3()
     {
-        $uploadsLibraries = new UploadsLibraries();
-        $result = $uploadsLibraries->testeS3();
-
-        return $this->respond($result);
+        try {
+            $uploadsLibraries = new UploadsLibraries();
+            $result = $uploadsLibraries->testConnection();
+            return $this->respond($result);
+        } catch (\Exception $e) {
+            log_message('error', 'Erro ao testar a conexão com o S3: ' . $e->getMessage());
+            return $this->fail('Erro ao testar a conexão com o S3: ' . $e->getMessage());
+        }
     }
 
-    public function testWhatsApp(){
+
+    public function testWhatsApp()
+    {
         $whatsapp = new WhatsappLibraries();
 
         $input = $this->request->getRawInput();
@@ -266,18 +278,16 @@ class Administracao extends ResourceController
 
         $send = $whatsapp->sendMessageText($message, $number);
 
-        if($send){
+        if ($send) {
             return $this->respond(['msg' => 'Executado com sucesso. Verifique se recebeu a mensagem.']);
-        }else{
+        } else {
             return $this->fail('Houve um erro na requisição. Tente novamente caso o erro persista, verifique com suporte se a instância está conectada.');
         }
 
         return $this->respond($input);
     }
 
-    public function update($id = null)
-    {
-    }
+    public function update($id = null) {}
 
     /**
      * Delete the designated resource object from the model

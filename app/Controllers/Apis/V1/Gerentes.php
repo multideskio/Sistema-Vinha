@@ -84,7 +84,7 @@ class Gerentes extends ResourceController
                 "sendWhatsapp" => $search['sendWhatsapp']
             ];
             return $this->respond($data);
-        }else{
+        } else {
             return $this->failNotFound();
         }
     }
@@ -148,7 +148,6 @@ class Gerentes extends ResourceController
 
             $modelUser->cadUser('gerente', $dataUser);
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
-            
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
@@ -194,21 +193,30 @@ class Gerentes extends ResourceController
     {
         $request = service('request');
         $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+
+        if (!$file || !$file->isValid()) {
+            return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
+        }
+
         try {
-            $uploadLibraries = new UploadsLibraries;
-            $upload = $uploadLibraries->uploadCI($file, $id, 'gerentes');
+            $uploadLibraries = new UploadsLibraries();
+            $path = "gerentes/{$id}/" . $file->getRandomName();
+            $uploadPath = $uploadLibraries->upload($file, $path);
+
             $data = [
-                'foto' => $upload['foto']
+                'foto' => $uploadPath
             ];
-            $status = $this->modelGerentes->update($id, $data);
-            if ($status === false) {
+
+            if (!$this->modelGerentes->update($id, $data)) {
                 return $this->fail($this->modelGerentes->errors());
             }
-            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
+
 
 
 

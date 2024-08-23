@@ -235,10 +235,12 @@ class Usuarios extends ResourceController
                 "instagram" => $input->instagram ?? null,
                 "id_google" => $input->google ?? null
             ];
-            if ($upload) {
+
+            /*if ($upload) {
                 $name = $liUpload->perfil($upload);
                 $perfil['foto'] = $name;
-            }
+            }*/
+            
             $this->modelPerfil->update(['id_user' => $id], $perfil);
             return $this->respond(['msg' => lang("Sucesso.alterado")]);
         } catch (\Exception $e) {
@@ -266,7 +268,7 @@ class Usuarios extends ResourceController
 
     /**LOGINS*/
     /**Login com o google*/
-    public function google()
+    /*public function google()
     {
         $code = $this->request->getVar("code");
         //Se não tem o code na url, retorna o pedido de autorização para acessar pelo google
@@ -307,7 +309,7 @@ class Usuarios extends ResourceController
                     ];*/
 
                     //return $this->modelUsuarios->google($data);
-                } else {
+                /*} else {
                     // Houve um erro ao obter os tokens de acesso
                     // Trate o erro conforme necessário
                     throw new ErrorException(lang("Errors.erroTokenGoogle", ["erro" => $accessToken["error"]]));
@@ -318,7 +320,7 @@ class Usuarios extends ResourceController
             return redirect()->to(site_url());
             //return $this->failUnauthorized($e->getMessage());
         }
-    }
+    }*/
 
     /**Login com senha */
     public function authenticate()

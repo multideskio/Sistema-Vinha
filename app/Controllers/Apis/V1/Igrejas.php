@@ -49,7 +49,7 @@ class Igrejas extends ResourceController
             ->select('usuarios.email, usuarios.whatsapp AS sendWhatsapp, usuarios.id AS id_login')
             ->join('usuarios', 'usuarios.id_perfil = igrejas.id')
             ->join('supervisores', 'supervisores.id = igrejas.id_supervisor')
-            ->where('usuarios.tipo', 'igreja') 
+            ->where('usuarios.tipo', 'igreja')
             ->find($id);
 
         if ($search) {
@@ -148,7 +148,7 @@ class Igrejas extends ResourceController
 
             $modelUser->cadUser('igreja', $dataUser);
 
-            
+
 
             $this->modelIgrejas->transComplete();
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
@@ -186,22 +186,31 @@ class Igrejas extends ResourceController
     public function foto($id = null)
     {
         $request = service('request');
-        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+
+        if (!$file || !$file->isValid()) {
+            return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
+        }
+
         try {
-            $uploadLibraries = new UploadsLibraries;
-            $upload = $uploadLibraries->uploadCI($file, $id, 'igrejas');
+            $uploadLibraries = new UploadsLibraries();
+            $path = "igrejas/{$id}/" . $file->getRandomName();
+            $uploadPath = $uploadLibraries->upload($file, $path);
+
             $data = [
-                'foto' => $upload['foto']
+                'foto' => $uploadPath
             ];
-            $status = $this->modelIgrejas->update($id, $data);
-            if ($status === false) {
+
+            if (!$this->modelIgrejas->update($id, $data)) {
                 return $this->fail($this->modelIgrejas->errors());
             }
-            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
+
 
     /**
      * Add or update a model resource, from "posted" properties

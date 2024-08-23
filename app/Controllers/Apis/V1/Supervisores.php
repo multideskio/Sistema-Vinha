@@ -168,7 +168,7 @@ class Supervisores extends ResourceController
 
             $modelUser->cadUser('supervisor', $dataUser);
 
-            if (!empty($input['filepond'])) {
+            /*if (!empty($input['filepond'])) {
                 $librariesUpload = new UploadsLibraries();
                 $upload = $librariesUpload->filePond('supervisor', $id, $input);
                 if (file_exists($upload['file'])) {
@@ -183,7 +183,7 @@ class Supervisores extends ResourceController
                     // Ocorreu um erro ao salvar a imagem
                     throw new Exception('Erro ao salvar a imagem.');
                 }
-            }
+            }*/
 
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
 
@@ -227,22 +227,31 @@ class Supervisores extends ResourceController
     public function foto($id = null)
     {
         $request = service('request');
-        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+
+        if (!$file || !$file->isValid()) {
+            return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
+        }
+
         try {
-            $uploadLibraries = new UploadsLibraries;
-            $upload = $uploadLibraries->uploadCI($file, $id, 'supervisores');
+            $uploadLibraries = new UploadsLibraries();
+            $path = "supervisores/{$id}/" . $file->getRandomName();
+            $uploadPath = $uploadLibraries->upload($file, $path);
+
             $data = [
-                'foto' => $upload['foto']
+                'foto' => $uploadPath
             ];
-            $status = $this->modelSupervisores->update($id, $data);
-            if ($status === false) {
+
+            if (!$this->modelSupervisores->update($id, $data)) {
                 return $this->fail($this->modelSupervisores->errors());
             }
-            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $upload]);
+
+            return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
+
 
     /**
      * Add or update a model resource, from "posted" properties
