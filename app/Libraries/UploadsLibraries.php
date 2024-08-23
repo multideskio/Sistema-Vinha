@@ -137,11 +137,21 @@ class UploadsLibraries
     {
         $localDir = FCPATH . 'uploads/' . dirname($path);
 
+        // Se o diretório não existir, tenta criá-lo
         if (!is_dir($localDir)) {
-            mkdir($localDir, 0755, true);
+            if (!mkdir($localDir, 0755, true)) {
+                throw new Exception("Erro ao criar o diretório: {$localDir}. Verifique as permissões.");
+            }
+
             log_message('info', '[Linha ' . __LINE__ . "] Diretório criado: {$localDir}");
         }
 
+        // Verifica se o diretório é gravável
+        if (!is_writable($localDir)) {
+            throw new Exception("Permissões insuficientes para escrever no diretório: {$localDir}");
+        }
+
+        // Tenta mover o arquivo para o diretório de destino
         $filePath = $localDir . '/' . basename($path);
         if (!$file->move($localDir, basename($path))) {
             throw new Exception('Erro ao mover o arquivo para o servidor local.');
@@ -149,6 +159,7 @@ class UploadsLibraries
 
         return base_url('uploads/' . $path);
     }
+
 
     /**
      * Testa a conexão com o S3.
