@@ -29,9 +29,9 @@ class Usuarios extends Migration
                 'COMMENT' => 'ID do perfil do usuário na tabela definida, GERENTES, SUPERVISORES, PASTOR, IGREJAS'
             ],
             "email" => [
-                'type' => 'VARCHAR',
+                'type'       => 'VARCHAR',
                 'constraint' => 60,
-                'null' => true
+                'unique'     => true,
             ],
             "password" => [
                 'type' => 'VARCHAR',
