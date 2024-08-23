@@ -43,15 +43,9 @@ class UsuariosModel extends Model
     ];
 
     protected $validationMessages = [
-        "nome" => [
-            "required" => "Um nome é obrigatório"
-        ],
         "password" => [
-            "required" => "Senha obrigatória",
+            "required"   => "Senha obrigatória",
             "min_length" => "Uma senha de pelo menos 6 caracteres"
-        ],
-        "telefone" => [
-            "required" => "O telefone é necessário"
         ],
         "email" => [
             "is_unique" => "Já existe um usuário do sistema utilizando esse endereço de e-mail"
@@ -86,12 +80,6 @@ class UsuariosModel extends Model
 
         if (!empty($data["data"]["password"])) {
             $data["data"]["password"] = password_hash($data["data"]["password"], PASSWORD_BCRYPT);
-        }
-
-        foreach (['telefone', 'celular'] as $field) {
-            if (!empty($data["data"][$field])) {
-                $data["data"][$field] = limparString($data["data"][$field]);
-            }
         }
 
         return $data;
