@@ -8,6 +8,7 @@ class Health extends Controller
     public function index()
     {
         //
+        session_destroy();
         return $this->response->setStatusCode(200)->setBody('OK');
     }
 }
