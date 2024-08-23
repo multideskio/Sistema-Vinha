@@ -44,7 +44,6 @@ class WhatsappLibraries
                 'apiUrl' => $this->apiUrl,
                 'instance' => $this->instance
             ]);
-
         } catch (Exception $e) {
             $this->logger->error('Erro no construtor: ' . $e->getMessage());
         }
@@ -118,12 +117,12 @@ class WhatsappLibraries
 
         try {
             $params = [
-                "number" => $number,
-                "mediaMessage" => [
-                    "mediatype" => "image",
-                    "caption"   => $message['message'],
-                    "media"     => $message['image']
-                ]
+                "number"    => $number,
+                "mediatype" => "image", // image, video or document
+                "mimetype"  => "image/png",
+                "caption"   => $message['message'],
+                "media"     => $message['image'],
+                "fileName"  => "imagem.png"
             ];
 
             $this->logger->info('Enviando imagem.', $params);
@@ -132,9 +131,10 @@ class WhatsappLibraries
             if (isset($body['Code'], $body['Message'])) {
                 throw new Exception("Erro {$body['Code']}: {$body['Message']}");
             }
-
+        
             $this->logger->info('Imagem enviada com sucesso.');
             return true;
+        
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
@@ -153,13 +153,11 @@ class WhatsappLibraries
         try {
             $params = [
                 "number" => $number,
-                "textMessage" => [
-                    "text" => $message['message']
-                ],
+                "text" => $message['message'],
                 "options" => [
-                    "delay" => 300,
+                    "delay" => 600,
                     "presence" => "composing",
-                    "linkPreview" => false,
+                    "linkPreview" => true,
                 ]
             ];
 

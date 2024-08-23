@@ -132,91 +132,95 @@ class Transacoes extends ResourceController
 
     public function dashboardAdmin()
     {
-        $modelUser = new UsuariosModel();
-        $dateIn = $this->request->getGet('dateIn');
-        $dateOut = $this->request->getGet('dateOut') . ' 23:59:59';
-
-        // Função auxiliar para garantir que o valor seja 0 se for null
-        $getValor = function ($result) {
-            return $result['valor'] ?? 0;
-        };
-
-        // Função auxiliar para calcular o crescimento percentual, arredondar e adicionar sinal
-        $calculateGrowthRate = function ($current, $previous) {
-            if ($previous > 0) {
-                $growth = round((($current - $previous) / $previous) * 100, 2);
-                return ($growth > 0 ? '+' : '') . $growth . '%';
-            } else {
-                return ($current > 0 ? '+100%' : '0%');
-            }
-        };
-
-        // Obter valores do mês atual
-        $currentMonth = $getValor($this->modelTransacoes->dashMensal());
-        $currentBoletos = $getValor($this->modelTransacoes->dashBoletos($dateIn, $dateOut));
-        $currentPix = $getValor($this->modelTransacoes->dashPix($dateIn, $dateOut));
-        $currentCredito = $getValor($this->modelTransacoes->dashCredito($dateIn, $dateOut));
-        $currentDebito = $getValor($this->modelTransacoes->dashDebito($dateIn, $dateOut));
-        $currentYear = $getValor($this->modelTransacoes->dashAnual());
-        $currentTotal = $getValor($this->modelTransacoes->dashTotal());
-
-        // Obter valores do mês anterior
-        $previousMonth = $getValor($this->modelTransacoes->dashMensalAnterior());
-        $previousBoletos = $getValor($this->modelTransacoes->dashBoletosAnterior());
-        $previousPix = $getValor($this->modelTransacoes->dashPixAnterior());
-        $previousCredito = $getValor($this->modelTransacoes->dashCreditoAnterior());
-        $previousDebito = $getValor($this->modelTransacoes->dashDebitoAnterior());
-        $previousYear = $getValor($this->modelTransacoes->dashAnualAnterior());
-        $previousTotal = $getValor($this->modelTransacoes->dashTotal());
-
-        // Calcular variações percentuais
-        $growthRateMonth = $calculateGrowthRate($currentMonth, $previousMonth);
-        $growthRateBoletos = $calculateGrowthRate($currentBoletos, $previousBoletos);
-        $growthRatePix = $calculateGrowthRate($currentPix, $previousPix);
-        $growthRateCredito = $calculateGrowthRate($currentCredito, $previousCredito);
-        $growthRateDebito = $calculateGrowthRate($currentDebito, $previousDebito);
-        $growthRateYear = $calculateGrowthRate($currentYear, $previousYear);
-        $growthRateTotal = $calculateGrowthRate($currentTotal, $previousTotal);
-
-        $data['mes'] = [
-            'valor' => decimalParaReaisBrasil($currentMonth),
-            'crescimento' => $growthRateMonth
-        ];
-        $data['boletos'] = [
-            'valor' => decimalParaReaisBrasil($currentBoletos),
-            'crescimento' => $growthRateBoletos
-        ];
-        $data['pix'] = [
-            'valor' => decimalParaReaisBrasil($currentPix),
-            'crescimento' => $growthRatePix
-        ];
-        $data['credito'] = [
-            'valor' => decimalParaReaisBrasil($currentCredito),
-            'crescimento' => $growthRateCredito
-        ];
-        $data['debito'] = [
-            'valor' => decimalParaReaisBrasil($currentDebito),
-            'crescimento' => $growthRateDebito
-        ];
-        $data['totalAnual'] = [
-            'valor' => decimalParaReaisBrasil($currentYear),
-            'crescimento' => $growthRateYear
-        ];
-        $data['totalGeral'] = [
-            'valor' => decimalParaReaisBrasil($currentTotal),
-            'crescimento' => $growthRateTotal
-        ];
-        $data['totalUsers'] = $modelUser->countAllResults();
-
-        return $this->respond($data);
-    }
-
-    public function ultimosCadastros(){
-
-    }
-
-    public function ultimasTransacoes(){
         
+        try {
+            $modelUser = new UsuariosModel();
+            $dateIn = $this->request->getGet('dateIn');
+            $dateOut = $this->request->getGet('dateOut') . ' 23:59:59';
+
+            // Função auxiliar para garantir que o valor seja 0 se for null
+            $getValor = function ($result) {
+                return $result['valor'] ?? 0;
+            };
+
+            // Função auxiliar para calcular o crescimento percentual, arredondar e adicionar sinal
+            $calculateGrowthRate = function ($current, $previous) {
+                if ($previous > 0) {
+                    $growth = round((($current - $previous) / $previous) * 100, 2);
+                    return ($growth > 0 ? '+' : '') . $growth . '%';
+                } else {
+                    return ($current > 0 ? '+100%' : '0%');
+                }
+            };
+
+            // Obter valores do mês atual
+            $currentMonth = $getValor($this->modelTransacoes->dashMensal());
+            $currentBoletos = $getValor($this->modelTransacoes->dashBoletos($dateIn, $dateOut));
+            $currentPix = $getValor($this->modelTransacoes->dashPix($dateIn, $dateOut));
+            $currentCredito = $getValor($this->modelTransacoes->dashCredito($dateIn, $dateOut));
+            $currentDebito = $getValor($this->modelTransacoes->dashDebito($dateIn, $dateOut));
+            $currentYear = $getValor($this->modelTransacoes->dashAnual());
+            $currentTotal = $getValor($this->modelTransacoes->dashTotal());
+
+            // Obter valores do mês anterior
+            $previousMonth = $getValor($this->modelTransacoes->dashMensalAnterior());
+            $previousBoletos = $getValor($this->modelTransacoes->dashBoletosAnterior());
+            $previousPix = $getValor($this->modelTransacoes->dashPixAnterior());
+            $previousCredito = $getValor($this->modelTransacoes->dashCreditoAnterior());
+            $previousDebito = $getValor($this->modelTransacoes->dashDebitoAnterior());
+            $previousYear = $getValor($this->modelTransacoes->dashAnualAnterior());
+            $previousTotal = $getValor($this->modelTransacoes->dashTotal());
+
+            // Calcular variações percentuais
+            $growthRateMonth = $calculateGrowthRate($currentMonth, $previousMonth);
+            $growthRateBoletos = $calculateGrowthRate($currentBoletos, $previousBoletos);
+            $growthRatePix = $calculateGrowthRate($currentPix, $previousPix);
+            $growthRateCredito = $calculateGrowthRate($currentCredito, $previousCredito);
+            $growthRateDebito = $calculateGrowthRate($currentDebito, $previousDebito);
+            $growthRateYear = $calculateGrowthRate($currentYear, $previousYear);
+            $growthRateTotal = $calculateGrowthRate($currentTotal, $previousTotal);
+
+            $data['mes'] = [
+                'valor' => decimalParaReaisBrasil($currentMonth),
+                'crescimento' => $growthRateMonth
+            ];
+            $data['boletos'] = [
+                'valor' => decimalParaReaisBrasil($currentBoletos),
+                'crescimento' => $growthRateBoletos
+            ];
+            $data['pix'] = [
+                'valor' => decimalParaReaisBrasil($currentPix),
+                'crescimento' => $growthRatePix
+            ];
+            $data['credito'] = [
+                'valor' => decimalParaReaisBrasil($currentCredito),
+                'crescimento' => $growthRateCredito
+            ];
+            $data['debito'] = [
+                'valor' => decimalParaReaisBrasil($currentDebito),
+                'crescimento' => $growthRateDebito
+            ];
+            $data['totalAnual'] = [
+                'valor' => decimalParaReaisBrasil($currentYear),
+                'crescimento' => $growthRateYear
+            ];
+            $data['totalGeral'] = [
+                'valor' => decimalParaReaisBrasil($currentTotal),
+                'crescimento' => $growthRateTotal
+            ];
+            $data['totalUsers'] = $modelUser->countAllResults();
+
+            return $this->respond($data);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
+    public function ultimosCadastros() {}
+
+    public function ultimasTransacoes()
+    {
+
 
         return $this->respond($this->modelTransacoes->transacoes());
     }
@@ -236,7 +240,7 @@ class Transacoes extends ResourceController
             ];
             $this->modelReembolso->transStart();
             $this->modelReembolso->insert($data);
-            
+
             $reembolso = $this->cieloPix->refundPix($id, $valor);
             $this->modelReembolso->transComplete();
             //return $this->respond([$data, $valor]);

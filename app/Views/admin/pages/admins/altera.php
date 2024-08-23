@@ -78,7 +78,7 @@
                             <i class="fas fa-home"></i> Dados do perfil
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
                             <i class="far fa-envelope"></i> Preferências
                         </a>
@@ -87,7 +87,7 @@
                         <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
                             <i class="far fa-envelope"></i> Logs
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
             <div class="card-body p-4">
