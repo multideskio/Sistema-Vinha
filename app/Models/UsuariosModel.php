@@ -36,9 +36,7 @@ class UsuariosModel extends Model
 
     // Validation
     protected $validationRules = [
-        "nome"     => "required",
         "password" => "required|min_length[6]",
-        "telefone" => "required",
         "email"    => "required|valid_email|is_unique[usuarios.email,id,{id}]"
     ];
 
