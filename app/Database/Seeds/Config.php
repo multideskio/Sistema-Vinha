@@ -24,6 +24,7 @@ class Config extends Seeder
         data to be inserted. The keys in the array correspond to the column names in the `admin`
         table, and the values are the data to be inserted into those columns. */
         if ($userModel->where('email', 'igrsysten@gmail.com')->countAllResults() == 0) {
+            
             $idAdmin = $adminModel->insert([
                 'empresa'         => 'Vinha Ministérios',
                 'email_remetente' => 'multidesk.io@gmail.com',
@@ -32,9 +33,8 @@ class Config extends Seeder
 
             echo "ID ADMIN: $idAdmin \n";
 
-            /* This code snippet is inserting data into the `administradores` table using the
-        `AdministradoresModel` model. The `insert` method of the `AdministradoresModel` is being
-        called with an associative array containing the data to be inserted. */
+            /* This code snippet is inserting data into the `administradores` table using the `AdministradoresModel` model. The `insert` method of the `AdministradoresModel` is being called with an associative array containing the data to be inserted. */
+
             $idAdm = $admModel->insert([
                 'id_adm'   => $idAdmin,
                 'nome'     => 'Paulo',
@@ -43,9 +43,8 @@ class Config extends Seeder
 
             echo "ID SUPERADMIN: $idAdm \n";
 
-            /* This code snippet is inserting data into the `usuarios` table using the `UsuariosModel`
-        model. The `insert` method of the `UsuariosModel` is being called with an associative array
-        containing the data to be inserted. Here's a breakdown of the data being inserted: */
+            /* This code snippet is inserting data into the `usuarios` table using the `UsuariosModel` model. The `insert` method of the `UsuariosModel` is being called with an associative array containing the data to be inserted. Here's a breakdown of the data being inserted: */
+
             $idUser = $userModel->insert([
                 'tipo' => 'superadmin',
                 'id_perfil' => $idAdm,
@@ -57,8 +56,14 @@ class Config extends Seeder
                 'confirmado' => true
             ]);
 
-            echo "ID USER: $idUser \n\n";
-            echo "Dados inseridos... \n";
+            if ($idUser === false) {
+            
+                var_dump($userModel->errors());
+            
+            } else {
+                echo "ID USER: $idUser \n\n";
+                echo "Dados inseridos... \n";
+            }
 
         } else {
             echo "Usuário já existe";

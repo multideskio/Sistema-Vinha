@@ -28,19 +28,19 @@ class UsuariosModel extends Model
     protected bool $allowEmptyInserts = false;
 
     // Dates
-    protected $useTtimestamps = true;
+    protected $useTimestamps = true;
     protected $dateFormat    = "datetime";
     protected $createdField  = "created_at";
     protected $updatedField  = "updated_at";
     protected $deletedField  = "deleted_at";
 
     // Validation
-    protected $validationRules = [
+    /*protected $validationRules = [
         "nome"     => "required",
         "password" => "required|min_length[6]",
         "telefone" => "required",
-        "email"    => "required|valid_email|is_unique[usuarios.email,id,{id}]"
-    ];
+        "email"    => "required|valid_email|is_unique[usuarios.email]"
+    ];*/
 
     protected $validationMessages   = [
         "nome" => [
@@ -50,7 +50,7 @@ class UsuariosModel extends Model
             "required" => "Senha obrigatória",
             "min_length" => "Uma senha de pelo menos 6 caracteres"
         ],
-        "telefone" => [
+        "Telefone" => [
             "required" => "O telefone é necessário"
         ],
         "email" => [
@@ -72,14 +72,33 @@ class UsuariosModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = ["updateCache"];
 
+
+    public function disableEmailValidation()
+    {
+        // Remova temporariamente a regra de validação para o e-mail
+        unset($this->validationRules['email']);
+    }
+
+    public function enableEmailValidation()
+    {
+        // Restaure a regra de validação para o e-mail
+        $this->validationRules['email'] = "required|valid_email|is_unique[usuarios.email]";
+    }
+
     public function updateUsuario($id, $usuarioData)
     {
-        // Atualiza as regras de validação para o email
-        $this->validationRules['email'] = "required|valid_email|is_unique[usuarios.email,id,{$id}]";
+        // Desativa temporariamente a validação para o e-mail
+        $this->disableEmailValidation();
 
-        // Realiza a atualização com a validação adequada
-        return $this->update($id, $usuarioData);
+        // Realiza a atualização
+        $result = $this->update($id, $usuarioData);
+
+        // Restaura a validação para o e-mail
+        $this->enableEmailValidation();
+
+        return $result;
     }
+
 
     protected function antesCadastro(array $data)
     {
@@ -108,14 +127,16 @@ class UsuariosModel extends Model
         return $data;
     }
 
-    //apaga cache ao realizar alguma ação importante no banco de dados
+    //apaga chache ao ralizar alguma ação importante no banco de dados
     protected function updateCache()
     {
         $cache = \Config\Services::cache();
         $cache->delete("user_cache");
         $cache->delete('listDashboard');
-    }
 
+        /*$dbutil = \Config\Database::utils();
+        $dbutil->optimizeTable("usuarios");*/
+    }
 
     public function listGeral($input = false, $limit = 10, $order = 'DESC')
     {
@@ -434,11 +455,436 @@ class UsuariosModel extends Model
             }
         }
 
+
         return [
             'rows' => $dataUsers, // Dados dos gerentes
             'pager' => $this->pager->links('default', 'paginate') // Links de paginação
         ];
     }
+
+    public function listSearch1($input = false)
+    {
+        $modelAdmin   = new AdministradoresModel();
+        $modelSuper   = new SupervisoresModel();
+        $modelRegiao  = new RegioesModel();
+        $modelGerente = new GerentesModel();
+        $modelPastor  = new PastoresModel();
+        $modelIgrejas = new IgrejasModel();
+
+        $dataUsers = array();
+
+        if (isset($input['search'])) {
+            $search = $input['search'];
+            $buscaUsers = $this->like('email', $search)
+                ->orLike('id', $search)
+                ->orLike('id_perfil', $search)
+                ->orLike('tipo', $search)
+                ->paginate(15);
+
+            if (count($buscaUsers)) {
+                $usuarios = $buscaUsers;
+            } else {
+                $usuarios = $this->paginate(15);
+            }
+        } else {
+            $usuarios = $this->paginate(15);
+        }
+
+        $pager = $this->pager->links('default', 'paginate');
+
+        foreach ($usuarios as $usuario) {
+            if ($usuario['nivel'] == 1) {
+                if (isset($input['search'])) {
+                    $search = $input['search'];
+                    $adminUsers = $modelAdmin->like('nome', $search)
+                        ->orLike('id', $search)
+                        ->orLike('cpf', $search)
+                        ->findAll();
+                    foreach ($adminUsers as $adminUser) {
+
+                        $dataUsers[] = [
+                            'id' => $usuario['id'],
+                            'email' => $usuario['email'],
+                            'perfil_id' => $usuario['id_perfil'],
+                            'nome' => $adminUser['nome'] . ' ' . $adminUser['sobrenome'],
+                            'doc' => $adminUser['cpf'],
+                            'foto' => $adminUser['foto'],
+                            'regiao' => 'Não aplicável',
+                            'gerente' => 'Não aplicável',
+                            'supervisao' => 'Não aplicável',
+                            'perfil_tipo' => 'administrador',
+                            'uf' => $adminUser['uf'],
+                            'cidade' => $adminUser['cidade'],
+                            'celular' => $adminUser['celular'],
+                            'telefone' => $adminUser['telefone']
+                        ];
+                    }
+                } else {
+                    $adminUser = $modelAdmin->find($usuario['id_perfil']);
+                    $dataUsers[] = [
+                        'id' => $usuario['id'],
+                        'email' => $usuario['email'],
+                        'perfil_id' => $usuario['id_perfil'],
+                        'nome' => $adminUser['nome'] . ' ' . $adminUser['sobrenome'],
+                        'doc' => $adminUser['cpf'],
+                        'foto' => $adminUser['foto'],
+                        'regiao' => 'Não aplicável',
+                        'gerente' => 'Não aplicável',
+                        'supervisao' => 'Não aplicável',
+                        'perfil_tipo' => 'administrador',
+                        'uf' => $adminUser['uf'],
+                        'cidade' => $adminUser['cidade'],
+                        'celular' => $adminUser['celular'],
+                        'telefone' => $adminUser['telefone']
+                    ];
+                }
+            }
+
+            if ($usuario['nivel'] == 2) {
+
+                if (isset($input['search'])) {
+                    $search = $input['search'];
+                    $adminUsers = $modelGerente->like('nome', $search)
+                        ->orLike('id', $search)
+                        ->orLike('cpf', $search)
+                        ->findAll();
+
+                    foreach ($adminUsers as $adminUser) {
+                        if ($usuario['id_perfil'] == $adminUser['id']) {
+                            $dataUsers[] = [
+                                'id' => $usuario['id'],
+                                'email' => $usuario['email'],
+                                'perfil_id' => $usuario['id_perfil'],
+                                'nome' => $adminUser['nome'] . ' ' . $adminUser['sobrenome'],
+                                'doc' => $adminUser['cpf'],
+                                'foto' => $adminUser['foto'],
+                                'regiao' => 'Não aplicável',
+                                'gerente' => 'Não aplicável',
+                                'supervisao' => 'Não aplicável',
+                                'perfil_tipo' => 'gerente',
+                                'uf' => $adminUser['uf'],
+                                'cidade' => $adminUser['cidade'],
+                                'celular' => $adminUser['celular'],
+                                'telefone' => $adminUser['telefone']
+                            ];
+                        }
+                    }
+                } else {
+                    $adminUser = $modelGerente->find($usuario['id_perfil']);
+                    $dataUsers[] = [
+                        'id' => $usuario['id'],
+                        'email' => $usuario['email'],
+                        'perfil_id' => $usuario['id_perfil'],
+                        'nome' => $adminUser['nome'] . ' ' . $adminUser['sobrenome'],
+                        'doc' => $adminUser['cpf'],
+                        'foto' => $adminUser['foto'],
+                        'regiao' => 'Não aplicável',
+                        'gerente' => 'Não aplicável',
+                        'supervisao' => 'Não aplicável',
+                        'perfil_tipo' => 'gerente',
+                        'uf' => $adminUser['uf'],
+                        'cidade' => $adminUser['cidade'],
+                        'celular' => $adminUser['celular'],
+                        'telefone' => $adminUser['telefone']
+                    ];
+                }
+            }
+
+            if ($usuario['nivel'] == 3) {
+
+
+
+                if (isset($input['search'])) {
+                    $search = $input['search'];
+                    $adminSupervisor = $modelSuper->like('nome', $search)
+                        ->orLike('cpf', $search)
+                        ->findAll();
+
+                    foreach ($adminSupervisor as $adminUser) {
+                        if ($usuario['id_perfil'] == $adminUser['id']) {
+                            $gerente = $modelGerente->find($adminUser['id_gerente']);
+                            $regiao  = $modelRegiao->find($adminUser['id_regiao']);
+                            $dataUsers[] = [
+                                'id' => $usuario['id'],
+                                'email' => $usuario['email'],
+                                'perfil_id' => $usuario['id_perfil'],
+                                'nome' => $adminUser['nome'] . ' ' . $adminUser['sobrenome'],
+                                'doc' => $adminUser['cpf'],
+                                'foto' => $adminUser['foto'],
+                                'regiao' => $regiao['nome'],
+                                'gerente' => $gerente['nome'] . ' ' . $gerente['sobrenome'],
+                                'supervisao' => 'Não aplicável',
+                                'perfil_tipo' => 'supervisor',
+                                'uf' => $adminUser['uf'],
+                                'cidade' => $adminUser['cidade'],
+                                'celular' => $adminUser['celular'],
+                                'telefone' => $adminUser['telefone']
+                            ];
+                        }
+                    }
+                } else {
+                    $adminUser = $modelSuper->find($usuario['id_perfil']);
+
+                    $gerente = $modelGerente->find($adminUser['id_gerente']);
+                    $regiao  = $modelRegiao->find($adminUser['id_regiao']);
+
+                    $dataUsers[] = [
+                        'id' => $usuario['id'],
+                        'email' => $usuario['email'],
+                        'perfil_id' => $usuario['id_perfil'],
+                        'nome' => $adminUser['nome'] . ' ' . $adminUser['sobrenome'],
+                        'doc' => $adminUser['cpf'],
+                        'foto' => $adminUser['foto'],
+                        'regiao' => $regiao['nome'],
+                        'gerente' => $gerente['nome'] . ' ' . $gerente['sobrenome'],
+                        'supervisao' => 'Não aplicável',
+                        'perfil_tipo' => 'supervisor',
+                        'uf' => $adminUser['uf'],
+                        'cidade' => $adminUser['cidade'],
+                        'celular' => $adminUser['celular'],
+                        'telefone' => $adminUser['telefone']
+                    ];
+                }
+            }
+        };
+
+        $data = [
+            'rows' => $dataUsers,
+            'pager' => $pager
+        ];
+        return $data;
+    }
+
+    public function listSearch0($input = false)
+    {
+        // Inicia o serviço de temporização
+        $benchmark = \Config\Services::timer();
+
+        // Começa a contagem do tempo
+        $benchmark->start('query_timer');
+
+        $this->select('usuarios.id, usuarios.email, usuarios.nivel')
+
+            ->select('administradores.id AS adm_id, administradores.nome AS adm_nome, administradores.cpf as adm_cpf, administradores.foto AS adm_foto, administradores.uf as adm_uf, administradores.cidade as adm_cidade, administradores.telefone as adm_telefone, administradores.celular as adm_celular')
+
+            ->select('gerentes.id AS ger_id, gerentes.nome AS ger_nome, gerentes.cpf as ger_cpf, gerentes.foto AS ger_foto, gerentes.uf as ger_uf, gerentes.cidade as ger_cidade, gerentes.telefone as ger_telefone, gerentes.celular as ger_celular')
+
+            ->select('supervisores.id AS sup_id, supervisores.nome AS sup_nome, supervisores.cpf as sup_cpf, supervisores.foto AS sup_foto, supervisores.uf as sup_uf, supervisores.cidade as sup_cidade, supervisores.telefone as sup_telefone, supervisores.celular as sup_celular, supervisores.id_regiao as sup_regiao, supervisores.id_gerente as sup_gerente')
+
+            ->select('pastores.id AS pas_id, pastores.nome AS pas_nome, pastores.cpf as pas_cpf')
+
+            ->select('igrejas.id AS igr_id, igrejas.fantasia AS igr_fantasia, igrejas.cnpj as igr_cnpj')
+
+            ->join('administradores', 'usuarios.id_perfil = administradores.id', 'left outer')
+            ->join('gerentes', 'usuarios.id_perfil = gerentes.id', 'left outer')
+            ->join('supervisores', 'usuarios.id_perfil = supervisores.id', 'left outer')
+            ->join('pastores', 'usuarios.id_perfil = pastores.id', 'left outer')
+            ->join('igrejas', 'usuarios.id_perfil = igrejas.id', 'left outer');
+
+        // Adiciona cláusula de grupo para evitar duplicação de resultados
+
+        if (isset($input['search'])) {
+
+
+            $search = $input['search'];
+
+            $this->groupStart();
+
+            $this->like('usuarios.email', $search)
+                ->orLike('usuarios.id', $search)
+                ->orLike('administradores.cpf', $search)
+                ->orLike('gerentes.cpf', $search)
+                ->orLike('supervisores.cpf', $search)
+                ->orLike('supervisores.nome', $search);
+
+            /*->orLike('supervisores.cpf', $search)
+                ->orLike('pastores.cpf', $search)
+                ->orLike('igrejas.cnpj', $search);*/
+
+            //->orLike('administradores.nome', $search)
+            //->orLike('gerentes.nome', $search)
+            /* ->orLike('supervisores.nome', $search)
+                //->orLike('pastores.nome', $search)
+                //->orLike('igrejas.fantasia', $search);
+            ;*/
+            $this->groupEnd();
+        } else {
+            $this->groupBy('usuarios.id');
+        }
+
+        $usuarios = $this->paginate(15);
+
+        $pager = $this->pager->links('default', 'paginate');
+
+
+        $usuariosFiltrados = array_map(function ($usuario) {
+            // Filtra e retorna apenas os dados relevantes
+            if ($usuario['nivel'] == 1) {
+                return [
+                    'id' => $usuario['id'],
+                    'email' => $usuario['email'],
+                    'perfil_id' => $usuario['adm_id'],
+                    'nome' => $usuario['adm_nome'],
+                    'doc' => $usuario['adm_cpf'],
+                    'foto' => $usuario['adm_foto'],
+                    'regiao' => 'Não aplicável',
+                    'gerente' => 'Não aplicável',
+                    'supervisao' => 'Não aplicável',
+                    'perfil_tipo' => 'administrador',
+                    'uf' => $usuario['adm_uf'],
+                    'cidade' => $usuario['adm_cidade'],
+                    'celular' => $usuario['adm_celular'],
+                    'telefone' => $usuario['adm_telefone']
+                ];
+            } elseif ($usuario['nivel'] == 2) {
+                return [
+                    'id' => $usuario['id'],
+                    'email' => $usuario['email'],
+                    'perfil_id' => $usuario['adm_id'],
+                    'nome' => $usuario['ger_nome'],
+                    'doc' => $usuario['ger_cpf'],
+                    'foto' => $usuario['ger_foto'],
+                    'regiao' => 'Não aplicável',
+                    'gerente' => 'Não aplicável',
+                    'supervisao' => 'Não aplicável',
+                    'perfil_tipo' => 'gerente',
+                    'uf' => $usuario['ger_uf'],
+                    'cidade' => $usuario['ger_cidade'],
+                    'celular' => $usuario['ger_celular'],
+                    'telefone' => $usuario['ger_telefone']
+                ];
+            } elseif ($usuario['nivel'] == 3) {
+                $modelRegiao = new RegioesModel();
+                $rowRegiao = $modelRegiao->select('nome')->find($usuario['sup_regiao']);
+                $nomeRegiao = $rowRegiao ? $rowRegiao['nome'] : 'Não informado';
+
+                $modelGerente = new GerentesModel();
+                $rowGerente = $modelGerente->select('nome, sobrenome')->find($usuario['sup_gerente']);
+                $nomeGerente = $rowGerente ? $rowGerente['nome'] . ' ' . $rowGerente['sobrenome'] : 'Não informado';
+
+                return [
+                    'id' => $usuario['id'],
+                    'email' => $usuario['email'],
+                    'perfil_id' => $usuario['adm_id'],
+                    'nome' => $usuario['sup_nome'],
+                    'doc' => $usuario['sup_cpf'],
+                    'foto' => $usuario['sup_foto'],
+                    'regiao' => $nomeRegiao,
+                    'gerente' => $nomeGerente,
+                    'supervisao' => 'Não aplicável',
+                    'perfil_tipo' => 'supervisor',
+                    'uf' => $usuario['sup_uf'],
+                    'cidade' => $usuario['sup_cidade'],
+                    'celular' => $usuario['sup_celular'],
+                    'telefone' => $usuario['sup_telefone']
+                ];
+            } elseif ($usuario['nivel'] == 4) {
+                /*return [
+                    'id' => $usuario['id'],
+                    'email' => $usuario['email'],
+                    'perfil_id' => $usuario['adm_id'],
+                    'nome' => $usuario['pas_nome'],
+                    'doc' => $usuario['pas_cpf'],
+                    'foto' => 'Não disponível',
+                    'regiao' => 'Não aplicável',
+                    'gerente' => 'Não aplicável',
+                    'supervisao' => 'Não aplicável',
+                    'perfil_tipo' => 'pastor',
+                    'uf' => 'Não disponível',
+                    'cidade' => 'Não disponível',
+                    'celular' => 'Não disponível',
+                    'telefone' => 'Não disponível'
+                ];*/
+            } elseif ($usuario['nivel'] == 5) {
+                /*return [
+                    'id' => $usuario['id'],
+                    'email' => $usuario['email'],
+                    'perfil_id' => $usuario['adm_id'],
+                    'nome' => $usuario['igr_fantasia'],
+                    'doc' => $usuario['igr_cnpj'],
+                    'foto' => 'Não disponível',
+                    'regiao' => 'Não aplicável',
+                    'gerente' => 'Não aplicável',
+                    'supervisao' => 'Não aplicável',
+                    'perfil_tipo' => 'igreja',
+                    'uf' => 'Não disponível',
+                    'cidade' => 'Não disponível',
+                    'celular' => 'Não disponível',
+                    'telefone' => 'Não disponível'
+                ];*/
+            }
+            return null;
+        }, $usuarios);
+
+        $usuariosFiltrados = array_filter($usuariosFiltrados); // Remove entradas nulas
+
+        // Para a contagem do tempo
+        $benchmark->stop('query_timer');
+
+        // Obtém o tempo de execução
+        $executionTime = number_format($benchmark->getElapsedTime('query_timer') * 1000, 3) . ' ms';
+
+        $data = [
+            'rows' => $usuariosFiltrados,
+            'pager' => $pager,
+            'execution_time' => $executionTime
+        ];
+
+        return $data;
+    }
+
+    /*public function listSearch0($input = false)
+    {
+
+        foreach ($this->findAll() as $row) {
+            if ($row['tipo'] == 'superadmin') {
+                $this->select('usuarios.*')
+                    ->select('administradores.*')
+                    ->join('administradores', 'usuarios.id_perfil = administradores.id', 'left');
+            }
+            if ($row['tipo'] == 'gerente') {
+                $this->select('usuarios.*')
+                    ->select('gerentes.*')
+                    ->join('gerentes', 'usuarios.id_perfil = gerentes.id', 'left');
+            }
+
+            if ($row['tipo'] == 'supervisor') {
+                $this->select('usuarios.*')
+                    ->select('supervisores.*')
+                    ->join('supervisores', 'usuarios.id_perfil = supervisores.id', 'left');
+            }
+
+            if ($row['tipo'] == 'pastor') {
+                $this->select('usuarios.*')
+                    ->select('pastores.*')
+                    ->join('pastores', 'usuarios.id_perfil = pastores.id', 'left');
+            }
+
+            if ($row['tipo'] == 'igreja') {
+                $this->select('usuarios.*')
+                    ->select('igrejas.*')
+                    ->join('igrejas', 'usuarios.id_perfil = igrejas.id', 'left');
+            }
+        }
+
+
+        if (isset($input['search'])) {
+            $this->like('administradores.nome', $input['search'])
+                ->orLike('gerentes.nome', $input['search'])
+                ->orLike('supervisores.nome', $input['search'])
+                ->orLike('pastores.nome', $input['search'])
+                ->orLike('igrejas.fantasia', $input['search'])
+                ->orLike('usuarios.email', $input['search'])
+                ->orLike('usuarios.id', $input['search']);
+        }
+
+        $data = [
+            'rows' => $this->paginate(15),
+            'pager' => $this->pager->links('default', 'paginate')
+        ];
+
+        return $data;
+    }*/
 
     //Lista de usuários em cache
     public function cacheData()
@@ -537,6 +983,17 @@ class UsuariosModel extends Model
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
     public function google(array $data)
     {
         $email = $data["email"];
@@ -599,6 +1056,11 @@ class UsuariosModel extends Model
     }
 
 
+
+
+
+
+
     public function cadUser(string $tipo, array $input): bool
     {
         try {
@@ -637,6 +1099,7 @@ class UsuariosModel extends Model
 
     function userData()
     {
+
         if (session('data')['tipo'] == 'superadmin') {
             $buscaPerfil = new AdministradoresModel();
             $perfil = $buscaPerfil->find(session('data')['id_perfil']);
