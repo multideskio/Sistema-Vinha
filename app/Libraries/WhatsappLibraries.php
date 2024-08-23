@@ -191,6 +191,8 @@ class WhatsappLibraries
                 'json' => $data
             ];
 
+            /* This code snippet is making a POST request to a specific endpoint using GuzzleHttp
+            client. Here's a breakdown of what each step is doing: */
             $this->logger->info('Enviando requisição POST para ' . $endpoint);
             $response = $this->client->post($this->apiUrl . $endpoint, $options);
             $responseBody = json_decode($response->getBody(), true);

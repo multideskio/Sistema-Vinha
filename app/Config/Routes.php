@@ -45,6 +45,7 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->resource('administradores');
     
     $routes->put('administracao/testwhatsapp', 'Administracao::testWhatsApp', ['filter' => 'logged']);
+    
     $routes->post('administracao/update/upload/(:num)', 'Administracao::foto/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/links/(:num)', 'Administracao::links/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/info/(:num)', 'Administracao::updateInfo/$1', ['filter' => 'logged']);

@@ -276,7 +276,7 @@ class Administracao extends ResourceController
         $message['message'] = $input['message'];
         $number             = $input['numberSend'];
 
-        $send = $whatsapp->sendMessageText($message, $number);
+        $send = $whatsapp->verifyNumber($message, $number, 'text'); 
 
         if ($send) {
             return $this->respond(['msg' => 'Executado com sucesso. Verifique se recebeu a mensagem.']);

@@ -82,7 +82,7 @@ function updateGeral() {
 }
 
 function dataConfig() {
-    $.getJSON(`${_baseUrl}/api/v1/administracao/${idEmp}`)
+    $.getJSON(`${_baseUrl}api/v1/administracao/${idEmp}`)
         .done(function (data) {
             const setCheckboxState = (selector, state) => {
                 $(selector).prop('checked', state);
@@ -127,13 +127,13 @@ function dataConfig() {
                 }
             });
 
-
             setCheckboxState("#ativarSMTP", data.ativar_smtp == 1);
 
             //WhatsApp
             $("#urlAPI").val(data.url_api)
             $("#instanceAPI").val(data.instance_api)
             $("#keyAPI").val(data.key_api)
+            
             setCheckboxState("#ativawa", data.ativar_wa == 1);
 
             //s3
@@ -230,7 +230,6 @@ function envioDeTeste() {
             // Executa após a requisição (seja sucesso ou falha)
         });
     });
-
 
     $("#testarEmail").on('click', function () {
         let email = $('#emailUser').val();
