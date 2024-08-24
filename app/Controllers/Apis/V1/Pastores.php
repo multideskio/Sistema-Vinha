@@ -102,24 +102,28 @@ class Pastores extends ResourceController
     public function create()
     {
         //
+        $db = \Config\Database::connect();  // Conecta ao banco de dados
         $modelUser = new UsuariosModel();
+        $db->transBegin();
 
         try {
 
             // Obtém os dados do FilePond do corpo da solicitação
             $input = $this->request->getVar();
 
-            $this->modelPastores->transStart(); // Iniciar transação
-
             if ($modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new Exception("Esse email já está cadastrado no sistema.", 1);
             };
+
+            $celular = $input['cel'];
+            $nome    = $input['nome'];
+            $email   = $input['email'];
 
             $data = [
                 "id_adm"       => session('data')['idAdm'],
                 "id_user"      => session('data')['id'],
                 'id_supervisor' => $input['selectSupervisor'],
-                'nome' => $input['nome'],
+                'nome' => $nome,
                 'sobrenome' => $input['sobrenome'],
                 'cpf' => $input['cpf'],
                 'uf' => $input['uf'],
@@ -130,43 +134,40 @@ class Pastores extends ResourceController
                 'bairro' => $input['bairro'],
                 'data_dizimo' => $input['dia'],
                 'telefone' => $input['tel'],
-                'celular' => $input['cel']
+                'celular' => $celular
             ];
 
             $id = $this->modelPastores->insert($data);
 
+            if ($id === false) {
+                // Se a inserção falhar, reverte a transação e retorna o erro
+                $db->transRollback();
+                return $this->fail($this->modelPastores->errors(), 400);
+            }
+
             $dataUser = [
                 'id_perfil' => $id,
-                'email' => $input['email'],
+                'email' => $email,
                 'password' => (isset($input['password'])) ? $input['password'] : '123456',
                 'id_adm' => session('data')['id']
             ];
 
-
             $user = $modelUser->cadUser('pastor', $dataUser);
 
             if ($user === false) {
+                $db->transRollback();
                 return $this->fail($modelUser->errors());
             }
 
-            /*if (!empty($input['filepond'])) {
-                $librariesUpload = new UploadsLibraries();
-                $upload = $librariesUpload->filePond('pastor', $id, $input);
-                if (file_exists($upload['file'])) {
-                    $update = [
-                        'foto' => $upload['newName']
-                    ];
-                    $status = $this->modelPastores->update($id, $update);
-                    if ($status === false) {
-                        return $this->fail($this->modelPastores->errors());
-                    }
-                } else {
-                    // Ocorreu um erro ao salvar a imagem
-                    throw new Exception('Erro ao salvar a imagem.');
-                }
-            }*/
-
-            $this->modelPastores->transComplete();
+            // Confirma a transação
+            $db->transCommit();
+            // Notificações
+            $notification = new \App\Libraries\NotificationLibrary();
+            //Verifica
+            if ($celular) {
+                $notification->sendWelcomeMessage($nome, $email, $celular);
+            }
+            $notification->sendVerificationEmail($email, $nome);
 
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id, 'user' => $user]);
         } catch (\Exception $e) {

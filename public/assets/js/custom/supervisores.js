@@ -2,31 +2,10 @@ $(document).ready(function () {
     // Função para inicializar Cleave.js
     const initCleave = (selector, options) => new Cleave(selector, options);
 
-    initCleave('.cpf', {
-        numericOnly: true,
-        delimiters: ['.', '.', '-'],
-        blocks: [3, 3, 3, 2],
-        uppercase: true
-    });
-
-    initCleave('.cep', {
-        numericOnly: true,
-        delimiters: ['-'],
-        blocks: [5, 3],
-        uppercase: true
-    });
-
-    initCleave('.telFixo', {
-        numericOnly: true,
-        delimiters: ['(', ') ', '-'],
-        blocks: [0, 2, 4, 4]
-    });
-
-    initCleave('.celular', {
-        numericOnly: true,
-        delimiters: ['+', ' (', ') ', ' ', '-'],
-        blocks: [0, 2, 2, 1, 4, 4]
-    });
+    $('.cpf').mask('000.000.000-00')
+    $('.cep').mask('00000-000')
+    $('.telFixo').mask('(00) 0000-0000')
+    $('.celular').mask('+00 (00) 0 0000-0000')
 
     // Atualiza a tabela ao carregar a página
     atualizarTabela();
@@ -64,12 +43,16 @@ $(document).ready(function () {
     $('#formCad').ajaxForm({
         beforeSubmit: () => {
             // Ações antes de enviar o formulário, se necessário
+            Swal.fire({
+                html: 'Enviando dados!',
+                icon: 'info'
+            });
         },
         success: (responseText, statusText, xhr, $form) => {
             atualizarTabela();
             $('#formCad')[0].reset();
             Swal.fire({
-                title: 'Cadastrado!',
+                html: 'Cadastrado!',
                 icon: 'success',
                 confirmButtonClass: 'btn btn-primary w-xs mt-2',
                 buttonsStyling: false,

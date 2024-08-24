@@ -105,22 +105,30 @@ class Igrejas extends ResourceController
     public function create()
     {
         //
+        $db = \Config\Database::connect();  // Conecta ao banco de dados
         $modelUser = new UsuariosModel();
+
+        // Inicia a transação
+        $db->transBegin();
 
         try {
             // Obtém os dados do FilePond do corpo da solicitação
             $input = $this->request->getVar();
-            $this->modelIgrejas->transStart(); // Iniciar transação
 
             if ($modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new Exception("Esse email já está cadastrado no sistema.", 1);
             };
 
+            $celular = $input['cel'];
+            $nome    = $input['nome_tesoureiro'];
+            $email   = $input['email'];
+
+
             $data = [
                 "id_adm"       => session('data')['idAdm'],
                 "id_user"      => session('data')['id'],
                 "id_supervisor" => $input['selectSupervisor'],
-                "nome_tesoureiro" => $input['nome_tesoureiro'],
+                "nome_tesoureiro" => $nome,
                 "sobrenome_tesoureiro" => $input['sobrenome_tesoureiro'],
                 "cpf_tesoureiro" => $input['cpf'],
                 "fundacao" => $input['fundacao'],
@@ -134,10 +142,16 @@ class Igrejas extends ResourceController
                 "bairro" => $input['bairro'],
                 "data_dizimo" => $input['dia'],
                 "telefone" => $input['tel'],
-                "celular" => $input['cel']
+                "celular" => $celular
             ];
 
             $id = $this->modelIgrejas->insert($data);
+
+            if ($id === false) {
+                // Se a inserção falhar, reverte a transação e retorna o erro
+                $db->transRollback();
+                return $this->fail($this->modelIgrejas->errors(), 400);
+            }
 
             $dataUser = [
                 'id_perfil' => $id,
@@ -146,11 +160,25 @@ class Igrejas extends ResourceController
                 'id_adm' => session('data')['id']
             ];
 
-            $modelUser->cadUser('igreja', $dataUser);
+            $idUser = $modelUser->cadUser('igreja', $dataUser);
 
+            if ($idUser === false) {
+                // Se a inserção falhar, reverte a transação e retorna o erro
+                $db->transRollback();
+                return $this->fail($modelUser->errors(), 400);
+            }
 
+            // Confirma a transação
+            $db->transCommit();
+            // Notificações
+            $notification = new \App\Libraries\NotificationLibrary();
+            //Verifica
+            if ($celular) {
+                $notification->sendWelcomeMessage($nome, $email, $celular);
+            }
+            $notification->sendVerificationEmail($email, $nome);
+            
 
-            $this->modelIgrejas->transComplete();
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
         } catch (\Exception $e) {
             $this->modelIgrejas->transRollback(); // Rollback em caso de exceção

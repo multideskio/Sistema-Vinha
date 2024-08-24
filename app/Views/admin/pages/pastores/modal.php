@@ -42,23 +42,23 @@
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="uf">Estado</label>
-                        <input type="text" name="uf" id="uf" class="form-control" placeholder="UF" maxlength="2">
+                        <input type="text" name="uf" id="uf" class="form-control uf" placeholder="UF" maxlength="2">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
                         <label for="cidade">Cidade</label>
-                        <input type="text" name="cidade" id="cidade" class="form-control" placeholder="Nome da cidade">
+                        <input type="text" name="cidade" id="cidade" class="form-control cidade" placeholder="Nome da cidade">
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="bairro">Bairro</label>
-                        <input type="text" name="bairro" id="bairro" class="form-control" placeholder="Nome do bairro">
+                        <input type="text" name="bairro" id="bairro" class="form-control bairro" placeholder="Nome do bairro">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-4 mt-2">
                         <label for="complemento">Endereço</label>
-                        <input type="text" name="complemento" id="complemento" class="form-control" placeholder="O restante do endereço">
+                        <input type="text" name="complemento" id="complemento" class="form-control cidade" placeholder="O restante do endereço">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="nascimento">Data de nascimento</label>

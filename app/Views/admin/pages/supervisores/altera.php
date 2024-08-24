@@ -169,28 +169,28 @@
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="uf" class="form-label">Estado/UF</label>
-                                    <input type="text" class="form-control" name="uf" id="uf" placeholder="UF">
+                                    <input type="text" class="form-control uf" name="uf" id="uf" placeholder="UF">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cidade" class="form-label">Cidade</label>
-                                    <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Cidade...">
+                                    <input type="text" class="form-control cidade" name="cidade" id="cidade" placeholder="Cidade...">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="bairro" class="form-label">Bairro</label>
-                                    <input type="text" class="form-control" name="bairro" id="bairro" placeholder="Bairro...">
+                                    <input type="text" class="form-control bairro" name="bairro" id="bairro" placeholder="Bairro...">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="complemento" class="form-label">Complemento</label>
-                                    <input type="text" class="form-control" name="complemento" id="complemento" placeholder="complemento...">
+                                    <input type="text" class="form-control rua" name="complemento" id="complemento" placeholder="complemento...">
                                 </div>
                             </div>
                             <!--end col-->
@@ -237,5 +237,5 @@
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
 <script src="/assets/js/custom/listaTransacoes.min.js"></script>
-<script src="/assets/js/custom/supervisoresUpdate.min.js"></script>
+<script src="/assets/js/custom/supervisoresUpdate.js"></script>
 <?= $this->endSection() ?>

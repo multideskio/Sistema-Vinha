@@ -36,7 +36,7 @@
 <?= $this->include('admin/pages/gerentes/modal.php') ?>
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
-<script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/gerentes.min.js"></script>
+<script src="/assets/js/custom/functions.js"></script>
+<script src="/assets/js/custom/gerentes.js"></script>
 <!-- REPETE -->
 <?= $this->endSection('js') ?>

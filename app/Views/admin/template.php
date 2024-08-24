@@ -42,10 +42,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Sweet Alerts js -->
     <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-    <!-- cleave.js -->
-    <script src="/assets/libs/cleave.js/cleave.min.js"></script>
-    <!-- form masks init -->
-    <script src="/assets/js/pages/form-masks.init.js"></script>
+    <!-- cleave.js 
+    <script src="/assets/libs/cleave.js/cleave.min.js"></script>-->
+
+    <!--  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <!-- form masks init 
+    <script src="/assets/js/pages/form-masks.init.js"></script>-->
     <script>
         let _idSearch = "<?= $idSearch ?>";
         let globalIdLogin;

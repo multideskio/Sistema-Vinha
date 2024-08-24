@@ -341,5 +341,5 @@
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
 <script src="/assets/js/custom/listaTransacoes.min.js"></script>
-<script src="/assets/js/custom/igrejaUpdate.min.js"></script>
+<script src="/assets/js/custom/igrejaUpdate.js"></script>
 <?= $this->endSection() ?>

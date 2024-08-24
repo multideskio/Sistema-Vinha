@@ -33,7 +33,7 @@ class Login extends BaseController
 
     public function novasenha($token): string
     {
-        $this->cachePage(getCacheExpirationTimeInSeconds(365));
+        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
         $data['rowConfig'] = $this->config;
 
         if ($token) {
@@ -44,6 +44,26 @@ class Login extends BaseController
                 $data['titlePage'] = 'Nova senha';
                 $data['token'] = $token;
                 return view('login/novasenha', $data);
+            }
+        }
+
+        $data['titlePage'] = 'Erro';
+        return view('login/confirm/erro', $data);
+    }
+
+    public function primeiroAcesso($token): string
+    {
+        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
+        $data['rowConfig'] = $this->config;
+
+        if ($token) {
+            $modelUser = new UsuariosModel();
+            $row = $modelUser->where('token', $token)->first();
+
+            if ($row) {
+                $data['titlePage'] = 'Nova senha';
+                $data['token'] = $token;
+                return view('login/primeiro-acesso', $data);
             }
         }
 

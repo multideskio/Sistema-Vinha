@@ -1,4 +1,4 @@
-<?= $this->extend('gerentes/template') ?>
+<?= $this->extend('supervisores/template') ?>
 
 <?= $this->section('page') ?>
 

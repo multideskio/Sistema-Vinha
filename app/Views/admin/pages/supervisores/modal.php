@@ -45,23 +45,23 @@
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="uf">Estado</label>
-                        <input type="text" name="uf" id="uf" class="form-control" placeholder="UF" maxlength="2">
+                        <input type="text" name="uf" id="uf" class="form-control uf" placeholder="UF" maxlength="2">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
                         <label for="cidade">Cidade</label>
-                        <input type="text" name="cidade" id="cidade" class="form-control" placeholder="Nome da cidade">
+                        <input type="text" name="cidade" id="cidade" class="form-control cidade" placeholder="Nome da cidade">
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="bairro">Bairro</label>
-                        <input type="text" name="bairro" id="bairro" class="form-control" placeholder="Nome do bairro">
+                        <input type="text" name="bairro" id="bairro" class="form-control bairro" placeholder="Nome do bairro">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-8 mt-2">
                         <label for="complemento">Endereço</label>
-                        <input type="text" name="complemento" id="complemento" class="form-control" placeholder="O restante do endereço">
+                        <input type="text" name="complemento" id="complemento" class="form-control rua" placeholder="O restante do endereço">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="dia" class="text-danger">Dia do dízimo</label>
@@ -82,12 +82,6 @@
                         <input type="password" name="password" id="password" class="form-control" placeholder="123456" autocomplete="off">
                     </div>
                 </div>
-                <!-- <div class="mt-2">
-                    <b>Foto</b>
-                    <div class="avatar-xl mx-auto">
-                        <input type="file" class="filepond filepond-input-circle" name="filepond" id="filepond" accept="image/png, image/jpeg, image/gif" />
-                    </div>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>

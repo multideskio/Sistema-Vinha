@@ -1,27 +1,8 @@
 function formatInputs() {
-    // Formatação de inputs com Cleave.js
-    var cleaveCpf = new Cleave('.cpf', {
-        numericOnly: true,
-        delimiters: ['.', '.', '-'],
-        blocks: [3, 3, 3, 2],
-        uppercase: true
-    });
-    var cleaveCep = new Cleave('.cep', {
-        numericOnly: true,
-        delimiters: ['-'],
-        blocks: [5, 3],
-        uppercase: true
-    });
-    var cleaveTelFixo = new Cleave('.telFixo', {
-        numericOnly: true,
-        delimiters: ['(', ') ', '-'],
-        blocks: [0, 2, 4, 4]
-    });
-    var cleaveCelular = new Cleave('.celular', {
-        numericOnly: true,
-        delimiters: ['+', ' (', ') ', ' ', '-'],
-        blocks: [0, 2, 2, 1, 4, 4]
-    });
+    $('.cpf').mask('000.000.000-00')
+    $('.cep').mask('00000-000')
+    $('.telFixo').mask('(00) 0000-0000')
+    $('.celular').mask('+00 (00) 0 0000-0000')
 }
 function sends() {
     $(".enviaLinks").on('change', function() {
@@ -47,11 +28,14 @@ function sends() {
     $('.formGeral').ajaxForm({
         beforeSubmit: function(formData, jqForm, options) {
             options.type = 'PUT'
+            Swal.fire({
+                html: 'Enviando dados!',
+                icon: 'info'
+            })
         },
         success: function(responseText, statusText, xhr, $form) {
             Swal.fire({
-                title: 'OK!',
-                text: 'Atualizado com sucesso!',
+                html: 'Atualizado com sucesso!',
                 icon: 'success'
             })
         },
@@ -69,18 +53,20 @@ function sends() {
     });
     $('.formUpload').ajaxForm({
         beforeSubmit: function(formData, jqForm, options) {
-            console.log('Enviando...')
+            Swal.fire({
+                html: 'Enviando imagem!',
+                icon: 'info'
+            })
         },
         success: function(responseText, statusText, xhr, $form) {
             Swal.fire({
-                title: 'OK!',
-                text: 'Imagem atualizada com sucesso!',
+                html: 'Imagem atualizada com sucesso!',
                 icon: 'success'
             })
         },
         error: function(xhr, status, error) {
             Swal.fire({
-                title: 'Erro ao atualizar imagem',
+                html: 'Erro ao atualizar imagem',
                 icon: 'error',
                 confirmButtonClass: 'btn btn-primary w-xs mt-2',
                 buttonsStyling: false,

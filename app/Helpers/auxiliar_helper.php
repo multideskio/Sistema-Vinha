@@ -255,10 +255,15 @@ if (!function_exists('centavosParaReaisBrasil')) {
 }
 
 if (!function_exists('decimalParaReaisBrasil')) {
-    function decimalParaReaisBrasil($valorDecimal)
+    function decimalParaReaisBrasil($valor)
     {
-        // Formata o número para o formato brasileiro de moeda
-        return 'R$ ' . number_format($valorDecimal, 2, ',', '.');
+        // Verifica se o valor é null
+        if (is_null($valor)) {
+            // Decida o que fazer com valores nulos
+            return '0,00'; // Por exemplo, retorna '0,00'
+        }
+
+        return number_format($valor, 2, ',', '.');
     }
 }
 
@@ -309,18 +314,54 @@ if (!function_exists('createSlug')) {
 
         // Remover acentuação
         $unwanted_array = [
-            'á' => 'a', 'à' => 'a', 'ã' => 'a', 'â' => 'a', 'ä' => 'a',
-            'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
-            'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
-            'ó' => 'o', 'ò' => 'o', 'õ' => 'o', 'ô' => 'o', 'ö' => 'o',
-            'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
-            'ç' => 'c', 'ñ' => 'n',
-            'Á' => 'A', 'À' => 'A', 'Ã' => 'A', 'Â' => 'A', 'Ä' => 'A',
-            'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E',
-            'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I',
-            'Ó' => 'O', 'Ò' => 'O', 'Õ' => 'O', 'Ô' => 'O', 'Ö' => 'O',
-            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U',
-            'Ç' => 'C', 'Ñ' => 'N'
+            'á' => 'a',
+            'à' => 'a',
+            'ã' => 'a',
+            'â' => 'a',
+            'ä' => 'a',
+            'é' => 'e',
+            'è' => 'e',
+            'ê' => 'e',
+            'ë' => 'e',
+            'í' => 'i',
+            'ì' => 'i',
+            'î' => 'i',
+            'ï' => 'i',
+            'ó' => 'o',
+            'ò' => 'o',
+            'õ' => 'o',
+            'ô' => 'o',
+            'ö' => 'o',
+            'ú' => 'u',
+            'ù' => 'u',
+            'û' => 'u',
+            'ü' => 'u',
+            'ç' => 'c',
+            'ñ' => 'n',
+            'Á' => 'A',
+            'À' => 'A',
+            'Ã' => 'A',
+            'Â' => 'A',
+            'Ä' => 'A',
+            'É' => 'E',
+            'È' => 'E',
+            'Ê' => 'E',
+            'Ë' => 'E',
+            'Í' => 'I',
+            'Ì' => 'I',
+            'Î' => 'I',
+            'Ï' => 'I',
+            'Ó' => 'O',
+            'Ò' => 'O',
+            'Õ' => 'O',
+            'Ô' => 'O',
+            'Ö' => 'O',
+            'Ú' => 'U',
+            'Ù' => 'U',
+            'Û' => 'U',
+            'Ü' => 'U',
+            'Ç' => 'C',
+            'Ñ' => 'N'
         ];
         $string = strtr($string, $unwanted_array);
 

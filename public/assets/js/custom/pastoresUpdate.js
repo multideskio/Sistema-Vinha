@@ -1,5 +1,6 @@
 $(document).ready(function () {
     searchUpdate(_idSearch)
+    formataCampos();
 
     $(".enviaLinks").on('change', function () {
         $('.formTexts').submit();
@@ -25,6 +26,10 @@ $(document).ready(function () {
     $('.formGeral').ajaxForm({
         beforeSubmit: function (formData, jqForm, options) {
             options.type = 'PUT'
+            Swal.fire({
+                text: 'Enviando dados!',
+                icon: 'info'
+            })
         },
         success: function (responseText, statusText, xhr, $form) {
             searchUpdate(_idSearch)
@@ -50,6 +55,10 @@ $(document).ready(function () {
     $('.formUpload').ajaxForm({
         beforeSubmit: function (formData, jqForm, options) {
             console.log('Enviando...')
+            Swal.fire({
+                text: 'Enviando imagem!',
+                icon: 'info'
+            })
         },
         success: function (responseText, statusText, xhr, $form) {
             Swal.fire({
@@ -168,5 +177,11 @@ function populateSupervisorSelect(idAtual) {
         });
     });
 }
-
+function formataCampos() {
+	// Inicialização de formatação de inputs com Cleave.js
+	$('.cpf').mask('000.000.000-00')
+    $('.cep').mask('00000-000')
+    $('.telFixo').mask('(00) 0000-0000')
+    $('.celular').mask('+00 (00) 0 0000-0000')
+}
 var teste = "0005";

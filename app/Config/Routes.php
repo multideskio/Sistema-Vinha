@@ -13,7 +13,11 @@ $routes->get('health', 'Health::index');
 
 $routes->get('nova-conta', 'Login::novaconta', ['filter' => 'csrf']);
 $routes->get('recuperacao', 'Login::recuperacao', ['filter' => 'csrf']);
+
 $routes->get('recupera/(:any)', 'Login::novasenha/$1', ['filter' => 'csrf']);
+$routes->get('primeiro-acesso/(:any)', 'Login::primeiroAcesso/$1', ['filter' => 'csrf']);
+
+
 
 $routes->get('sair', 'Home::sair');
 $routes->get('teste', 'Home::teste');
@@ -137,6 +141,7 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
     
     $routes->get('admins', 'Admin::admins');
     $routes->get('admin/(:num)', 'Admin::admin/$1');
+    $routes->get('superadmin/(:num)', 'Admin::admin/$1');
 
     /*$routes->get('recebimento', 'Admin::recebimento');
     $routes->get('retorno', 'Admin::retorno');

@@ -50,8 +50,8 @@
                         <div class="card mt-4">
                             <div class="card-body p-4">
                                 <div class="text-center mt-2">
-                                    <h5 class="text-primary">Recuperação de senha</h5>
-                                    <p class="text-muted">Informe uma nova senha</p>
+                                    <h5 class="text-primary">PRIMEIRO ACESSO</h5>
+                                    <p class="text-muted">Cadastre uma senha</p>
                                 </div>
                                 <div class="p-2 mt-4">
                                     <?php if (session()->getFlashdata('error')) : ?>

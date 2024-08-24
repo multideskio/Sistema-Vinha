@@ -2,7 +2,11 @@
 
 namespace App\Controllers\Apis\V1;
 
+use App\Libraries\EmailsLibraries;
+use App\Libraries\NotificationLibrary;
 use App\Libraries\UploadsLibraries;
+use App\Libraries\WhatsappLibraries;
+use App\Models\ConfigMensagensModel;
 use App\Models\UsuariosModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -106,21 +110,30 @@ class Gerentes extends ResourceController
      */
     public function create()
     {
+        $db = \Config\Database::connect();  // Conecta ao banco de dados
         $modelUser = new UsuariosModel();
+
+        // Inicia a transação
+        $db->transBegin();
 
         try {
             // Obtém os dados do FilePond do corpo da solicitação
             $input = $this->request->getVar();
 
+            // Validação do e-mail
             if ($modelUser->where('email', $input['email'])->countAllResults()) {
-                throw new Exception("Esse email já está cadastrado no sistema.", 1);
-            };
+                throw new \Exception("Esse email já está cadastrado no sistema.", 1);
+            }
 
+            $celular = $input['cel'];
+            $nome    = $input['nome'];
+            $email   = $input['email'];
 
+            // Dados a serem inseridos
             $data = [
                 "id_adm"       => session('data')['idAdm'],
                 "id_user"      => session('data')['id'],
-                "nome"         => $input['nome'],
+                "nome"         => $nome,
                 "sobrenome"    => $input['sobrenome'],
                 "cpf"          => $input['cpf'],
                 "uf"           => $input['uf'],
@@ -130,28 +143,56 @@ class Gerentes extends ResourceController
                 "bairro"       => $input['bairro'],
                 "data_dizimo"  => $input['dia'],
                 "telefone"     => $input['tel'],
-                "celular"      => $input['cel']
+                "celular"      => $celular
             ];
 
+            // Inserção no banco de dados
             $id = $this->modelGerentes->insert($data);
 
             if ($id === false) {
-                return $this->fail($this->modelGerentes->errors());
+                // Se a inserção falhar, reverte a transação e retorna o erro
+                $db->transRollback();
+                return $this->fail($this->modelGerentes->errors(), 400);
             }
 
+            // Dados para a criação do usuário
             $dataUser = [
                 'id_perfil' => $id,
-                'email' => $input['email'],
-                'password' => (isset($input['password'])) ? $input['password'] : '123456',
-                'id_adm' => session('data')['id']
+                'email'     => $email,
+                'password'  => $input['password'] ?? '123456', // Usando operador null coalescing
+                'id_adm'    => session('data')['id']
             ];
 
-            $modelUser->cadUser('gerente', $dataUser);
+            // Criação do usuário
+            $user = $modelUser->cadUser('gerente', $dataUser);
+
+            if (!$user) {
+                // Se a criação do usuário falhar, reverte a transação e retorna o erro
+                $db->transRollback();
+                return $this->fail('Falha ao criar o usuário.', 400);
+            }
+            // Confirma a transação
+            $db->transCommit(); 
+
+            // Notificações
+            $notification = new \App\Libraries\NotificationLibrary();
+            
+            //Verifica
+            if ($celular) {
+                $notification->sendWelcomeMessage($nome, $email, $celular); 
+            }
+
+            $notification->sendVerificationEmail($email, $nome);
+
+            // Retorno de sucesso
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
         } catch (\Exception $e) {
-            return $this->fail($e->getMessage());
+            // Reverte a transação em caso de qualquer exceção
+            $db->transRollback();
+            return $this->fail(['error' => $e->getMessage()], 400);
         }
     }
+
 
     /**
      * Return the editable properties of a resource object

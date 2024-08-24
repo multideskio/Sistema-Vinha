@@ -1,28 +1,10 @@
 $(document).ready(function () {
     // Formatação de inputs com Cleave.js
-    var cleaveCpf = new Cleave('.cpf', {
-        numericOnly: true,
-        delimiters: ['.', '.', '-'],
-        blocks: [3, 3, 3, 2],
-        uppercase: true
-    });
-    var cleaveCep = new Cleave('.cep', {
-        numericOnly: true,
-        delimiters: ['-'],
-        blocks: [5, 3],
-        uppercase: true
-    });
-    var cleaveTelFixo = new Cleave('.telFixo', {
-        numericOnly: true,
-        delimiters: ['(', ') ', '-'],
-        blocks: [0, 2, 4, 4]
-    });
-    var cleaveCelular = new Cleave('.celular', {
-        numericOnly: true,
-        delimiters: ['+', ' (', ') ', ' ', '-'],
-        blocks: [0, 2, 2, 1, 4, 4]
-    });
-    
+    $('.cpf').mask('000.000.000-00')
+    $('.cep').mask('00000-000')
+    $('.telFixo').mask('(00) 0000-0000')
+    $('.celular').mask('+00 (00) 0 0000-0000')
+
     // Atualiza a tabela ao carregar a página
     atualizarTabela();
     
@@ -57,6 +39,10 @@ $(document).ready(function () {
     $('#formCad').ajaxForm({
         beforeSubmit: function (formData, jqForm, options) {
             // Ações antes de enviar o formulário, se necessário
+            Swal.fire({
+                html: 'Enviado dados!',
+                icon: 'info'
+            });
         },
         success: function (responseText, statusText, xhr, $form) {
             atualizarTabela();

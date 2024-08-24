@@ -33,5 +33,5 @@
 <?= $this->endSection('page') ?>
 <?= $this->section('js') ?>
 <script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/supervisores.min.js"></script>
+<script src="/assets/js/custom/supervisores.js"></script>
 <?= $this->endSection() ?>

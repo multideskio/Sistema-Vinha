@@ -27,7 +27,12 @@ $(document).ready(function () {
 	});
 
 	$('#formCad').ajaxForm({
-		beforeSubmit: function () { },
+		beforeSubmit: function () { 
+			Swal.fire({
+				title: 'Enviando dados!',
+				icon: 'info'
+			});
+		},
 		success: function () {
 			atualizarTabela();
 			$('#formCad')[0].reset();
@@ -115,31 +120,10 @@ function atualizarTabela(search = '', page = 1) {
 
 function formataCampos() {
 	// Inicialização de formatação de inputs com Cleave.js
-	initializeCleave('.cpf', {
-		numericOnly: true,
-		delimiters: ['.', '.', '-'],
-		blocks: [3, 3, 3, 2],
-		uppercase: true
-	});
-
-	initializeCleave('.cep', {
-		numericOnly: true,
-		delimiters: ['-'],
-		blocks: [5, 3],
-		uppercase: true
-	});
-
-	initializeCleave('.telFixo', {
-		numericOnly: true,
-		delimiters: ['(', ') ', '-'],
-		blocks: [0, 2, 4, 4]
-	});
-
-	initializeCleave('.celular', {
-		numericOnly: true,
-		delimiters: ['+', ' (', ') ', ' ', '-'],
-		blocks: [0, 2, 2, 1, 4, 4]
-	});
+	$('.cpf').mask('000.000.000-00')
+    $('.cep').mask('00000-000')
+    $('.telFixo').mask('(00) 0000-0000')
+    $('.celular').mask('+00 (00) 0 0000-0000')
 }
 
 // Função para exibir mensagens
@@ -161,3 +145,21 @@ function exibirMensagem(type, error) {
 		buttonsStyling: false,
 	});
 }
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+	// Obtém a data atual
+	var today = new Date();
+
+	// Subtrai 18 anos da data atual
+	var year = today.getFullYear() - 18;
+	var month = today.getMonth() + 1; // Mês é 0-indexado
+	var day = today.getDate();
+
+	// Formata a data como YYYY-MM-DD
+	var minDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+	// Define o valor do atributo min
+	document.getElementById('nascimento').setAttribute('max', minDate);
+});
