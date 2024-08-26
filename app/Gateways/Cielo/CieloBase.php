@@ -520,7 +520,16 @@ class CieloBase
 
             $endPoint = "/1/sales/{$paymentId}";
 
-            return $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponsePix', true);
+            $response = $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponsePix', true);
+
+            if ($idPayment = $this->transactionsModel->where('id_transacao', $paymentId)->first()) {
+                $this->transactionsModel->update($idPayment, [
+                    'status_text' => $response['statusName']
+                ]);
+            }
+
+
+            return $response;
         } catch (Exception $e) {
             // Logar o erro e retornar uma resposta de erro padrão
             log_message('error', "Erro ao verificar status do pagamento para ID {$paymentId}: " . $e->getMessage());
