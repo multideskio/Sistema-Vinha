@@ -48,14 +48,20 @@ class TransacoesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['limparCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['limparCache'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['limparCache'];
 
+    private function limparCache(){
+
+        $cache = service('cache');
+        $deletedItems = $cache->deleteMatching("transacoesList_" . '*');
+
+    }
     public function updateStatus()
     {
         return true;
@@ -252,21 +258,29 @@ class TransacoesModel extends Model
     public function transacoes($input = false, $limit = 10, $order = 'DESC'): array
     {
         $request = service('request');
-        $data = [];
-        $currentPageTotal = 0; // Soma dos valores da página atual
-        $allPagesTotal = 0; // Soma dos valores de todas as páginas da consulta atual
 
-        // Define o termo de busca, se houver
+        // Criação de uma chave de cache única baseada nos parâmetros
+        $cacheKey = "transacoesList_{$limit}_{$order}_" . md5(json_encode($input));
+
+        $cache = \Config\Services::cache();
+
+        // Verifica se os dados estão em cache
+        if ($data = $cache->get($cacheKey)) {
+            return $data;
+        }
+
+        $data = [];
+        $currentPageTotal = 0;
+        $allPagesTotal = 0;
+
         $search = $input['search'] ?? false;
 
-        // Constrói a consulta para transações com paginação
         $this->select("transacoes.*")
             ->select('usuarios.tipo AS tipo_user, usuarios.email')
             ->join('usuarios', 'usuarios.id = transacoes.id_user')
             ->orderBy('transacoes.id', $order)
             ->limit($limit);
 
-        // Instancia os modelos
         $modelPastor = new PastoresModel();
         $modelIgreja = new IgrejasModel();
 
@@ -294,7 +308,6 @@ class TransacoesModel extends Model
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
-                    // Adiciona o valor da transação à soma da página atual
                     $currentPageTotal += $transacao['valor'];
                 }
             } elseif ($transacao['tipo_user'] == 'igreja') {
@@ -318,26 +331,22 @@ class TransacoesModel extends Model
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
-                    // Adiciona o valor da transação à soma da página atual
                     $currentPageTotal += $transacao['valor'];
                 }
             }
         }
 
-        // Calcula a soma dos valores de todas as páginas da consulta atual
         $allPagesTotalResult = $this->select('SUM(valor) AS total')
             ->where('status_text', 'Pago')
             ->get()
             ->getRow();
         $allPagesTotal = $allPagesTotalResult->total;
 
-        // Paginação dos resultados
         $totalResults = $this->countAllResults();
         $currentPage = $request->getGet('page') ?? 1;
         $start = ($currentPage - 1) * $limit + 1;
         $end = min($currentPage * $limit, $totalResults);
 
-        // Lógica para definir a mensagem de resultados
         $resultCount = count($transacoes);
         if ($search) {
             $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "{$resultCount} resultados encontrados.";
@@ -348,13 +357,17 @@ class TransacoesModel extends Model
         $result = [
             'rows' => $data,
             'pager' => $this->pager->links('default', 'paginate'),
-            'num' => $this->countAllResults() . ' transações encontrados',
+            'num' => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
-            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal) // Certifique-se de formatar a soma total
+            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal)
         ];
+
+        // Armazena os dados no cache
+        $cache->save($cacheKey, $result, 300); // Cache por 5 minutos (300 segundos)
 
         return $result;
     }
+
 
 
     public function listTransacaoUsuario($id, $input = false, $limit = 10, $order = 'DESC')

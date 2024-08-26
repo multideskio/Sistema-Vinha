@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Exception;
 
+
 /**
  * Class CieloBase
  *
@@ -61,6 +62,11 @@ class CieloBase
      * @var Client
      */
     protected $client;
+
+    private const STATUS_PAID     = 'Pago';
+    private const STATUS_REFUNDED = 'Reembolsado';
+    private const STATUS_CANCELED = 'Cancelado';
+    private const STATUS_PENDING  = 'Pendente';
 
     /**
      * CieloBase constructor.
@@ -522,13 +528,7 @@ class CieloBase
 
             $response = $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponsePix', true);
 
-            if ($idPayment = $this->transactionsModel->where('id_transacao', $paymentId)->first()) {
-                $this->transactionsModel->update($idPayment, [
-                    'status_text' => $response['statusName']
-                ]);
-            }
-
-
+            $this->updateTransactionStatus($paymentId, $response);
             return $response;
         } catch (Exception $e) {
             // Logar o erro e retornar uma resposta de erro padrão
@@ -570,5 +570,57 @@ class CieloBase
             $buildClient = new AdminModel();
             return $buildClient->find($build['id_perfil']);
         }
+    }
+
+    private function updateTransactionStatus($transaction, $dataReturn)
+    {
+        $updateData = [
+            'status' => 0, // Status padrão
+            'status_text' => '',
+            'tipo_pagamento' => $dataReturn['full']['Payment']['Type'],
+            'log' => json_encode($dataReturn)
+        ];
+
+        // Atualiza os dados da transação com base no status retornado
+        switch ($dataReturn['status']) {
+            case 2:
+            case 3:
+                $updateData['status'] = 1;
+                $updateData['status_text'] = self::STATUS_PAID;
+                if (isset($dataReturn['full']['Payment']['CapturedDate'])) {
+                    $updateData['data_pagamento'] = $dataReturn['full']['Payment']['CapturedDate'];
+                }
+                break;
+            case 11:
+                $updateData['status_text'] = self::STATUS_REFUNDED;
+                if (isset($dataReturn['full']['Payment']['CapturedDate'])) {
+                    $updateData['data_pagamento'] = $dataReturn['full']['Payment']['CapturedDate'];
+                }
+                break;
+            case 'Voided':
+                $updateData['status_text'] = 'Cancelado pelo admin';
+                break;
+            case 1:
+            case 12:
+                $updateData['status_text'] = self::STATUS_PENDING;
+                break;
+            case 'Denied':
+            case 13:
+                $updateData['status_text'] = self::STATUS_CANCELED;
+                break;
+            default:
+                $updateData['status_text'] = self::STATUS_CANCELED;
+                break;
+        }
+
+        if($row = $this->transactionsModel->where('id_transacao', $transaction)->first()){
+            $this->transactionsModel->update($row['id'], $updateData);
+            log_message('info', "Transação ID {$transaction} atualizada para status: {$updateData['status_text']}");
+        }else{
+            log_message('error', 'Trasação não encontrada no banco de dados');
+        }
+        
+
+        
     }
 }

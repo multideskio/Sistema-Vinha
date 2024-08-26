@@ -220,8 +220,6 @@ class Transacoes extends ResourceController
 
     public function ultimasTransacoes()
     {
-
-
         return $this->respond($this->modelTransacoes->transacoes());
     }
 
