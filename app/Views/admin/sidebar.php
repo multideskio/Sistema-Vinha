@@ -110,11 +110,11 @@
                         <i class="bi bi-person-badge-fill"></i> <span>Administradores</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= site_url('admin/ajuda') ?>">
                         <i class="bi bi-question-circle"></i> <span>Ajuda</span>
                     </a>
-                </li>
+                </li>-->
             </ul>
         </div>
         <!-- Sidebar -->

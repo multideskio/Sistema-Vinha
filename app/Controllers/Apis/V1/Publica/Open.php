@@ -71,12 +71,16 @@ class Open extends ResourceController
                 throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
             };
 
+            $nome    = $input['nome'];
+            $celular = $input['whatsapp'];
+            $email   = $input['email'];
+
             //ARRAY CADASTRO DO PASTOR
             $data = [
                 "id_adm"       => 1,
                 //"id_user"      => session('data')['id'],
                 'id_supervisor' => $input['selectSupervisor'],
-                'nome' => $input['nome'],
+                'nome' => $nome,
                 'sobrenome' => $input['sobrenome'],
                 'cpf' => $input['cpf'],
                 'uf' => $input['uf'],
@@ -86,7 +90,7 @@ class Open extends ResourceController
                 'nascimento' => $input['nascimento'],
                 'bairro' => $input['bairro'],
                 'data_dizimo' => $input['dia'],
-                'celular' => $input['whatsapp']
+                'celular' => $celular
             ];
 
             //INSERE PASTOR
@@ -102,7 +106,7 @@ class Open extends ResourceController
                 'tipo'        => 'pastor',
                 'id_perfil'   => $id,
                 'id_admin'    => 1,
-                'email'       => $input['email'],
+                'email'       => $email,
                 'password'    => $input['password'],
                 'nivel'       => '4'
             ];
@@ -118,35 +122,15 @@ class Open extends ResourceController
             $this->modelPastor->transComplete();
             $this->modelUser->transComplete();
             
-            //DADOS PARA ENVIO NO WHATSAPP
-            //BUSCA DADOS DA API
-            $whatsapp = new WhatsappLibraries();
-            $messages = $this->modelMessages->where('tipo', 'novo_usuario')->first();
-
-            //VERIFICA SE ESTÁ ATIVO PARA ENVIO
-            if ($messages['status']) {
-                // Valores que irão substituir as tags
-                $valores = [
-                    '{NOME}'  => $input['nome'],
-                    '{EMAIL}' => $input['email'],
-                    '{TEL}'   => $input['whatsapp']
-                ];
-                // Substituir as tags com os valores
-                $novaString = strtr($messages['mensagem'], $valores);
-                $msg['message'] = $novaString;
-                $whatsapp->sendMessageText($msg, $input['whatsapp']);
+            // Notificações
+            $notification = new \App\Libraries\NotificationLibrary();
+            
+            //Verifica
+            if ($celular) {
+                $notification->sendWelcomeMessage($nome, $email, $celular); 
             }
 
-            //DADOS PARA ENVIO DE EMAIL
-            //ENVIA EMAIL DE VERIFICAÇÃO DE CADASTRO
-            $newEmail = new EmailsLibraries;
-            $rowUser = $this->modelUser->find($user);
-            $sendEmail = [
-                'nome' => $input['nome'],
-                'token' => $rowUser['token']
-            ];
-            $message = view('emails/confirma-email', $sendEmail);
-            $newEmail->envioEmail($rowUser['email'], 'Confirme seu e-mail', $message);
+            $notification->sendVerificationEmail($email, $nome);
 
             //RESPOSTA DE SUCESSO
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
@@ -161,22 +145,30 @@ class Open extends ResourceController
     public function igreja()
     {
         try {
+            
             $this->modelIgreja->transStart();
+            
             $header = $this->request->headers();
             $input  = $this->request->getPost();
+
             if ($header['Origin']->getValue() != rtrim(site_url(), '/')) {
                 throw new SecurityException('Origem de solicitação não permitida.');
             }
+
             if ($this->modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
             };
+
+            $nome    = $input['nomeTesoureiro'];
+            $email   = $input['email'];
+            $celular = $input['whatsapp'];
 
             //ARRAY CADASTRO DO PASTOR
             $data = [
                 "id_adm"       => 1,
                 //"id_user"      => session('data')['id'],
                 "id_supervisor" => $input['selectSupervisor'],
-                "nome_tesoureiro" => $input['nomeTesoureiro'],
+                "nome_tesoureiro" => $nome,
                 "sobrenome_tesoureiro" => $input['sobreTesoureiro'],
                 "cpf_tesoureiro" => $input['cpfTesoureiro'],
                 "fundacao" => $input['dataFundacao'],
@@ -190,7 +182,7 @@ class Open extends ResourceController
                 "bairro" => $input['bairro'],
                 "data_dizimo" => $input['dia'],
                 //"telefone" => $input['tel'],
-                "celular" => $input['whatsapp']
+                "celular" => $celular
             ];
 
             $id = $this->modelIgreja->insert($data);
@@ -205,12 +197,13 @@ class Open extends ResourceController
                 'tipo'        => 'igreja',
                 'id_perfil'   => $id,
                 'id_admin'    => 1,
-                'email'       => $input['email'],
+                'email'       => $email,
                 'password'    => $input['password'],
                 'nivel'       => '4'
             ];
 
             $this->modelUser->transStart();
+
             //INSERE USUÁRIO
             $user = $this->modelUser->insert($dataUser);
 
@@ -218,38 +211,19 @@ class Open extends ResourceController
             if ($user === false) {
                 throw new SecurityException($this->modelUser->errors()[]);
             }
+            
             $this->modelUser->transComplete();
             $this->modelIgreja->transComplete();
 
-            //DADOS PARA ENVIO NO WHATSAPP
-            //BUSCA DADOS DA API
-            $whatsapp = new WhatsappLibraries();
-            $messages = $this->modelMessages->where('tipo', 'novo_usuario')->first();
-
-            //VERIFICA SE ESTÁ ATIVO PARA ENVIO
-            if ($messages['status']) {
-                // Valores que irão substituir as tags
-                $valores = [
-                    '{NOME}'  => $input['razaosocial'],
-                    '{EMAIL}' => $input['email'],
-                    '{TEL}'   => $input['whatsapp']
-                ];
-                // Substituir as tags com os valores
-                $novaString = strtr($messages['mensagem'], $valores);
-                $msg['message'] = $novaString;
-                $whatsapp->sendMessageText($msg, $input['whatsapp']);
+            // Notificações
+            $notification = new \App\Libraries\NotificationLibrary();
+            
+            //Verifica
+            if ($celular) {
+                $notification->sendWelcomeMessage($nome, $email, $celular); 
             }
 
-            //DADOS PARA ENVIO DE EMAIL
-            //ENVIA EMAIL DE VERIFICAÇÃO DE CADASTRO
-            $newEmail = new EmailsLibraries;
-            $rowUser = $this->modelUser->find($user);
-            $sendEmail = [
-                'nome' => $input['razaosocial'],
-                'token' => $rowUser['token']
-            ];
-            $message = view('emails/confirma-email', $sendEmail);
-            $newEmail->envioEmail($rowUser['email'], 'Confirme seu e-mail', $message);
+            $notification->sendVerificationEmail($email, $nome);
 
             //RESPOSTA DE SUCESSO
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);

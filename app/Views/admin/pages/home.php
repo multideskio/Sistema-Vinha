@@ -327,9 +327,7 @@
 
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
-
 <!-- apexcharts -->
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
 <script src="/assets/js/custom/dashboard.min.js?v=1.0.0"></script>

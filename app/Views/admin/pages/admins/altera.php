@@ -95,16 +95,16 @@
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
                         <?= form_open('api/v1/administradores/' . $idSearch, 'class="formGeral" autocomplete="off"') ?>
                         <div class="row">
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="nome" class="form-label">Nome</label>
                                     <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome...">
                                 </div>
                             </div>
                             <!--end col-->
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="sobrenome" class="form-label">Sobre-nome</label>
+                                    <label for="sobrenome" class="form-label">Sobrenome</label>
                                     <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome...">
                                 </div>
                             </div>
@@ -116,9 +116,6 @@
                                 </div>
                             </div>
                             <!--end col-->
-                            <div class="col-lg-12">
-                                <small class="text-danger">Não é possivel atualizar o e-mail, o usuário deve criar uma nova conta com o novo e-mail</small>
-                            </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cel" class="form-label">Celular</label>

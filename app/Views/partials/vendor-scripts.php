@@ -4,7 +4,10 @@
 <script src="/assets/libs/node-waves/waves.min.js"></script>
 <script src="/assets/libs/feather-icons/feather.min.js"></script>
 <script src="/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
-<script src="/assets/js/plugins.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="/assets/libs/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="/assets/libs/flatpickr/flatpickr.min.js"></script>
 
 <div id="pwa-install-banner">
     Instale nosso aplicativo!
@@ -22,45 +25,45 @@
         });
     }
 
-    
+
     let deferredPrompt;
 
-// Verifica se o PWA já está instalado
-const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    // Verifica se o PWA já está instalado
+    const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-if (!isPWAInstalled) {
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Previne o mini-infobar de aparecer no mobile
-        e.preventDefault();
-        // Guarda o evento para ser acionado mais tarde
-        deferredPrompt = e;
+    if (!isPWAInstalled) {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previne o mini-infobar de aparecer no mobile
+            e.preventDefault();
+            // Guarda o evento para ser acionado mais tarde
+            deferredPrompt = e;
 
-        // Exibe o banner de instalação após 20 segundos
-        setTimeout(() => {
-            document.getElementById('pwa-install-banner').style.display = 'block';
-        }, 20000);
-    });
+            // Exibe o banner de instalação após 20 segundos
+            setTimeout(() => {
+                document.getElementById('pwa-install-banner').style.display = 'block';
+            }, 20000);
+        });
 
-    document.getElementById('install-button').addEventListener('click', async () => {
-        if (deferredPrompt) {
-            // Mostra o prompt de instalação
-            deferredPrompt.prompt();
-            // Espera pelo usuário responder ao prompt
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('Usuário aceitou a instalação');
-            } else {
-                console.log('Usuário recusou a instalação');
+        document.getElementById('install-button').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Mostra o prompt de instalação
+                deferredPrompt.prompt();
+                // Espera pelo usuário responder ao prompt
+                const {
+                    outcome
+                } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação');
+                } else {
+                    console.log('Usuário recusou a instalação');
+                }
+                // Resetar deferredPrompt para null
+                deferredPrompt = null;
             }
-            // Resetar deferredPrompt para null
-            deferredPrompt = null;
-        }
-        // Esconde o banner após a interação
-        document.getElementById('pwa-install-banner').style.display = 'none';
-    });
-} else {
-    console.log('O PWA já está instalado.');
-}
-
-
+            // Esconde o banner após a interação
+            document.getElementById('pwa-install-banner').style.display = 'none';
+        });
+    } else {
+        console.log('O PWA já está instalado.');
+    }
 </script>

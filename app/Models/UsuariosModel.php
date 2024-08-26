@@ -85,13 +85,32 @@ class UsuariosModel extends Model
 
     protected function updateCache()
     {
-        $cache = \Config\Services::cache();
+        $cache = service('cache');
         $cache->delete("user_cache");
         $cache->delete('listDashboard');
+
+        $deletedItems = $cache->deleteMatching("userlist_" . '*');
     }
+
+    // Caminho: app/Controllers/SeuController.php
 
     public function listGeral($input = false, $limit = 10, $order = 'DESC')
     {
+        $search = $input['search'] ?? false;
+
+        // Chave única para identificar o cache
+        $cacheKey = "userlist_{$search}_{$limit}_{$order}";
+
+        // Instância do serviço de cache
+        $cache = \Config\Services::cache();
+
+        // Verifica se o cache existe
+        if ($data = $cache->get($cacheKey)) {
+            // Retorna os dados do cache
+            return $data;
+        }
+
+        // Se não estiver em cache, processa os dados normalmente
         $data = [];
         $this->orderBy('id', $order);
         $rows = $this->paginate($limit);
@@ -106,12 +125,19 @@ class UsuariosModel extends Model
             }
         }
 
-        return [
+        // Dados processados para serem retornados
+        $result = [
             'rows' => $data,
             'pager' => $this->pager->links('default', 'paginate'),
             'num'   => $this->countAllResults() . ' cadastrados encontrados'
         ];
+
+        // Armazena os dados processados no cache
+        $cache->save($cacheKey, $result, 300); // 300 segundos (5 minutos) de cache
+
+        return $result;
     }
+
 
     public function listSearch($input = false, $limit = 10, $order = 'DESC')
     {

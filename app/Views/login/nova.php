@@ -37,7 +37,7 @@
                                 <div class="text-center mt-2">
                                     <h5 class="text-primary">Criar nova conta</h5>
                                 </div>
-                                <div class="p-2 mt-4">
+                                <div class="p-0 mt-4">
                                     <div class="mb-3">
                                         <label for="tipoCadastro" class="form-label">Tipo de cadastro <span class="text-danger">*</span></label>
                                         <select name="tipoCadastro" id="tipoCadastro" class="form-select" required>
@@ -54,7 +54,7 @@
                         </div>
                         <!-- end card -->
                         <div class="mt-4 text-center">
-                            <p class="mb-0">Já tem uma conta?<a href="/" class="fw-semibold text-primary text-decoration-underline">Entrar</a></p>
+                            <p class="mb-0">Já tem uma conta? <a href="/" class="fw-semibold text-primary text-decoration-underline">Entrar</a></p>
                         </div>
                     </div>
                 </div>
@@ -81,9 +81,10 @@
     <!-- Plugin adicionais -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/assets/js/custom/functions.min.js"></script>
-    <!-- cleave.js -->
-    <script src="/assets/libs/cleave.js/cleave.min.js"></script>
-    <script src="/assets/js/custom/newlogin.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    
+    <script src="/assets/js/custom/newlogin.js"></script>
 </body>
 
 </html>
