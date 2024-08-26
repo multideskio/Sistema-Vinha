@@ -66,8 +66,8 @@ if (!function_exists('limparString')) {
         /* The line `return preg_replace('/[^0-9]/', '', );` in the `limparString` function is
         using a regular expression to remove all non-numeric characters from the input string
         ``. */
-        //return preg_replace('/[^0-9]/', '', $string);
-        return $string;
+        return preg_replace('/[^0-9]/', '', $string);
+        //return $string;
     }
 }
 
