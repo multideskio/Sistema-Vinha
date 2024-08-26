@@ -82,7 +82,8 @@ class PastoresModel extends Model
         }
         return $data;
     }
-    public function listSearch($input = false, $limit = 10, $order = 'DESC'): array
+    
+    public function listSearch($input = false, $limit = 12, $order = 'DESC'): array
     {
         $data = [];
 

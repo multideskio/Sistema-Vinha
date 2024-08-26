@@ -40,6 +40,10 @@ function updateImage() {
     $('.formUpload').ajaxForm({
         beforeSubmit: function (formData, jqForm, options) {
             console.log('Enviando...')
+            Swal.fire({
+                text: 'Enviando imagem!',
+                icon: 'info'
+            })
         },
         success: function (responseText, statusText, xhr, $form) {
             dataConfig();
@@ -64,11 +68,15 @@ function updateGeral() {
     $('.formGeral').ajaxForm({
         beforeSubmit: function (formData, jqForm, options) {
             options.type = 'PUT'
+            Swal.fire({
+                text: 'Enviando dados!',
+                icon: 'info'
+            })
         },
         success: function (responseText, statusText, xhr, $form) {
             dataConfig();
             Swal.fire({
-                text: 'Executado com sucesso!',
+                text: 'Excutado com sucesso!',
                 icon: 'success'
             })
         },
@@ -173,33 +181,20 @@ function dataConfig() {
 }
 
 function formataCampos() {
-    // Formatação de inputs com Cleave.js
-    var cleave = new Cleave('#cnpj', {
-        numericOnly: true,
-        blocks: [2, 3, 3, 4, 2],
-        delimiters: ['.', '.', '/', '-'],
-        uppercase: true
-    });
+    const maskConfigs = [
+        { selector: '.cpf', mask: '000.000.000-00' },
+        { selector: '.cep', mask: '00000-000' },
+        { selector: '.telFixo', mask: '(00) 0000-0000' },
+        { selector: '.celular', mask: '+00 (00) 0 0000-0000' },
+        { selector: '#numberSend', mask: '+00 (00) 0 0000-0000' },
+        { selector: '.cnpj', mask: '00.000.000/0000-00' }
+    ];
 
-    var cleaveCep = new Cleave('#cep', {
-        numericOnly: true,
-        delimiters: ['-'],
-        blocks: [5, 3],
-        uppercase: true
-    });
-
-    var cleaveTelFixo = new Cleave('#fixo', {
-        numericOnly: true,
-        delimiters: ['(', ') ', '-'],
-        blocks: [0, 2, 4, 4]
-    });
-
-    var cleaveCelular = new Cleave('#celular', {
-        numericOnly: true,
-        delimiters: ['+', ' (', ') ', ' ', '-'],
-        blocks: [0, 2, 2, 1, 4, 4]
+    maskConfigs.forEach(config => {
+        $(config.selector).mask(config.mask);
     });
 }
+
 
 function envioDeTeste() {
     $("#testarS3").on('click', function () {

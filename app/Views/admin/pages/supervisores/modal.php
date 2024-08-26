@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <hr>
-            <?= form_open('api/v1/supervisores', ['id' => 'formCad']) ?>
+            <?= form_open('api/v1/supervisores', ['id' => 'formCad', 'autocomple' => 'off']) ?>
             <div class="modal-body">
                 <div class="row gx-1">
                     <div class="col-md-6">
@@ -30,12 +30,12 @@
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
-                        <label for="cpf">CPF</label>
-                        <input type="text" name="cpf" id="cpf" class="form-control cpf" placeholder="000.000.000-00">
+                        <label for="cpf" class="text-danger">CPF</label>
+                        <input type="text" name="cpf" id="cpf" class="form-control cpf" placeholder="000.000.000-00" required minlength="14">
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="exemplo@gmail.com" autocomplete="off">
+                        <label for="email" class="text-danger">E-mail</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="exemplo@gmail.com" autocomplete="off" required>
                     </div>
                 </div>
                 <div class="row gx-1">
@@ -69,18 +69,15 @@
                     </div>
                 </div>
                 <div class="row gx-1">
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-6 mt-2">
                         <label for="tel">Telefone</label>
                         <input type="text" name="tel" id="tel" class="form-control telFixo" placeholder="(00) 0000-0000" autocomplete="off">
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="cel">Celular</label>
-                        <input type="text" name="cel" id="cel" class="form-control celular" placeholder="+55 (00) 0 0000-0000">
+                    <div class="col-md-6 mt-2">
+                        <label for="cel" class="text-danger">Celular</label>
+                        <input type="text" name="cel" id="cel" class="form-control celular" placeholder="+55 (00) 0 0000-0000" required minlength="19">
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="password">Informe uma senha <small>Padrão <b>123456</b></small></label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="123456" autocomplete="off">
-                    </div>
+                    <input type="hidden" name="password" value="123456">
                 </div>
             </div>
             <div class="modal-footer">

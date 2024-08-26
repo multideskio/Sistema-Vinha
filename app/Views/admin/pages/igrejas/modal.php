@@ -19,8 +19,8 @@
                     </div>
 
                     <div class="col-md-12 col-lg-6 mt-2">
-                        <label for="cnpj">CNPJ</label>
-                        <input type="text" name="cnpj" id="cnpj" class="form-control cnpj" placeholder="00.000.000/0001-00">
+                        <label for="cnpj" class="text-danger">CNPJ</label>
+                        <input type="text" name="cnpj" id="cnpj" class="form-control cnpj" placeholder="00.000.000/0001-00" required>
                     </div>
                 </div>
                 <div class="row gx-1">
@@ -56,7 +56,7 @@
                         <label for="bairro">Bairro</label>
                         <input type="text" name="bairro" id="bairro" class="form-control" placeholder="Nome do bairro">
                     </div>
-                    <div class="col-md-12 col-lg-4 mt-2">
+                    <div class="col-md-12 col-lg-4 mt-2"> 
                         <label for="complemento">Endereço</label>
                         <input type="text" name="complemento" id="complemento" class="form-control" placeholder="O restante do endereço">
                     </div>
@@ -75,8 +75,8 @@
                         <input type="text" name="tel" id="tel" class="form-control telFixo" placeholder="(00) 0000-0000" autocomplete="off">
                     </div>
                     <div class="col-md-12 col-lg-4 mt-2">
-                        <label for="cel">Celular</label>
-                        <input type="text" name="cel" id="cel" class="form-control celular" placeholder="+55 (00) 0 0000-0000">
+                        <label for="cel" class="text-danger">Celular</label>
+                        <input type="text" name="cel" id="cel" class="form-control celular" placeholder="+55 (00) 0 0000-0000" required maxlength="19">
                     </div>
                 </div>
                 <div class="row gx-1">
@@ -93,12 +93,9 @@
                         <input type="text" name="cpf" id="cpf" class="form-control cpf" placeholder="000.000.000-00" required>
                     </div>
                 </div>
-                <div class="row gx-1">
-                    <div class="col-md-12 col-lg-5 mt-2">
-                        <label for="password" class="text-danger">Informe uma senha <small>Padrão <b>123456</b></small></label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="123456" autocomplete="off" required>
-                    </div>
-                </div>
+                
+                <input type="hidden" value="123456" name="password">
+                    
                 <!-- <div class="mt-2">
                     <b>Foto</b>
                     <div class="avatar-xl mx-auto">

@@ -108,7 +108,7 @@
                         <div class="mb-3 row">
                             <div class="col-md-5">
                                 <label for="cnpj">CNPJ</label>
-                                <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ" required>
+                                <input type="text" class="form-control cnpj" name="cnpj" id="cnpj" placeholder="CNPJ" required>
                             </div>
 
                             <div class="col-md-7">
@@ -119,7 +119,7 @@
 
                         <div class="col-md-12 mb-3">
                             <label for="email">E-mail de suporte</label>
-                            <input type="email" class="form-control" name="email" id="email" placeholder="email@exemplo.com" required>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="email@exemplo.com" required autocomplete="off">
                         </div>
 
                         <div class="mb-3 row">
@@ -136,26 +136,26 @@
                         <div class="mb-3 row">
                             <div class="col-md-4">
                                 <label for="cep">CEP</label>
-                                <input type="text" class="form-control" name="cep" id="cep" placeholder="00000-000" required>
+                                <input type="text" class="form-control cep" name="cep" id="cep" placeholder="00000-000" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="uf">UF</label>
-                                <input type="text" class="form-control" name="uf" id="uf" placeholder="UF" maxlength="2" required>
+                                <input type="text" class="form-control uf" name="uf" id="uf" placeholder="UF" maxlength="2" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="cidade">Cidade</label>
-                                <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Cidade" required>
+                                <input type="text" class="form-control cidade" name="cidade" id="cidade" placeholder="Cidade" required>
                             </div>
                         </div>
 
                         <div class="mb-3 row">
                             <div class="col-md-5">
                                 <label for="bairro">Bairro</label>
-                                <input type="text" class="form-control" name="bairro" id="bairro" placeholder="Bairro..." required>
+                                <input type="text" class="form-control bairro" name="bairro" id="bairro" placeholder="Bairro..." required>
                             </div>
                             <div class="col-md-7">
                                 <label for="complemento">Complemento</label>
-                                <input type="text" class="form-control" name="complemento" id="complemento" placeholder="Quadra, Lote, Número" required>
+                                <input type="text" class="form-control rua" name="complemento" id="complemento" placeholder="Quadra, Lote, Número" required>
                             </div>
                         </div>
 
@@ -190,7 +190,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="smtpPASS">SMTP Password</label>
-                            <input type="password" name="smtpPASS" id="smtpPASS" placeholder="Sua senha" class="form-control" required>
+                            <input type="text" name="smtpPASS" id="smtpPASS" placeholder="Sua senha" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="smtpPORT">SMTP Porta</label>
@@ -262,7 +262,7 @@
                         <?= form_open('api/v1/administracao/update/s3/' . $idSearch, ['class' => 'formGeral']) ?>
                         <div class="mb-3">
                             <label for="s3Regiao">Região</label>
-                            <select id="s3Region" name="s3Regiao" class="form-select">
+                            <select id="s3Regiao" name="s3Regiao" class="form-select">
                                 <option selected>Escolha uma região</option>
                                 <option value="us-east-1">US East (N. Virginia)</option>
                                 <option value="us-west-1">US West (N. California)</option>
@@ -289,11 +289,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="s3Id">ID da chave de acesso</label>
-                            <input type="password" name="s3Id" id="s3Id" placeholder="Fornecida ao criar as credenciais do bucket" required class="form-control">
+                            <input type="text" name="s3Id" id="s3Id" placeholder="Fornecida ao criar as credenciais do bucket" required class="form-control">
                         </div>
                         <div class="mb-3">
                             <label for="s3Key">Chave de acesso secreta</label>
-                            <input type="password" name="s3Key" id="s3Key" placeholder="Fornecida ao criar as credenciais do bucket" class="form-control">
+                            <input type="text" name="s3Key" id="s3Key" placeholder="Fornecida ao criar as credenciais do bucket" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label for="s3Cdn">URL CDN (Caso utilize cloudfront)</label>
@@ -307,7 +307,7 @@
                     </div>
                     <!--end tab-pane-->
 
-                    <div class="tab-pane" id="mensagens" role="tabpanel">
+                   <!-- <div class="tab-pane" id="mensagens" role="tabpanel">
                         <div class="text-center">
                             <h4>Configuração de mensagens que são enviadas por WhatsApp</h4>
                             <p class="text-info mt-3 fs-8">
@@ -337,8 +337,8 @@
                                         <textarea name="mensagemNovo" id="mensageNovo" class="form-control mb-3" rows="10"></textarea>
                                         <div class="col-lg-12 fs-6 mb-3">
                                             <div class="form-check form-switch form-switch-success form-switch-lg">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="ativawa" name="ativawa" value="1">
-                                                <label class="form-check-label" for="ativawa">Ativar o envio</label>
+                                                <input class="form-check-input" type="checkbox" role="switch" id="ativawamensageNovo" name="ativawamensageNovo" value="1">
+                                                <label class="form-check-label" for="ativawamensageNovo">Ativar o envio</label>
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -508,7 +508,7 @@
 
                         </div>
                     </div>
-                    <!--end tab-pane-->
+                    end tab-pane-->
                 </div>
             </div>
         </div>
@@ -557,7 +557,7 @@
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
 <script>
-    const idEmp = "<?= session('data')['idAdm'] ?>";
+    const idEmp = "<?= session('data')['idAdm'] ?>";  
 </script>
 <script src="/assets/js/custom/config.js"></script>
 <?= $this->endSection(); ?>

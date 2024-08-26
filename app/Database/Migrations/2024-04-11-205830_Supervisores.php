@@ -44,7 +44,7 @@ class Supervisores extends Migration
             ],
             'cpf' => [
                 'type' => 'CHAR',
-                'constraint' => 11
+                'constraint' => 20
             ],
             'foto' => [
                 'type' => 'VARCHAR',
@@ -76,11 +76,11 @@ class Supervisores extends Migration
             ],
             'telefone' => [
                 'type' => 'VARCHAR',
-                'constraint' => 15
+                'constraint' => 30
             ],
             'celular' => [
                 'type' => 'VARCHAR',
-                'constraint' => 15
+                'constraint' => 30
             ],
             'facebook' => [
                 'type' => 'VARCHAR',

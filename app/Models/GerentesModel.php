@@ -123,7 +123,7 @@ class GerentesModel extends Model
             ->limit($limit, $offset)
             ->findAll();
     }
-    public function listSearch($input = false, $limit = 10, $order = 'DESC'): array
+    public function listSearch($input = false, $limit = 12, $order = 'DESC'): array
     {
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;

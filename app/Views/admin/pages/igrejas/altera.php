@@ -220,7 +220,7 @@
                             </div>
                             <!--end col-->
                             <div class="col-lg-12">
-                                <div class="hstack gap-2 justify-content-end">
+                                <div class="hstack gap-2 justify-content-start">
                                     <button type="submit" class="btn btn-primary">Alterar</button>
                                 </div>
                             </div>

@@ -6,7 +6,7 @@
         <div class="h-100">
             <div class="row mb-3 pb-1">
                 <div class="col-12">
-                    <div class="d-flex align-items-lg-center flex-lg-row flex-column">
+                    <div class="d-flex flex-lg-row flex-column">
                         <div class="flex-grow-1">
                             <h1 class="fw-bolder">PAINEL DE ACOMPANHAMENTO</h1>
                         </div>
@@ -14,7 +14,7 @@
                             <div class="row g-3 mb-0 align-items-center">
                                 <div class="col-sm-auto">
                                     <div class="input-group">
-                                        <input id="testDate" name="testDate" type="text" class="form-control border-0 shadow" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true" placeholder="<?php echo date("Y-m-d"); ?>">
+                                        <input id="dateSearch" name="dateSearch" type="text" class="form-control border-0 shadow">
                                         <button class="input-group-text bg-primary border-primary text-white" id="btnSearchDash">
                                             <i class="ri-calendar-2-line"></i>
                                         </button>
@@ -327,6 +327,8 @@
 
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
 <!-- apexcharts -->
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>

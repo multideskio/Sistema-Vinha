@@ -38,6 +38,7 @@ function sends() {
                 html: 'Atualizado com sucesso!',
                 icon: 'success'
             })
+            searchUpdate(_idSearch);
         },
         error: function(xhr, status, error) {
             Swal.fire({

@@ -10,28 +10,25 @@ class Regioes extends Migration
     {
         //
         $db = db_connect();
-
         $db->disableForeignKeyChecks();
-
         $this->forge->addField([
             'id' => [
                 'type' => 'INT',
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-
             'id_adm' => [
                 'type' => 'INT',
                 'unsigned' => true
             ],
-
             'id_user' => [
                 'type' => 'INT',
                 'unsigned' => true
             ],
             'nome' => [
                 'type' => 'VARCHAR',
-                'constraint' => 60
+                'constraint' => 60,
+                'unique' =>  true
             ],
             'descricao' => [
                 'type' => 'VARCHAR',
@@ -50,7 +47,6 @@ class Regioes extends Migration
                 'null' => true,
             ]
         ]);
-
         $this->forge->addPrimaryKey('id');
         $this->forge->createTable('regioes', true);
         $db->enableForeignKeyChecks();

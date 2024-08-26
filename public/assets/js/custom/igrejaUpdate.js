@@ -63,6 +63,7 @@ function setupAjaxForm(formSelector, options) {
                     Swal.fire(options.successMessage);
                 }
             }
+            searchUpdate(_idSearch);
         },
         error: function (xhr, status, error) {
             Swal.fire(options.errorMessage);

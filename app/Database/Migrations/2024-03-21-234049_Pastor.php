@@ -46,7 +46,7 @@ class Perfis extends Migration
             
             'cpf' => [
                 'type' => 'CHAR',
-                'constraint' => 11
+                'constraint' => 20
             ],
 
             'nascimento' => [
@@ -56,7 +56,7 @@ class Perfis extends Migration
 
             'foto' => [
                 'type' => 'VARCHAR',
-                'constraint' => 160
+                'constraint' => 255
             ],
             
             'uf' => [
@@ -76,7 +76,7 @@ class Perfis extends Migration
             
             'complemento' => [
                 'type' => 'VARCHAR',
-                'constraint' => 120
+                'constraint' => 255
             ],
             
             'bairro' => [
@@ -91,26 +91,26 @@ class Perfis extends Migration
             
             'telefone' => [
                 'type' => 'VARCHAR',
-                'constraint' => 15
+                'constraint' => 30
             ],
             
             'celular' => [
                 'type' => 'VARCHAR',
-                'constraint' => 15
+                'constraint' => 30
             ],
             
             'facebook' => [
                 'type' => 'VARCHAR',
-                'constraint' => 160
+                'constraint' => 255
             ],
             
             'instagram' => [
                 'type' => 'VARCHAR',
-                'constraint' => 160
+                'constraint' => 255
             ],
             'website' => [
                 'type' => 'VARCHAR',
-                'constraint' => 60
+                'constraint' => 255
             ],
             
             'created_at' => [

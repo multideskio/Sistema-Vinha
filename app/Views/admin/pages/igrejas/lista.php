@@ -3,7 +3,7 @@
 <div class="col-xxl-12">
     <h1 class="mb-3 fw-bolder float-start">Gerenciamento de igrejas</h1>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarIgreja">
+    <button type="button" class="btn btn-success float-end mb-2" data-bs-toggle="modal" data-bs-target="#cadastrarIgreja">
         <i class="ri-user-settings-line"></i> Cadastrar igreja
     </button>
 </div>
@@ -18,7 +18,6 @@
     <div class="text-center">
         <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
         <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
-        <p class="text-muted mb-0">Cadastre gerentes...</p>
     </div>
 </div>
 <div class="loadResult">

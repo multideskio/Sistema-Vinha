@@ -30,17 +30,17 @@ class Usuarios extends Migration
             ],
             "email" => [
                 'type'       => 'VARCHAR',
-                'constraint' => 60,
+                'constraint' => 120,
                 'unique'     => true,
             ],
             "password" => [
                 'type' => 'VARCHAR',
-                'constraint' => 80,
+                'constraint' => 120,
                 'null' => true
             ],
             "token" => [
                 'type' => 'VARCHAR',
-                'constraint' => 80,
+                'constraint' => 120,
                 'null' => true
             ],
             "nivel" => [

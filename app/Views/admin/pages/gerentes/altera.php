@@ -101,98 +101,99 @@
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="nome" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome...">
+                                    <label for="nome" class="form-label text-danger">Nome</label>
+                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome..." autocomplete="off" required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="sobrenome" class="form-label">Sobre-nome</label>
-                                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome...">
+                                    <label for="sobrenome" class="form-label text-danger">Sobre-nome</label>
+                                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome..." autocomplete="off" required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="cpf" class="form-label">CPF</label>
-                                    <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="000.000.000-00">
+                                    <label for="cpf" class="form-label text-danger">CPF</label>
+                                    <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="000.000.000-00" autocomplete="off" required minlength="11">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-12">
-                                <small class="text-danger">Não é possivel atualizar o e-mail, o usuário deve criar uma nova conta com o novo e-mail</small>
+                                <small class="text-danger">Não é possível atualizar o e-mail, o usuário deve criar uma nova conta com o novo e-mail</small>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="cel" class="form-label">Celular</label>
-                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="(00) 0000-0000">
+                                    <label for="cel" class="form-label text-danger">Celular/WhatsApp</label>
+                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="+55 (00) 0 0000-0000" autocomplete="off" required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="tel" class="form-label">Telefone 2</label>
-                                    <input type="text" class="form-control telFixo" id="tel" name="tel" placeholder="(00) 0000-0000">
+                                    <label for="tel" class="form-label">Fixo</label>
+                                    <input type="text" class="form-control telFixo" id="tel" name="tel" placeholder="(00) 0000-0000" autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label><br>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com" readonly>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com" autocomplete="off" readonly required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cep" class="form-label">CEP</label>
-                                    <input type="text" class="form-control cep" id="cep" name="cep" placeholder="00000-000">
+                                    <input type="text" class="form-control cep" id="cep" name="cep" placeholder="00000-000" autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="uf" class="form-label">Estado/UF</label>
-                                    <input type="text" class="form-control uf" name="uf" id="uf" placeholder="UF">
+                                    <input type="text" class="form-control uf" id="uf" name="uf" placeholder="UF" autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cidade" class="form-label">Cidade</label>
-                                    <input type="text" class="form-control cidade" name="cidade" id="cidade" placeholder="Cidade...">
+                                    <input type="text" class="form-control cidade" id="cidade" name="cidade" placeholder="Cidade..." autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="bairro" class="form-label">Bairro</label>
-                                    <input type="text" class="form-control bairro" name="bairro" id="bairro" placeholder="Bairro...">
+                                    <input type="text" class="form-control bairro" id="bairro" name="bairro" placeholder="Bairro..." autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="complemento" class="form-label">Complemento</label>
-                                    <input type="text" class="form-control rua" name="complemento" id="complemento" placeholder="complemento...">
+                                    <input type="text" class="form-control rua" id="complemento" name="complemento" placeholder="complemento..." autocomplete="off">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="dizimo" class="form-label">Dia do dízimo</label>
-                                    <input type="number" max="31" class="form-control" id="dizimo" name="dia" placeholder="Dia dizimo">
+                                    <input type="number" max="31" class="form-control" id="dizimo" name="dia" placeholder="Dia dízimo" autocomplete="off" required>
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-12">
-                                <div class="hstack gap-2 justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Alterar</button>
+                                <div class="hstack gap-2 justify-content-start">
+                                    <button type="submit" class="btn btn-primary">ALTERAR CADASTRO</button>
                                 </div>
                             </div>
                             <!--end col-->
                         </div>
+
                         <!--end row-->
                         </form>
                     </div>

@@ -126,7 +126,7 @@
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="sobrenome" class="form-label text-danger">Sobre-nome</label>
+                                    <label for="sobrenome" class="form-label text-danger">Sobrenome</label>
                                     <input type="text" class="form-control" id="sobrenome" name="sobrenome" placeholder="Sobrenome..." required>
                                 </div>
                             </div>
@@ -134,14 +134,14 @@
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cpf" class="form-label">CPF</label>
-                                    <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="000.000.000-00">
+                                    <input type="text" class="form-control cpf" id="cpf" name="cpf" placeholder="000.000.000-00" required minlength="11">
                                 </div>
                             </div>
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cel" class="form-label text-danger">Celular</label>
-                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="(00) 0000-0000" required>
+                                    <input type="text" class="form-control celular" id="cel" name="cel" placeholder="+55 (00) 0000-0000" required minlength="11">
                                 </div>
                             </div>
                             <!--end col-->
@@ -202,8 +202,8 @@
                             </div>
                             <!--end col-->
                             <div class="col-lg-12">
-                                <div class="hstack gap-2 justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Alterar</button>
+                                <div class="hstack gap-2 justify-content-start">
+                                    <button type="submit" class="btn btn-primary">ALTERAR CADASTRO</button>
                                 </div>
                             </div>
                             <!--end col-->

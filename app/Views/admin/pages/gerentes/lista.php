@@ -3,7 +3,7 @@
 <div class="col-xxl-12">
     <h1 class="mb-3 fw-bolder float-start">Gerenciamento de gerentes</h1>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#cadastrarGerente">
+    <button type="button" class="btn btn-success float-end mb-2" data-bs-toggle="modal" data-bs-target="#cadastrarGerente">
         <i class="ri-user-settings-line"></i> Cadastrar Gerente
     </button>
 </div>
@@ -20,7 +20,6 @@
     <div class="text-center">
         <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
         <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
-        <p class="text-muted mb-0">Cadastre gerentes...</p>
     </div>
 </div>
 
@@ -36,7 +35,7 @@
 <?= $this->include('admin/pages/gerentes/modal.php') ?>
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
-<script src="/assets/js/custom/functions.js"></script>
-<script src="/assets/js/custom/gerentes.js"></script>
+<script src="/assets/js/custom/functions.min.js"></script>
+<script src="/assets/js/custom/gerentes.min.js"></script>
 <!-- REPETE -->
 <?= $this->endSection('js') ?>

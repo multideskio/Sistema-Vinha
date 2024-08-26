@@ -1,185 +1,228 @@
-function formatImput() {
-    // Formatação de inputs com Cleave.js
-    $('.cpf').mask('000.000.000-00')
-    $('.cep').mask('00000-000')
-    $('.telFixo').mask('(00) 0000-0000')
-    $('.celular').mask('+00 (00) 0 0000-0000')
+// Instâncias de Choices.js
+let choicesRegioesInstance;
+let choicesGerentesInstance;
+
+$(document).ready(function () {
+    initialize();
+});
+
+function initialize() {
+    // Carrega os dados iniciais
+    searchUpdate(_idSearch);
+    // Configura as máscaras de input
+    formatInput();
+    // Configura os event handlers
+    setupEventHandlers();
 }
-function sends() {
-    $(".enviaLinks").on('change', () => {
-        $('.formTexts').submit()
-    });
-    $("#profile-img-file-input").on('change', () => {
-        $('.formUpload').submit()
-    });
 
-    $('.formTexts').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
-            options.type = 'PUT'
-        },
-        success: function(responseText, statusText, xhr, $form) {
-            $(".alertAlterado").show(),
-                setTimeout(() => {
-                    $(".alertAlterado").fadeOut()
-                }, 1200);
-        },
-        error: function(xhr, status, error) {
-            console.log(xhr)
-            console.log(status)
-            console.log(error)
-        }
-    });
+// Função para aplicar máscaras aos campos de input
+function formatInput() {
+    $('.cpf').mask('000.000.000-00');
+    $('.cep').mask('00000-000');
+    $('.telFixo').mask('(00) 0000-0000');
+    $('.celular').mask('+00 (00) 0 0000-0000');
+}
 
-    $('.formGeral').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
-            options.type = 'PUT'
-            Swal.fire({
-                text: 'Enviando dados!',
-                icon: 'info'
-            })
-        },
-        success: function(responseText, statusText, xhr, $form) {
-            Swal.fire({
-                text: 'Atualizado com sucesso!',
-                icon: 'success'
-            })
-        },
-        error: function(xhr, status, error) {
-            Swal.fire({
-                text: 'Erro ao atualizar...',
-                icon: 'error'
-            });
-        }
-    });
+// Configura todos os event handlers
+function setupEventHandlers() {
+    configureFileUploads();
+    configureAjaxForms();
+}
 
-    $('.formUpload').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
-            console.log('Enviando...')
-            Swal.fire({
-                text: 'Enviando imagem!',
-                icon: 'info'
-            })
+// Configura os eventos de upload de arquivos
+function configureFileUploads() {
+    $(".enviaLinks").on('change', () => $('.formTexts').submit());
+    $("#profile-img-file-input").on('change', () => $('.formUpload').submit());
+}
+
+// Configura os formulários AJAX
+function configureAjaxForms() {
+    setupAjaxForm('.formTexts', 'PUT', handleFormTextsSuccess);
+    setupAjaxForm('.formGeral', 'PUT', handleFormGeralSuccess);
+    setupAjaxForm('.formUpload', null, handleFormUploadSuccess);
+}
+
+// Configura um formulário AJAX com opções e callbacks
+function setupAjaxForm(selector, method, successCallback) {
+    $(selector).ajaxForm({
+        beforeSubmit: function (formData, jqForm, options) {
+            if (method) options.type = method;
+            if (selector != '.formTexts') {
+                showLoadingMessage();
+            }
         },
-        success: function(responseText, statusText, xhr, $form) {
-            Swal.fire({
-                text: 'Imagem atualizada com sucesso!',
-                icon: 'success'
-            })
-        },
-        error: function(xhr, status, error) {
-            Swal.fire({
-                text: 'Erro ao atualizar imagem',
-                icon: 'error'
-            });
-        }
+        success: successCallback,
+        error: handleFormError
     });
 }
+
+// Exibe mensagem de carregamento
+function showLoadingMessage() {
+    Swal.fire({
+        text: 'Enviando dados!',
+        icon: 'info'
+    });
+}
+
+// Sucesso ao enviar formTexts
+function handleFormTextsSuccess(responseText, statusText, xhr, $form) {
+    showTemporaryAlert(".alertAlterado", 1200);
+}
+
+// Sucesso ao enviar formGeral
+function handleFormGeralSuccess(responseText, statusText, xhr, $form) {
+    Swal.fire({
+        text: 'Atualizado com sucesso!',
+        icon: 'success'
+    });
+
+    searchUpdate(_idSearch);
+}
+
+// Sucesso ao enviar formUpload
+function handleFormUploadSuccess(responseText, statusText, xhr, $form) {
+    Swal.fire({
+        text: 'Imagem atualizada com sucesso!',
+        icon: 'success'
+    });
+}
+
+// Tratamento de erro ao enviar qualquer formulário
+function handleFormError(xhr, status, error) {
+    Swal.fire({
+        text: 'Erro ao processar a solicitação',
+        icon: 'error'
+    });
+    console.error(xhr, status, error);
+}
+
+// Atualiza os dados com base no ID fornecido
 function searchUpdate(id) {
-    if (id) {
-        // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
-        var url = `${_baseUrl}api/v1/supervisores/${id}`;
-        $.getJSON(url)
-            .done(function(data, textStatus, jqXHR) {
-                if (data.foto) {
-                    $("#fotoPerfil").attr('src', data.foto);
-                }
-                $("#viewNameUser").html(data.nome);
-                $("#facebook").val(data.facebook);
-                $("#website").val(data.website);
-                $("#instagram").val(data.instagram);
-                $("#nome").val(data.nome);
-                $("#sobrenome").val(data.sobrenome);
-                $("#cpf").val(data.cpf);
-                $("#cel").val(data.celular);
-                $("#email").val(data.email);
-                $("#tel").val(data.telefone);
-                $("#cep").val(data.cep);
-                $("#uf").val(data.uf);
-                $("#cidade").val(data.cidade);
-                $("#bairro").val(data.bairro);
-                $("#complemento").val(data.complemento);
-                $("#dizimo").val(data.data_dizimo);
+    if (!id) {
+        showErrorAndGoBack('Os dados não foram encontrados');
+        return;
+    }
 
-                $("#gerente").val(data.gerente);
-                $("#regiao").val(data.regiao);
+    const url = `${_baseUrl}api/v1/supervisores/${id}`;
+    $.getJSON(url)
+        .done(handleSearchUpdateSuccess)
+        .fail(handleSearchUpdateError);
 
-                globalIdLogin = data.id_login;
-                atualizarTabela();
+    // Tratamento de erro para a imagem
+    $('#fotoPerfil').on('error', function () {
+        $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+    });
+}
 
-                listRegioes(data.idRegiao)
-                listGerentes(data.idGerente)
+// Sucesso ao buscar dados de supervisores
+function handleSearchUpdateSuccess(data) {
+    updateFormFields(data);
+    atualizarTabela();
+    listRegioes(data.idRegiao);
+    listGerentes(data.idGerente);
+}
 
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
-                console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-                $('.loadResult').hide();
-                Swal.fire({
-                    text: 'Os dados não foram enconrados',
-                    icon: 'error'
-                }).then(function(result) {
-                    history.back();
-                });
-            });
-        // Tratamento de erro para a imagem
-        $('#fotoPerfil').on('error', function() {
-            $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
-        });
-    } else {
-        Swal.fire({
-            text: 'Os dados não foram encontrados',
-            icon: 'error'
-        }).then(function(result) {
-            history.back();
-        });
+// Erro ao buscar dados de supervisores
+function handleSearchUpdateError(jqXHR, textStatus, errorThrown) {
+    $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+    console.error("Erro ao carregar os dados:", textStatus, errorThrown);
+    showErrorAndGoBack('Os dados não foram encontrados');
+}
+
+// Atualiza os campos do formulário com os dados retornados
+function updateFormFields(data) {
+    $("#fotoPerfil").attr('src', data.foto || 'https://placehold.co/50/00000/FFF?text=V');
+    $("#viewNameUser").text(data.nome);
+    $("#facebook").val(data.facebook);
+    $("#website").val(data.website);
+    $("#instagram").val(data.instagram);
+    $("#nome").val(data.nome);
+    $("#sobrenome").val(data.sobrenome);
+    $("#cpf").val(data.cpf);
+    $("#cel").val(data.celular);
+    $("#email").val(data.email);
+    $("#tel").val(data.telefone);
+    $("#cep").val(data.cep);
+    $("#uf").val(data.uf);
+    $("#cidade").val(data.cidade);
+    $("#bairro").val(data.bairro);
+    $("#complemento").val(data.complemento);
+    $("#dizimo").val(data.data_dizimo);
+    $("#gerente").val(data.gerente);
+    $("#regiao").val(data.regiao);
+
+    globalIdLogin = data.id_login;
+}
+
+// Lista as regiões e inicializa Choices.js
+function listRegioes(idAtual) {
+    destroyChoicesInstance(choicesRegioesInstance);
+
+    $('#selectRegiao').empty().removeAttr('required');
+    $.getJSON(`${_baseUrl}api/v1/regioes`)
+        .done(data => {
+            populateSelectOptions('#selectRegiao', data.rows, idAtual);
+            choicesRegioesInstance = initializeChoices('#selectRegiao');
+        })
+        .fail(() => showErrorAndGoBack('Cadastre regiões antes de cadastrar um supervisor...'));
+}
+
+// Lista os gerentes e inicializa Choices.js
+function listGerentes(idAtual) {
+    destroyChoicesInstance(choicesGerentesInstance);
+
+    $('#selectGerentes').empty().removeAttr('required');
+    $.getJSON(`${_baseUrl}api/v1/gerentes/list`)
+        .done(data => {
+            populateSelectOptions('#selectGerentes', data, idAtual);
+            choicesGerentesInstance = initializeChoices('#selectGerentes');
+        })
+        .fail(() => showErrorAndGoBack('Cadastre gerentes antes de cadastrar um supervisor...'));
+}
+
+// Remove a instância de Choices.js, se existir
+function destroyChoicesInstance(instance) {
+    if (instance) {
+        instance.destroy();
     }
 }
-function listRegioes(idAtual) {
-    $('#selectRegiao').empty().removeAttr('required');
-    $.getJSON(`${_baseUrl}api/v1/regioes`, {}, (data) => {
-        data.rows.forEach(regiao => {
-            if (idAtual === regiao.id) {
-                $('#selectRegiao').append(`<option selected value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
-            } else {
-                $('#selectRegiao').append(`<option value="${regiao.id}">${regiao.id} - ${regiao.nome}</option>`);
-            }
-        });
-        // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
-        $('#selectRegiao').attr('required', true).attr('data-choices', true);
-        new Choices('#selectRegiao');
-    }).fail(() => {
-        Swal.fire({
-            text: 'Cadastre regiões antes de cadastrar um supervisor...',
-            icon: 'error'
-        }).then((result) => {
-            history.back();
-        });
-    });
-}
-function listGerentes(idAtual) {
-    $('#selectGerentes').empty().removeAttr('required');
 
-    $.getJSON(`${_baseUrl}api/v1/gerentes/list`, {}, (data) => {
-        data.forEach(gerente => {
-            if (idAtual === gerente.id) {
-                $('#selectGerentes').append(`<option selected value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
-            } else {
-                $('#selectGerentes').append(`<option value="${gerente.id}">${gerente.id} - ${gerente.nome} ${gerente.sobrenome}</option>`);
-            }
+function initializeChoices(selector) {
+    if (typeof Choices !== 'undefined') {
+        return new Choices(selector, {
+            allowHTML: true
         });
-        // Adiciona os atributos e inicializa o plugin Choices após adicionar todas as opções
-        $('#selectGerentes').attr('required', true).attr('data-choices', true);
-        new Choices('#selectGerentes');
-    }).fail(() => {
-        Swal.fire({
-            text: 'Cadastre gerentes antes de cadastrar um supervisor...',
-            icon: 'error'
-        }).then((result) => {
-            history.back();
-        });
+    }
+    return null;
+}
+
+
+
+
+// Popula as opções do select com base nos dados retornados
+function populateSelectOptions(selector, data, selectedId) {
+    const select = $(selector);
+    data.forEach(item => {
+        const isSelected = selectedId === item.id ? 'selected' : '';
+        select.append(`<option ${isSelected} value="${item.id}">${item.id} - ${item.nome}</option>`);
+    });
+    select.attr('required', true).attr('data-choices', true);
+}
+
+// Exibe uma mensagem de erro e retorna à página anterior
+function showErrorAndGoBack(message) {
+    Swal.fire({
+        text: message,
+        icon: 'error'
+    }).then(() => {
+        history.back();
     });
 }
-$(document).ready(function() {
-    searchUpdate(_idSearch)
-    formatImput()
-    sends();
-});
+
+// Exibe um alerta temporário
+function showTemporaryAlert(selector, duration) {
+    $(selector).show();
+    setTimeout(() => {
+        $(selector).fadeOut();
+    }, duration);
+}

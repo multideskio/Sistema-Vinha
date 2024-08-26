@@ -7,72 +7,68 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <hr>
-            <?= form_open_multipart('api/v1/gerentes', ['id' => 'formCad']); ?>
+            <?= form_open_multipart('api/v1/gerentes', ['id' => 'formCad', 'autocomplete' => 'off']); ?>
             <div class="modal-body ">
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
                         <label for="nome" class="text-danger">Nome</label>
-                        <input type="text" id="nome" name="nome" class="form-control" required placeholder="Primeiro nome">
+                        <input type="text" id="nome" name="nome" class="form-control" required placeholder="Primeiro nome" autocomplete="off">
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="sobrenome" class="text-danger">Sobrenome</label>
-                        <input type="text" name="sobrenome" id="sobrenome" class="form-control" required placeholder="Sobrenome">
+                        <input type="text" name="sobrenome" id="sobrenome" class="form-control" required placeholder="Sobrenome" autocomplete="off">
                     </div>
                 </div>
-
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
-                        <label for="cpf">CPF</label>
-                        <input type="text" name="cpf" id="cpf" class="form-control cpf" placeholder="000.000.000-00">
+                        <label for="cpf" class="text-danger">CPF</label>
+                        <input type="text" name="cpf" id="cpf" class="form-control cpf" placeholder="000.000.000-00" required autocomplete="off" minlength="14">
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="exemplo@gmail.com">
+                        <label for="email" class="text-danger">E-mail</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="exemplo@gmail.com" required autocomplete="off">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
                         <label for="cep">CEP</label>
-                        <input type="text" name="cep" id="cep" class="form-control cep" placeholder="00000-000">
+                        <input type="text" name="cep" id="cep" class="form-control cep" placeholder="00000-000" autocomplete="off">
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="uf">Estado</label>
-                        <input type="text" name="uf" id="uf" class="form-control uf" placeholder="UF" maxlength="2">
+                        <input type="text" name="uf" id="uf" class="form-control uf" placeholder="UF" maxlength="2" autocomplete="off">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-6 mt-2">
                         <label for="cidade">Cidade</label>
-                        <input type="text" name="cidade" id="cidade" class="form-control cidade" placeholder="Nome da cidade">
+                        <input type="text" name="cidade" id="cidade" class="form-control cidade" placeholder="Nome da cidade" autocomplete="off">
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="bairro">Bairro</label>
-                        <input type="text" name="bairro" id="bairro" class="form-control bairro" placeholder="Nome do bairro">
+                        <input type="text" name="bairro" id="bairro" class="form-control bairro" placeholder="Nome do bairro" autocomplete="off">
                     </div>
                 </div>
                 <div class="row gx-1">
                     <div class="col-md-8 mt-2">
                         <label for="complemento">Endereço</label>
-                        <input type="text" name="complemento" id="complemento" class="form-control rua" placeholder="O restante do endereço">
+                        <input type="text" name="complemento" id="complemento" class="form-control rua" placeholder="O restante do endereço" autocomplete="off">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label for="dia" class="text-danger">Dia do dízimo</label>
-                        <input type="number" name="dia" id="dia" class="form-control" max="31" min="1" required placeholder="1 á 31">
+                        <input type="number" name="dia" id="dia" class="form-control" max="31" min="1" required placeholder="1 á 31" autocomplete="off">
                     </div>
                 </div>
                 <div class="row gx-1">
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-6 mt-2">
                         <label for="tel">Telefone</label>
-                        <input type="text" name="tel" id="tel" class="form-control telFixo" placeholder="(00) 0000-0000">
+                        <input type="text" name="tel" id="tel" class="form-control telFixo" placeholder="(00) 0000-0000" autocomplete="off">
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="cel">Celular</label>
-                        <input type="text" name="cel" id="cel" class="form-control celular" placeholder="+55 (00) 0 0000-0000">
+                    <div class="col-md-6 mt-2">
+                        <label for="cel" class="text-danger">Celular</label>
+                        <input type="text" name="cel" id="cel" class="form-control celular" placeholder="+55 (00) 0 0000-0000" required autocomplete="off">
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label for="password">Informe uma senha <small>Padrão <b>123456</b></small></label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="123456">
-                    </div>
+                    <input type="hidden" name="password" value="123456" autocomplete="off">
                 </div>
             </div>
             <div class="modal-footer">
