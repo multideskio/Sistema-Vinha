@@ -234,7 +234,7 @@ class UsuariosModel extends Model
             'id_perfil'     => intval($rowUser['id_perfil']),
             'id'            => intval($rowUser['id']),
             'idAdm'         => intval($rowUser['id_adm']) ?? 1,
-            'name'          => $perfil['nome'] ?? '',
+            'name'          => $perfil['nome'] ?? $perfil['nome_tesoureiro'] ?? '',
             'email'         => $rowUser['email'],
             'celular'       => $perfil['celular'] ?? '',
             'tel'           => $perfil['telefone'] ?? '',
