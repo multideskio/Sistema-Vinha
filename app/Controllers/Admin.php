@@ -151,7 +151,8 @@ class Admin extends BaseController
 
     public function perfil(): string
     {
-        $data['idSearch']  = session('data')['idAdm'];
+        $data['idSearch']  = session('data')['id_perfil'];
+
         $data['titlePage'] = "Meu perfil";
         $data['tipo']      = session('data')['tipo'];
         return view('admin/pages/user/perfil', $data);

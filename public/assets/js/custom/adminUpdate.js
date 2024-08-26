@@ -1,145 +1,111 @@
-function searchUpdate(id) {
-    if (id) {
-        // Monta a URL da requisição AJAX com os parâmetros search e page, se estiverem definidos
-        var url = _baseUrl + `api/v1/administradores/${id}`;
-        $.getJSON(url)
-            .done(function(data, textStatus, jqXHR) {
-                if (data.foto) {
-                    $("#fotoPerfil").attr('src', data.foto);
-                }
-                $("#viewNameUser").html(data.nome);
-                $("#facebook").val(data.facebook);
-                $("#website").val(data.website);
-                $("#instagram").val(data.instagram);
-                $("#nome").val(data.nome);
-                $("#sobrenome").val(data.sobrenome);
-                $("#cpf").val(data.cpf);
-                $("#cel").val(data.celular);
-                $("#email").val(data.email);
-                $("#tel").val(data.telefone);
-                $("#cep").val(data.cep);
-                $("#uf").val(data.uf);
-                $("#cidade").val(data.cidade);
-                $("#bairro").val(data.bairro);
-                $("#complemento").val(data.complemento);
-                $("#dizimo").val(data.data_dizimo);
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
-                //console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-                Swal.fire({
-                    title: 'Os dados não foram encontrados',
-                    icon: 'error'
-                }).then(function(result) {
-                    history.back();
-                });
-                $('.loadResult').hide();
-            });
-        // Tratamento de erro para a imagem
-        $('#fotoPerfil').on('error', function() {
-            $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
-        });
-    }
-}
+$(document).ready(function() {
+    const userId = _idSearch; // Presumindo que _idSearch é definida globalmente.
 
-function updateTexts(id) {
-    $('.formGeral').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
-            options.type = 'PUT'
-        },
-        success: function(responseText, statusText, xhr, $form) {
-            searchUpdate(id)
-            Swal.fire({
-                text: 'Atualizado com sucesso!',
-                icon: 'success'
-            })
-        },
-        error: function(xhr, status, error) {
-            Swal.fire({
-                text: 'Erro ao atualizar...',
-                icon: 'error'
-            });
-        }
+    setupInputMasks();
+    setupEventListeners(userId);
+    loadUserData(userId);
+});
+
+function setupEventListeners(userId) {
+    setupFormSubmission('.formGeral', 'PUT', () => {
+        loadUserData(userId);
+        showAlert('Atualizado com sucesso!', 'success');
     });
-}
 
-function updateImage(id) {
+    setupFormSubmission('.formUpload', null, () => {
+        loadUserData(userId);
+        showAlert('Imagem atualizada com sucesso!', 'success');
+    });
+
     $("#profile-img-file-input").on('change', function() {
+        showAlert('Enviando imagem', 'info');
         $('.formUpload').submit();
     });
-    $('.formUpload').ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {
-            console.log('Enviando...')
-        },
-        success: function(responseText, statusText, xhr, $form) {
-            searchUpdate(id);
-            Swal.fire({
-                text: 'Imagem atualizada com sucesso!',
-                icon: 'success'
-            })
-        },
-        error: function(xhr, status, error) {
-            Swal.fire({
-                text: 'Erro ao atualizar imagem',
-                icon: 'error'
-            });
-        }
-    });
-}
 
-function updateLinks(id) {
     $(".enviaLinks").on('change', function() {
         $('.formTexts').submit();
     });
 
-    $('.formTexts').ajaxForm({
+    setupFormSubmission('.formTexts', 'PUT', () => {
+        loadUserData(userId);
+        $(".alertAlterado").show();
+        setTimeout(() => {
+            $(".alertAlterado").fadeOut();
+        }, 1200);
+    });
+}
+
+function setupFormSubmission(formSelector, method, onSuccess) {
+    $(formSelector).ajaxForm({
         beforeSubmit: function(formData, jqForm, options) {
-            options.type = 'PUT'
+            if (method) options.type = method;
         },
         success: function(responseText, statusText, xhr, $form) {
-            searchUpdate(id);
-            $(".alertAlterado").show(),
-                setTimeout(() => {
-                    $(".alertAlterado").fadeOut()
-                }, 1200);
+            if (onSuccess) onSuccess();
         },
         error: function(xhr, status, error) {
-
+            showAlert('Erro ao atualizar...', 'error');
         }
     });
 }
 
-function formatInputs() {
-    var cleaveCpf = new Cleave('.cpf', {
-        numericOnly: true,
-        delimiters: ['.', '.', '-'],
-        blocks: [3, 3, 3, 2],
-        uppercase: true
-    });
+function loadUserData(id) {
+    if (!id) return;
 
-    var cleaveCep = new Cleave('.cep', {
-        numericOnly: true,
-        delimiters: ['-'],
-        blocks: [5, 3],
-        uppercase: true
-    });
+    const url = `${_baseUrl}api/v1/administradores/${id}`;
+    $.getJSON(url)
+        .done(function(data) {
+            updateUserProfile(data);
+        })
+        .fail(function() {
+            $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+            showAlert('Os dados não foram encontrados', 'error', () => history.back());
+        });
 
-    var cleaveTelFixo = new Cleave('.telFixo', {
-        numericOnly: true,
-        delimiters: ['(', ') ', '-'],
-        blocks: [0, 2, 4, 4]
-    });
-
-    var cleaveCelular = new Cleave('.celular', {
-        numericOnly: true,
-        delimiters: ['+', ' (', ') ', ' ', '-'],
-        blocks: [0, 2, 2, 1, 4, 4]
+    $('#fotoPerfil').on('error', function() {
+        $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
     });
 }
 
-$(document).ready(function() {
-    searchUpdate(_idSearch)
-    formatInputs()
-    updateLinks(_idSearch)
-    updateImage(_idSearch)
-    updateTexts(_idSearch)
-});
+function updateUserProfile(data) {
+    if (data.foto) {
+        $("#fotoPerfil").attr('src', data.foto);
+    }
+    $("#viewNameUser").html(data.nome);
+    $("#facebook").val(data.facebook);
+    $("#website").val(data.website);
+    $("#instagram").val(data.instagram);
+    $("#nome").val(data.nome);
+    $("#sobrenome").val(data.sobrenome);
+    $("#cpf").val(data.cpf);
+    $("#cel").val(data.celular);
+    $("#email").val(data.email);
+    $("#tel").val(data.telefone);
+    $("#cep").val(data.cep);
+    $("#uf").val(data.uf);
+    $("#cidade").val(data.cidade);
+    $("#bairro").val(data.bairro);
+    $("#complemento").val(data.complemento);
+    $("#dizimo").val(data.data_dizimo);
+}
+
+function showAlert(message, icon, callback) {
+    Swal.fire({
+        text: message,
+        icon: icon
+    }).then(callback);
+}
+
+function setupInputMasks() {
+    const maskConfigs = [
+        { selector: '.cpf', mask: '000.000.000-00' },
+        { selector: '.cep', mask: '00000-000' },
+        { selector: '.telFixo', mask: '(00) 0000-0000' },
+        { selector: '.celular', mask: '+00 (00) 0 0000-0000' },
+        { selector: '.cnpj', mask: '00.000.000/0000-00' }
+    ];
+
+    maskConfigs.forEach(config => {
+        $(config.selector).mask(config.mask);
+    });
+}

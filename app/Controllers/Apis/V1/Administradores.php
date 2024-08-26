@@ -110,10 +110,20 @@ class Administradores extends ResourceController
                 throw new Exception("Esse email já está cadastrado no sistema.", 1);
             };
 
+            // Validação do e-mail
+            if ($modelUser->where('email', $input['email'])->countAllResults()) {
+                throw new \Exception("Esse email já está cadastrado no sistema.", 1);
+            }
+
+            $celular = $input['cel'];
+            $nome    = $input['nome'];
+            $email   = $input['email'];
+
+
             $data = [
                 "id_adm"       => session('data')['idAdm'],
                 "id_user"      => session('data')['id'],
-                "nome"         => $input['nome'],
+                "nome"         => $nome,
                 "sobrenome"    => $input['sobrenome'],
                 "cpf"          => $input['cpf'],
                 "uf"           => $input['uf'],
@@ -121,8 +131,8 @@ class Administradores extends ResourceController
                 "cep"          => $input['cep'],
                 "complemento"  => $input['complemento'],
                 "bairro"       => $input['bairro'],
-                "telefone"     => $input['tel'],
-                "celular"      => $input['cel']
+                //"telefone"     => $input['tel'],
+                "celular"      => $celular
             ];
 
             $id = $this->modelAdmin->insert($data);
@@ -133,9 +143,9 @@ class Administradores extends ResourceController
 
             $dataUser = [
                 'id_perfil' => $id,
-                'email' => $input['email'],
-                'password' => (isset($input['password'])) ? $input['password'] : '123456',
-                'id_adm' => session('data')['id']
+                'email'     => $email,
+                'password'  => (isset($input['password'])) ? $input['password'] : '123456',
+                'id_adm'    => session('data')['id']
             ];
 
             $user = $modelUser->cadUser('superadmin', $dataUser);
@@ -145,6 +155,16 @@ class Administradores extends ResourceController
             }
 
             $this->modelAdmin->transComplete();
+
+            // Notificações
+            $notification = new \App\Libraries\NotificationLibrary();
+            
+            //Verifica
+            if ($celular) {
+                $notification->sendWelcomeMessage($nome, $email, $celular); 
+            }
+
+            $notification->sendVerificationEmail($email, $nome);
 
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
         } catch (\Exception $e) {

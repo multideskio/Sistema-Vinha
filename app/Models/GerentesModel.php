@@ -61,7 +61,7 @@ class GerentesModel extends Model
     protected $beforeUpdate   = ["filterHtml", "limpaStrings"];
     protected $afterUpdate    = ["updateCache"];
     protected $beforeFind     = [];
-    protected $afterFind      = [];
+    protected $afterFind      = ["filterHtml"];
     protected $beforeDelete   = [];
     protected $afterDelete    = ["updateCache"];
 
