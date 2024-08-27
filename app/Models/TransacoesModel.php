@@ -56,11 +56,11 @@ class TransacoesModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = ['limparCache'];
 
-    private function limparCache(){
+    protected function limparCache()
+    {
 
         $cache = service('cache');
         $deletedItems = $cache->deleteMatching("transacoesList_" . '*');
-
     }
     public function updateStatus()
     {
@@ -362,8 +362,9 @@ class TransacoesModel extends Model
             'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal)
         ];
 
+        helper('auxiliar');
         // Armazena os dados no cache
-        $cache->save($cacheKey, $result, 300); // Cache por 5 minutos (300 segundos)
+        $cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(7)); // Cache por 5 minutos (300 segundos)
 
         return $result;
     }
@@ -405,10 +406,18 @@ class TransacoesModel extends Model
         // Instancia os modelos
         $modelPastor = new PastoresModel();
         $modelIgreja = new IgrejasModel();
+        $modelReembolso = new ReembolsosModel();
 
         foreach ($transacoes as $transacao) {
             if ($transacao['tipo_user'] == 'pastor') {
                 $rowPastor = $modelPastor->find($transacao['id_cliente']);
+                $rowRembolso = $modelReembolso->where('id_transacao', $transacao['id'])->first();
+
+                if ($rowRembolso) {
+                    $dataTransacao = $rowRembolso;
+                } else {
+                    $dataTransacao = [];
+                }
                 $data[] = [
                     'id'          => $transacao['id'],
                     'nome'        => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
@@ -422,7 +431,8 @@ class TransacoesModel extends Model
                     'valor'       => decimalParaReaisBrasil($transacao['valor']),
                     'status'      => $transacao['status_text'],
                     'forma_pg'    => $transacao['tipo_pagamento'],
-                    'descricao_lg' => $transacao['descricao_longa']
+                    'descricao_lg' => $transacao['descricao_longa'],
+                    'reembolso' => $dataTransacao
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
@@ -431,6 +441,15 @@ class TransacoesModel extends Model
                 }
             } elseif ($transacao['tipo_user'] == 'igreja') {
                 $rowIgreja = $modelIgreja->find($transacao['id_cliente']);
+
+                $rowRembolso = $modelReembolso->select('descricao, created_at')->where('id_transacao', $transacao['id'])->first();
+
+                if ($rowRembolso) {
+                    $dataTransacao = $rowRembolso;
+                } else {
+                    $dataTransacao = null;
+                }
+
                 $data[] = [
                     'id'          => intval($transacao['id']),
                     'nome'        => $rowIgreja['razao_social'],
@@ -444,7 +463,8 @@ class TransacoesModel extends Model
                     'valor'       => decimalParaReaisBrasil($transacao['valor']),
                     'status'      => $transacao['status_text'],
                     'forma_pg'    => $transacao['tipo_pagamento'],
-                    'descricao_lg' => $transacao['descricao_longa']
+                    'descricao_lg' => $transacao['descricao_longa'],
+                    'reembolso' => $dataTransacao
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {

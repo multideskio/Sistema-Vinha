@@ -51,22 +51,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <?= form_open('', 'class="formReembolso" id="formReembolso"') ?>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="descRembolso">Descrição do reembolso</label>
-                    <textarea required name="desc" id="descRembolso" class="form-control" placeholder="Descreva o motivo para esse reembolso" rows="5"></textarea>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="descRembolso" class="text-danger">Descrição do reembolso</label>
+                        <textarea required name="desc" id="descRembolso" class="form-control" placeholder="Descreva o motivo para esse reembolso" rows="5"></textarea>
+                    </div>
+                    <input type="hidden" name="valor" id="valor" required readonly>
+                    <input type="hidden" id="id_transacao" name="id_transacao" required readonly>
                 </div>
-                <div class="mb-3">
-                    <label for="valor">Valor para reembolso</label>
-                    <input type="text" name="valor" id="valor" class="form-control" required>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Devolver dinheiro</button>
                 </div>
-                <input type="hidden" id="id_transacao" name="id_transacao" class="form-control">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-success">Devolver dinheiro</button>
-            </div>
-</form>
+            </form>
         </div>
     </div>
 </div>

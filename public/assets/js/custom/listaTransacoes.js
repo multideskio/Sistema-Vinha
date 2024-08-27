@@ -70,8 +70,10 @@ function atualizarTabela(search = false, page = 1) {
                     btn = `<button class="btn btn-danger btn-sm" onclick="reembolsar('${row.id_transacao}', '${row.id}', '${row.valor}')">Reembolsar</button>`;
                 } else if (row.status == 'Cancelado') {
                     status = `<span class="badge bg-danger">${row.status}</span>`;
+                    btn = ``;
                 } else if (row.status == 'Reembolsado') {
                     status = `<span class="badge bg-dark">${row.status}</span>`;
+                    btn = ``
                 } else {
                     status = `<span class="badge bg-warning">${row.status}</span>`;
                     btn = `<button class="btn btn-info btn-sm" onclick="sincronizar('${row.id_transacao}')">Sincronizar</button>`
@@ -135,11 +137,11 @@ function reembolsar(id, id_transacao, valor) {
                 })
             } else {
                 Swal.fire({
-                    html: 'Reembolso negado.<br>Verifique se há saldo em sua conta da CIELO <br> Status: ' + responseText.ReasonMessage,
+                    html: 'Reembolso agendado, a qualquer momento ele poderá liberado.<br> Status: ' + responseText.ReasonMessage,
                     icon: 'error'
                 })
             }
-
+            atualizarTabela()
         },
         error: function (xhr, status, error) {
             console.log(xhr.responseJSON.messages.error)

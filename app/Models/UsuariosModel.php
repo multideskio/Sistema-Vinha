@@ -132,8 +132,9 @@ class UsuariosModel extends Model
             'num'   => $this->countAllResults() . ' cadastrados encontrados'
         ];
 
+        helper('auxiliar');
         // Armazena os dados processados no cache
-        $cache->save($cacheKey, $result, 300); // 300 segundos (5 minutos) de cache
+        //$cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(7)); // 300 segundos (5 minutos) de cache
 
         return $result;
     }

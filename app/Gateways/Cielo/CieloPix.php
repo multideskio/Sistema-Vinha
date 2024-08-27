@@ -89,7 +89,7 @@ class CieloPix extends CieloBase
             $endPoint = "/1/sales/{$paymentId}/void";
             $response = $this->makeRequest('PUT', $endPoint, $params, 'handleRefundResponse');
 
-            $this->saveTransactionRefund($paymentId, $amount, $response);
+            $this->saveTransactionRefund($paymentId, $amount, $response); 
 
             return $response;
         } catch (Exception $e) {
@@ -109,6 +109,13 @@ class CieloPix extends CieloBase
             $data = [
                 'id_transacao' => $paymentId,
                 'status_text' => 'Reembolsado'
+            ];
+            $dataId = $this->transactionsModel->where('id_transacao', $paymentId)->select('id')->first();
+            $this->transactionsModel->update($dataId['id'], $data);
+        }else{
+            $data = [
+                'id_transacao' => $paymentId,
+                'status_text' => 'Reembolso em andamento'
             ];
             $dataId = $this->transactionsModel->where('id_transacao', $paymentId)->select('id')->first();
             $this->transactionsModel->update($dataId['id'], $data);
