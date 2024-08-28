@@ -8,7 +8,7 @@ class Redis extends BaseConfig
 {
     public $default = [
         'scheme' => 'tcp',            // Protocolo de conexão (tcp é o padrão)
-        'host'   => '5.161.224.162',  // Endereço do Redis
+        'host'   => '5.161.224.69',   // Endereço do Redis
         'port'   => 6382,             // Porta correta do Redis
         'password' => null,           // Senha do Redis, se necessário
         'timeout' => 5.0,             // Timeout ajustável para evitar timeout de conexão

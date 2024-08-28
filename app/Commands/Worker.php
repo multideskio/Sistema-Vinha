@@ -5,7 +5,6 @@ namespace App\Commands;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Predis\Client as RedisClient;
-use App\Jobs\GenerateReportJob;
 use Config\Redis as RedisConfig;
 
 class Worker extends BaseCommand
@@ -26,7 +25,7 @@ class Worker extends BaseCommand
 
     public function run(array $params)
     {
-        CLI::write('Iniciando o worker...', 'green');
+        CLI::write('Worker iniciado...', 'green');
 
         // Loop para processar as tarefas em segundo plano
         while (true) {
