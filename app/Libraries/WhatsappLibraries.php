@@ -7,22 +7,23 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use CodeIgniter\Log\Logger;
+use InvalidArgumentException;
 
 class WhatsappLibraries
 {
-    protected $apiUrl;
-    protected $instance;
-    protected $apikey;
-    protected $headers;
-    protected $client;
-    protected $modelAdmin;
-    protected $logger;
+    protected string $apiUrl;
+    protected string $instance;
+    protected string $apikey;
+    protected array $headers;
+    protected Client $client;
+    protected AdminModel $modelAdmin;
+    protected Logger $logger;
 
     public function __construct(Client $client = null, AdminModel $modelAdmin = null, Logger $logger = null)
     {
         try {
             $this->modelAdmin = $modelAdmin ?? new AdminModel();
-            $this->client = $client ?? new Client;
+            $this->client = $client ?? new Client();
             $this->logger = $logger ?? \Config\Services::logger();
 
             $this->logger->info('Construtor chamado.');
@@ -73,8 +74,14 @@ class WhatsappLibraries
         }
     }
 
-    public function verifyNumber($message, $number, $tipo)
+    public function verifyNumber(array $message, string $number, string $tipo = 'text'): bool
     {
+        // Restringe `$tipo` a apenas 'text' ou 'image'
+        if (!in_array($tipo, ['text', 'image'])) {
+            $this->logger->error('Tipo inválido fornecido: ' . $tipo);
+            throw new InvalidArgumentException('Tipo deve ser "text" ou "image".');
+        }
+
         $this->logger->info('Método verifyNumber chamado.', [
             'number' => $number,
             'tipo' => $tipo
@@ -93,10 +100,10 @@ class WhatsappLibraries
             if ($body[0]['exists']) {
                 $this->logger->info('Número verificado com sucesso.');
 
-                if ($tipo == 'text') {
+                if ($tipo === 'text') {
                     return $this->sendMessageText($message, $number);
                 }
-                if ($tipo == 'image') {
+                if ($tipo === 'image') {
                     return $this->sendMessageImage($message, $number);
                 }
             } else {
@@ -104,11 +111,11 @@ class WhatsappLibraries
             }
         } catch (Exception $e) {
             $this->logger->error('Erro em verifyNumber: ' . $e->getMessage());
-            return false;  // Retorna false para indicar falha, mas não lança exceção
+            return false;
         }
     }
 
-    public function sendMessageImage(array $message, $number)
+    public function sendMessageImage(array $message, string $number): bool
     {
         $this->logger->info('Método sendMessageImage chamado.', [
             'number' => $number,
@@ -118,7 +125,7 @@ class WhatsappLibraries
         try {
             $params = [
                 "number"    => $number,
-                "mediatype" => "image", // image, video or document
+                "mediatype" => "image",
                 "mimetype"  => "image/png",
                 "caption"   => $message['message'],
                 "media"     => $message['image'],
@@ -131,10 +138,9 @@ class WhatsappLibraries
             if (isset($body['Code'], $body['Message'])) {
                 throw new Exception("Erro {$body['Code']}: {$body['Message']}");
             }
-        
+
             $this->logger->info('Imagem enviada com sucesso.');
             return true;
-        
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
@@ -143,7 +149,7 @@ class WhatsappLibraries
         }
     }
 
-    public function sendMessageText($message, $number)
+    public function sendMessageText(array $message, string $number): bool
     {
         $this->logger->info('Método sendMessageText chamado.', [
             'number' => $number,
@@ -178,7 +184,7 @@ class WhatsappLibraries
         }
     }
 
-    protected function postRequest($endpoint, array $data)
+    protected function postRequest(string $endpoint, array $data): ?array
     {
         $this->logger->info('Método postRequest chamado.', [
             'endpoint' => $endpoint,
@@ -191,19 +197,15 @@ class WhatsappLibraries
                 'json' => $data
             ];
 
-            /* This code snippet is making a POST request to a specific endpoint using GuzzleHttp
-            client. Here's a breakdown of what each step is doing: */
-            
             $this->logger->info('Enviando requisição POST para ' . $endpoint);
-            
+
             $response = $this->client->post($this->apiUrl . $endpoint, $options);
-            
-            $responseBody = json_decode($response->getBody(), true);
-            
+
+            $responseBody = json_decode($response->getBody()->getContents(), true);
+
             $this->logger->info('Resposta da requisição recebida.', $responseBody);
-            
+
             return $responseBody;
-            
         } catch (RequestException $e) {
             $response = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';

@@ -69,6 +69,7 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->get('transacoes/user/(:num)', 'Transacoes::adminUsers/$1', ['filter' => 'admin']);
     $routes->get('transacoes/dashboard', 'Transacoes::dashboardAdmin', ['filter' => 'logged']);
     $routes->get('transacoes/lista', 'Transacoes::ultimasTransacoes', ['filter' => 'logged']);
+    $routes->match(['POST', 'GET'], 'transacoes/relatorio', 'Transacoes::gerarRelatorio', ['filter' => 'logged']);
 
     $routes->resource('transacoes', ['filter' => 'logged']);
 

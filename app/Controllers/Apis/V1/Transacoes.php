@@ -4,11 +4,16 @@ namespace App\Controllers\Apis\V1;
 
 use App\Gateways\Cielo\CieloCron;
 use App\Gateways\Cielo\CieloPix;
+use App\Libraries\UploadsLibraries;
 use App\Models\ReembolsosModel;
 use App\Models\UsuariosModel;
+use App\Workers\RedisWorker;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+
+use Predis\Client as RedisClient;
+use Config\Redis as RedisConfig;
 
 class Transacoes extends ResourceController
 {
@@ -23,6 +28,7 @@ class Transacoes extends ResourceController
     protected $modelReembolso;
     protected $cieloCron;
     protected $cieloPix;
+    protected $redis;
 
     public function __construct()
     {
@@ -30,6 +36,20 @@ class Transacoes extends ResourceController
         $this->modelReembolso = new ReembolsosModel();
         $this->cieloCron = new CieloCron;
         $this->cieloPix = new CieloPix;
+
+        // Carrega as configurações do Redis
+        $config = new RedisConfig();
+        
+        // Tenta conectar ao Redis com as configurações fornecidas
+        try {
+            $this->redis = new RedisClient($config->default);
+            // Testa a conexão
+            $this->redis->ping();
+        } catch (\Exception $e) {
+            // Tratamento de erro ao conectar ao Redis
+            log_message('error', 'Erro ao conectar ao Redis: ' . $e->getMessage());
+            die('Não foi possível conectar ao Redis: ' . $e->getMessage());
+        }
 
         helper('auxiliar');
     }
@@ -132,7 +152,7 @@ class Transacoes extends ResourceController
 
     public function dashboardAdmin()
     {
-        
+
         try {
             $modelUser = new UsuariosModel();
             $dateIn = $this->request->getGet('dateIn');
@@ -247,5 +267,32 @@ class Transacoes extends ResourceController
             $this->modelReembolso->transRollback();
             return $this->fail($e->getMessage());
         }
+    }
+
+    public function gerarRelatorio()
+    {
+        // Parâmetros da requisição
+        $dataInicio    = $this->request->getVar('data_inicio');
+        $dataFim       = $this->request->getVar('data_fim');
+        $tipoPagamento = $this->request->getVar('tipo_pagamento');
+        $status        = $this->request->getVar('status');
+
+        // Adicionar a tarefa na fila Redis
+        $job = [
+            'handler' => 'App\Jobs\GenerateReportJob',
+            'data' => [
+                'data_inicio' => $dataInicio,
+                'data_fim' => $dataFim,
+                'tipo_pagamento' => $tipoPagamento,
+                'status' => $status
+            ]
+        ];
+
+        // Adiciona a tarefa na fila chamada "jobs_queue"
+        $this->redis->rpush('jobs_queue', json_encode($job));
+
+        log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+
+        return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado.']);
     }
 }

@@ -170,7 +170,7 @@ class TransacoesModel extends Model
     }
 
 
-    private function obterPerfilUsuario($usuario)
+    public function obterPerfilUsuario($usuario)
     {
         switch ($usuario['tipo']) {
             case 'gerente':

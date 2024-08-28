@@ -117,7 +117,7 @@ class UploadsLibraries
      * @param string $contentType Tipo de conteúdo MIME.
      * @return string URL do arquivo no S3.
      */
-    private function uploadToS3(string $tempPath, string $path, string $contentType): string
+    public function uploadToS3(string $tempPath, string $path, string $contentType): string
     {
         $this->s3Client->putObject([
             'Bucket'      => $this->bucketName,
