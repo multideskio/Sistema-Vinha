@@ -30,7 +30,15 @@ class GenerateReportJob
 
         // Nome do arquivo CSV
         $nomeArquivo = 'relatorio_transacoes_' . date('Y-m-d_H-i-s') . '.csv';
-        $caminhoArquivo = WRITEPATH . 'uploads/' . $nomeArquivo;
+        $caminhoPasta = WRITEPATH . 'uploads/'; // Define o caminho da pasta
+        $caminhoArquivo = $caminhoPasta . $nomeArquivo;
+
+
+        // Verifica se o diretório existe, caso contrário cria
+        if (!is_dir($caminhoPasta)) {
+            mkdir($caminhoPasta, 0755, true); // Cria o diretório com permissões adequadas
+        }
+
 
         // Abre o arquivo para escrita
         $arquivo = fopen($caminhoArquivo, 'w');
