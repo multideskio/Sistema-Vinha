@@ -43,13 +43,13 @@ $routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1\Public
 });
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
-    
+
     $routes->post('administradores/update/upload/(:num)', 'Administradores::foto/$1');
     $routes->put('administradores/update/links/(:num)', 'Administradores::links/$1');
     $routes->resource('administradores');
-    
+
     $routes->put('administracao/testwhatsapp', 'Administracao::testWhatsApp', ['filter' => 'logged']);
-    
+
     $routes->post('administracao/update/upload/(:num)', 'Administracao::foto/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/links/(:num)', 'Administracao::links/$1', ['filter' => 'logged']);
     $routes->put('administracao/update/info/(:num)', 'Administracao::updateInfo/$1', ['filter' => 'logged']);
@@ -63,13 +63,16 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->resource('emails', ['filter' => 'logged']);
     $routes->resource('ajuda', ['filter' => 'logged']);
 
-    $routes->get('transacoes/user', 'Transacoes::usuario', ['filter' => 'logged']);
 
-    $routes->post('transacoes/user/reembolso/(:any)', 'Transacoes::reembolso/$1', ['filter' => 'admin']);
-    $routes->get('transacoes/user/(:num)', 'Transacoes::adminUsers/$1', ['filter' => 'admin']);
-    $routes->get('transacoes/dashboard', 'Transacoes::dashboardAdmin', ['filter' => 'logged']);
-    $routes->get('transacoes/lista', 'Transacoes::ultimasTransacoes', ['filter' => 'logged']);
-    $routes->match(['POST', 'GET'], 'transacoes/relatorio', 'Transacoes::gerarRelatorio', ['filter' => 'logged']);
+    $routes->group('transacoes', ['filter' => 'admin'], static function ($routes) {
+        $routes->get('user', 'Transacoes::usuario');
+        $routes->post('user/reembolso/(:any)', 'Transacoes::reembolso/$1');
+        $routes->get('user/(:num)', 'Transacoes::adminUsers/$1');
+        $routes->get('dashboard', 'Transacoes::dashboardAdmin');
+        $routes->get('lista', 'Transacoes::ultimasTransacoes');
+        $routes->match(['POST', 'GET'], 'relatorio', 'Transacoes::gerarRelatorio');
+        $routes->get('relatorios/lista', 'Transacoes::listRelatorios');
+    });
 
     $routes->resource('transacoes', ['filter' => 'logged']);
 
@@ -119,7 +122,7 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static fun
     $routes->get('google', 'Usuarios::google');
     $routes->match(['POST', 'GET'], 'authenticate', 'Usuarios::authenticate');
     $routes->get('confirmacao/(:any)', 'Usuarios::confirmacao/$1');
-    
+
     //(:any)
     $routes->resource('whatsapp', ['filter' => 'logged']);
 });
@@ -132,14 +135,14 @@ $routes->group('admin', ['filter' => ['logged', 'admin']], static function ($rou
 
     $routes->get('gerentes', 'Admin::gerentes');
     $routes->get('gerente/(:num)', 'Admin::gerente/$1');
-    
+
     $routes->get('supervisores', 'Admin::supervisores');
     $routes->get('supervisor/(:num)', 'Admin::supervisor/$1');
     $routes->get('pastores', 'Admin::pastores');
     $routes->get('pastor/(:num)', 'Admin::pastor/$1');
     $routes->get('igrejas', 'Admin::igrejas');
     $routes->get('igreja/(:num)', 'Admin::igreja/$1');
-    
+
     $routes->get('admins', 'Admin::admins');
     $routes->get('admin/(:num)', 'Admin::admin/$1');
     $routes->get('superadmin/(:num)', 'Admin::admin/$1');

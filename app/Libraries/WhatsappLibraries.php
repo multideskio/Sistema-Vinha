@@ -76,8 +76,8 @@ class WhatsappLibraries
 
     public function verifyNumber(array $message, string $number, string $tipo = 'text'): bool
     {
-        // Restringe `$tipo` a apenas 'text' ou 'image'
-        if (!in_array($tipo, ['text', 'image'])) {
+        // Restringe `$tipo` a apenas 'text' ou 'image' ou 'csv'
+        if (!in_array($tipo, ['text', 'image', 'csv'])) {
             $this->logger->error('Tipo inválido fornecido: ' . $tipo);
             throw new InvalidArgumentException('Tipo deve ser "text" ou "image".');
         }
@@ -105,6 +105,9 @@ class WhatsappLibraries
                 }
                 if ($tipo === 'image') {
                     return $this->sendMessageImage($message, $number);
+                }
+                if ($tipo === 'csv') {
+                    return $this->sendMessageCsv($message, $number);
                 }
             } else {
                 throw new Exception("Erro: O número não está registrado no WhatsApp");
@@ -148,6 +151,42 @@ class WhatsappLibraries
             return false;
         }
     }
+
+
+    public function sendMessageCsv(array $message, string $number): bool
+    {
+        $this->logger->info('Método sendMessageImage chamado.', [
+            'number' => $number,
+            'message' => $message
+        ]);
+
+        try {
+            $params = [
+                "number"    => $number,
+                "mediatype" => "document",
+                "mimetype"  => "text/csv",
+                "caption"   => $message['message'],
+                "media"     => $message['csv'],
+                "fileName"  => "relatorio.csv"
+            ];
+
+            $this->logger->info('Enviando imagem.', $params);
+            $body = $this->postRequest('/message/sendMedia/' . $this->instance, $params);
+
+            if (isset($body['Code'], $body['Message'])) {
+                throw new Exception("Erro {$body['Code']}: {$body['Message']}");
+            }
+
+            $this->logger->info('Imagem enviada com sucesso.');
+            return true;
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
+            $this->logger->error('Erro na requisição sendMessageImage: ' . $responseBodyAsString);
+            return false;
+        }
+    }
+
 
     public function sendMessageText(array $message, string $number): bool
     {

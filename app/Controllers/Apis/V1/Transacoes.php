@@ -6,6 +6,7 @@ use App\Gateways\Cielo\CieloCron;
 use App\Gateways\Cielo\CieloPix;
 use App\Libraries\UploadsLibraries;
 use App\Models\ReembolsosModel;
+use App\Models\RelatoriosGeradosModel;
 use App\Models\UsuariosModel;
 use App\Workers\RedisWorker;
 use CodeIgniter\API\ResponseTrait;
@@ -14,6 +15,7 @@ use CodeIgniter\RESTful\ResourceController;
 
 use Predis\Client as RedisClient;
 use Config\Redis as RedisConfig;
+use DateTime;
 
 class Transacoes extends ResourceController
 {
@@ -39,7 +41,7 @@ class Transacoes extends ResourceController
 
         // Carrega as configurações do Redis
         $config = new RedisConfig();
-        
+
         // Tenta conectar ao Redis com as configurações fornecidas
         try {
             $this->redis = new RedisClient($config->default);
@@ -269,30 +271,89 @@ class Transacoes extends ResourceController
         }
     }
 
+    // File: app/Controllers/RelatorioController.php
+
     public function gerarRelatorio()
     {
         // Parâmetros da requisição
-        $dataInicio    = $this->request->getVar('data_inicio');
-        $dataFim       = $this->request->getVar('data_fim');
-        $tipoPagamento = $this->request->getVar('tipo_pagamento');
-        $status        = $this->request->getVar('status');
+        $data = $this->request->getVar('dateSearch');
+        $separa = explode(" até ", $data);
 
-        // Adicionar a tarefa na fila Redis
-        $job = [
-            'handler' => 'App\Jobs\GenerateReportJob',
-            'data' => [
+        // Função para converter a data de dd/mm/yyyy para yyyy-mm-dd
+        function converterData($data)
+        {
+            $dateTime = DateTime::createFromFormat('d/m/Y', $data);
+            return $dateTime ? $dateTime->format('Y-m-d') : null;
+        }
+
+        $dataInicio    = converterData($separa[0]);
+        $dataFim       = converterData($separa[1]);
+        $tipoPagamento = ($this->request->getVar('tipoPagamento') === 'Todos') ? false : $this->request->getVar('tipoPagamento');
+        $status        = ($this->request->getVar('statusPagamento') === 'Todos') ? false : $this->request->getVar('statusPagamento');
+
+        // Consulta para contar a quantidade de registros
+        $transacoesQuery = (new \App\Models\TransacoesModel())
+            ->where('created_at >=', $dataInicio)
+            ->where('created_at <=', $dataFim);
+
+        if ($tipoPagamento) {
+            $transacoesQuery->where('tipo_pagamento', $tipoPagamento);
+        }
+
+        if ($status) {
+            $transacoesQuery->where('status_text', $status);
+        }
+
+        // Contar o número de transações que satisfazem os critérios
+        $totalRegistros = $transacoesQuery->countAllResults(false); // false para não resetar a query
+
+        // Defina o limite de registros para decidir o processamento
+        $limiteParaFila = 500; // Ajuste conforme sua necessidade
+
+        if ($totalRegistros <= $limiteParaFila) {
+            // Executa a tarefa em primeiro plano
+            $job = new \App\Jobs\GenerateReportJob();
+            $job->handle([
                 'data_inicio' => $dataInicio,
                 'data_fim' => $dataFim,
                 'tipo_pagamento' => $tipoPagamento,
-                'status' => $status
-            ]
-        ];
+                'status' => $status,
+                "id_admin"     => session('data')['idAdm'],
+                "id_user"      => session('data')['id'],
+                "whatsapp"     => session('data')['celular']
+            ]);
 
-        // Adiciona a tarefa na fila chamada "jobs_queue"
-        $this->redis->rpush('jobs_queue', json_encode($job));
+            log_message('info', 'Relatório gerado em primeiro plano com sucesso.');
 
-        log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+            return $this->respond(['status' => 'success', 'message' => 'Relatório gerado com sucesso em primeiro plano.', 'parametros' => $this->request->getVar()]);
+        } else {
+            // Adicionar a tarefa na fila Redis
+            $job = [
+                'handler' => 'App\Jobs\GenerateReportJob',
+                'data' => [
+                    'data_inicio' => $dataInicio,
+                    'data_fim' => $dataFim,
+                    'tipo_pagamento' => $tipoPagamento,
+                    'status' => $status,
+                    "id_admin"     => session('data')['idAdm'],
+                    "id_user"      => session('data')['id'],
+                    "whatsapp"     => session('data')['celular']
+                ]
+            ];
 
-        return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado.']);
+            // Adiciona a tarefa na fila chamada "jobs_queue"
+            $this->redis->rpush('jobs_queue', json_encode($job));
+
+            log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+
+            return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado na fila.']);
+        }
+    }
+
+    public function listRelatorios(){
+        $modelRelatorios = new RelatoriosGeradosModel();
+
+        $data = $modelRelatorios->listSearch($this->request->getGet());
+        return $this->respond($data);
     }
 }
