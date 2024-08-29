@@ -78,97 +78,81 @@ class TransacoesModel extends Model
      *
      * @return bool Retorna false se o envio de lembrete está desativado ou fora do horário permitido, true caso contrário.
      */
+
     public function verificarEnvioDeLembretes()
     {
-        // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
-        $hora = date('H');
-        if ($hora < 8 || $hora >= 18) {
-            log_message('info', 'Fora de horário comercial');
-            return false;
-        }
-
-        // Instancia o modelo de mensagens de configuração
-        $modelMessages = new ConfigMensagensModel();
-
-        // Busca a mensagem de pagamento atrasado ativa
-        $data = $modelMessages
-            ->where('status', 1)
-            ->where('tipo', 'pagamento_atrasado')
-            ->first();
-
-        // Verifica se a mensagem de lembrete de pagamento atrasado está ativa
-        if (!$data) {
-            log_message('info', 'envio de lembrete desativado');
-            return false;
-        }
-
-        // Conecta ao banco de dados
+        $dataEnvios = [];
         $db = \Config\Database::connect();
+        $usuariosQuery = $db->table('usuarios')
+            ->select('usuarios.*')
+            ->where('usuarios.tipo !=', 'superadmin')
+            ->get();
+
+        $usuarios = $usuariosQuery->getResultArray();
+        $controleEnviosModel = new ControleEnviosModel();
         $hoje = date('Y-m-d');
         $mesAtual = date('Y-m');
-        $pagina = 1;
-        $porPagina = 100; // Número de usuários por página
 
-        do {
-            // Consulta paginada para buscar os usuários
-            $usuariosQuery = $db->table('usuarios')
-                ->select('usuarios.*')
-                ->where('usuarios.tipo !=', 'superadmin')
-                ->limit($porPagina, ($pagina - 1) * $porPagina)
-                ->get();
+        // Configuração do Redis com tratamento de exceção
+        try {
+            $redis = new \Predis\Client((new \Config\Redis())->default);
+        } catch (\Exception $e) {
+            log_message('error', 'Erro ao conectar ao Redis: ' . $e->getMessage());
+            return;
+        }
 
-            $usuarios = $usuariosQuery->getResultArray();
-            $controleEnviosModel = new \App\Models\ControleEnviosModel();
-
-            foreach ($usuarios as $usuario) {
-                // Obtém o perfil do usuário
-                $perfil = $this->obterPerfilUsuario($usuario);
-                if (!$perfil) {
-                    continue; // Pula se o perfil não for encontrado
-                }
-
-                // Determina a melhor data de pagamento para o usuário
-                $melhorDia = $perfil['data_dizimo'];
-                $dataPagamento = date('Y-m-' . $melhorDia);
-
-                // Verifica se existe alguma transação paga para o usuário no mês atual
-                $transacoesPagasNoMes = $this->where('id_user', $usuario['id'])
-                    ->where('DATE_FORMAT(data_pagamento, "%Y-%m")', $mesAtual)
-                    ->where('status', 1) // Verifica se a transação está paga
-                    ->findAll();
-
-                if (empty($transacoesPagasNoMes)) {
-                    // Verifica a data do último envio de lembrete
-                    $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])
-                        ->orderBy('created_at', 'desc')
-                        ->first();
-
-                    $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
-
-                    // Envia lembrete se não foi enviado hoje e está dentro de 3 dias antes ou depois da melhor data de pagamento
-                    if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
-                        $this->enviarLembrete($perfil, $diasDiferenca);
-
-                        // Registra o envio na tabela controle_envios
-                        $id = $controleEnviosModel->insert([
-                            'id_user' => $usuario['id']
-                        ]);
-
-                        if ($id) {
-                            log_message('info', 'REGISTROU O ENVIO: ' . $perfil['id']);
-                        }
-                    } else {
-                        log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
-                    }
-                }
-                sleep(3); // Espera de 3 segundos antes de processar o próximo usuário
+        foreach ($usuarios as $usuario) {
+            $perfil = $this->obterPerfilUsuario($usuario);
+            if (!$perfil) {
+                continue;
             }
 
-            $pagina++;
-            $totalUsuarios = $db->table('usuarios')->where('tipo !=', 'superadmin')->countAllResults();
-        } while (($pagina - 1) * $porPagina < $totalUsuarios);
-    }
+            $melhorDia = $perfil['data_dizimo'];
+            $dataPagamento = date('Y-m-' . $melhorDia);
 
+            // Verifica se já foi enviado lembrete recente
+            $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
+
+            if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
+                // Adiciona a tarefa de lembrete na fila Redis
+                $job = [
+                    'handler' => 'App\Jobs\AvisosWhatsApp',
+                    'data' => [
+                        'usuario' => $perfil,
+                        'diasDiferenca' => $diasDiferenca
+                    ]
+                ];
+
+                try {
+                    // Adiciona à fila e verifica se foi bem-sucedido
+                    if ($redis->rpush('jobs_queue', json_encode($job))) {
+                        log_message('info', 'Tarefa de lembrete adicionada à fila Redis: ' . json_encode($job));
+                        $dataEnvios[] = ['id_user' => $usuario['id']];
+                    } else {
+                        log_message('error', 'Falha ao adicionar a tarefa de lembrete à fila Redis.');
+                    }
+                } catch (\Exception $e) {
+                    log_message('error', 'Erro ao adicionar tarefa à fila Redis: ' . $e->getMessage());
+                }
+            } else {
+                log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
+            }
+        }
+
+        // Inserção em batch no banco de dados se houver envios registrados
+        if ($dataEnvios) {
+            try {
+                $controleEnviosModel->insertBatch($dataEnvios);
+                log_message('info', 'Envios registrados com sucesso no banco de dados.');
+            } catch (\Exception $e) {
+                log_message('error', 'Erro ao registrar envios no banco de dados: ' . $e->getMessage());
+            }
+        }
+    }
 
     public function obterPerfilUsuario($usuario)
     {

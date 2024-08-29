@@ -308,9 +308,14 @@ class Transacoes extends ResourceController
         $totalRegistros = $transacoesQuery->countAllResults(false); // false para não resetar a query
 
         // Defina o limite de registros para decidir o processamento
-        $limiteParaFila = 500; // Ajuste conforme sua necessidade
+        $limiteParaFila = 1; // Ajuste conforme sua necessidade
 
         if ($totalRegistros <= $limiteParaFila) {
+
+            if($totalRegistros === 0){
+                return $this->respond(['status' => 'success', 'message' => 'Não há resultados para sua busca.']);
+            }
+            
             // Executa a tarefa em primeiro plano
             $job = new \App\Jobs\GenerateReportJob();
             $job->handle([
@@ -327,6 +332,7 @@ class Transacoes extends ResourceController
 
             return $this->respond(['status' => 'success', 'message' => 'Relatório gerado com sucesso em primeiro plano.', 'parametros' => $this->request->getVar()]);
         } else {
+
             // Adicionar a tarefa na fila Redis
             $job = [
                 'handler' => 'App\Jobs\GenerateReportJob',
@@ -342,9 +348,9 @@ class Transacoes extends ResourceController
             ];
 
             // Adiciona a tarefa na fila chamada "jobs_queue"
-            $this->redis->rpush('jobs_queue', json_encode($job));
+            $status = $this->redis->rpush('jobs_queue', json_encode($job));
 
-            log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+            log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job)."\n". $status);
 
             return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado na fila.']);
         }

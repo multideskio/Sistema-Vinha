@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\AjudaModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
+
 class Home extends BaseController
 {
     protected $modelConfig;
@@ -20,7 +21,7 @@ class Home extends BaseController
 
     public function index()
     {
-        
+
         //$this->cachePage(getCacheExpirationTimeInSeconds(60));
         return view('login/login', [
             'data' => $this->modelConfig,
@@ -71,11 +72,11 @@ class Home extends BaseController
         if (!$row) {
             throw PageNotFoundException::forPageNotFound();
         }
-        
+
         $this->data['result'] = $row;
         return view('ajuda/post', $this->data);
     }
-    
+
     public function sair()
     {
         session_destroy();
@@ -183,10 +184,34 @@ class Home extends BaseController
         //return $newEmail->envioTeste('igrsysten@gmail.com', 'Teste de envio', $message);
     }*/
 
-    
+
 
     public function phpinfo()
     {
         phpinfo();
+    }
+
+    public function teste()
+    {
+        //Predis\Client as RedisClient;
+        //Config\Redis as RedisConfig;
+
+        $redis = new \Predis\Client((new \Config\Redis())->default);
+
+        // Adicionar a tarefa na fila Redis
+        $job = [
+            'handler' => 'App\Jobs\Avisos',
+            'data' => [
+                'aviso' => 'Você é legal',
+                'tel' => '5562981154120'
+            ]
+        ];
+
+        // Tente adicionar à fila e verifique se houve sucesso
+        if ($redis->rpush('jobs_avisos', json_encode($job))) {
+            log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+        } else {
+            log_message('error', 'Falha ao adicionar a tarefa à fila Redis.');
+        }
     }
 }
