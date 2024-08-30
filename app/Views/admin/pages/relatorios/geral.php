@@ -4,7 +4,6 @@
 <div class="col-xxl-12">
     <h1 class="mb-3 fw-bolder">Gerar relatório</h1>
 </div>
-
 <div class="row">
     <div class="col-lg-3">
         <div class="card">
@@ -14,12 +13,11 @@
                     <label for="dateSearch" class="form-label">Defina uma data</label>
                     <div class="input-group">
                         <input id="dateSearch" name="dateSearch" type="text" class="form-control border-0 shadow">
-                        <button class="input-group-text bg-primary border-primary text-white" id="btnSearchDash">
+                        <button class="input-group-text bg-primary border-primary text-white" type="button">
                             <i class="ri-calendar-2-line"></i>
                         </button>
                     </div>
                 </div>
-
                 <div class="mb-3">
                     <label for="tipoPagamento" class="form-label">Forma de pagamento</label>
                     <select class="form-select" name="tipoPagamento" id="tipoPagamento">
@@ -30,7 +28,6 @@
                         <option value="boleto">Boleto</option>
                     </select>
                 </div>
-
                 <div class="mb-3">
                     <label for="statusPagamento" class="form-label">Status do pagamento</label>
                     <select class="form-select" name="statusPagamento" id="statusPagamento">
@@ -62,13 +59,10 @@
                             </tr>
                         </thead>
                         <tbody id="relatoriosLista">
-
                         </tbody>
                     </table>
-
                     <div id="pager" class="mt-2"></div>
                 </div>
-
                 <div class="noresult" style="display: none">
                     <div class="text-center">
                         <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>

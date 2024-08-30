@@ -197,12 +197,9 @@
     </div>
     <!--end col-->
 </div>
-
 <?= $this->endSection(); ?>
 <?= $this->section('js') ?>
-
 <script src="/assets/js/pages/profile-setting.init.js"></script>
 <script src="/assets/js/custom/functions.min.js"></script>
-
 <script src="/assets/js/custom/adminUpdate.js"></script>
 <?= $this->endSection(); ?>

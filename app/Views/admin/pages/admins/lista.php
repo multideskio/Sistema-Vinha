@@ -33,7 +33,6 @@
         <h5 class="mt-2">Buscando registros</h5>
     </div>
 </div>
-
 <?= $this->include('admin/pages/admins/modal.php') ?>
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>

@@ -58,7 +58,6 @@ class TransacoesModel extends Model
 
     protected function limparCache()
     {
-
         $cache = service('cache');
         $deletedItems = $cache->deleteMatching("transacoesList_" . '*');
     }
@@ -81,6 +80,13 @@ class TransacoesModel extends Model
 
     public function verificarEnvioDeLembretes()
     {
+        // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
+        $hora = date('H');
+        if ($hora < 8 || $hora >= 18) {
+            log_message('info', 'Fora de horário comercial');
+            return false;
+        }
+
         $dataEnvios = [];
         $db = \Config\Database::connect();
         $usuariosQuery = $db->table('usuarios')
@@ -88,10 +94,10 @@ class TransacoesModel extends Model
             ->where('usuarios.tipo !=', 'superadmin')
             ->get();
 
-        $usuarios = $usuariosQuery->getResultArray();
+        $usuarios            = $usuariosQuery->getResultArray();
         $controleEnviosModel = new ControleEnviosModel();
-        $hoje = date('Y-m-d');
-        $mesAtual = date('Y-m');
+        $hoje                = date('Y-m-d');
+        $mesAtual            = date('Y-m');
 
         // Configuração do Redis com tratamento de exceção
         try {
@@ -111,9 +117,7 @@ class TransacoesModel extends Model
             $dataPagamento = date('Y-m-' . $melhorDia);
 
             // Verifica se já foi enviado lembrete recente
-            $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])
-                ->orderBy('created_at', 'desc')
-                ->first();
+            $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])->orderBy('created_at', 'desc')->first();
 
             $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
 

@@ -13,7 +13,11 @@ class RelatoriosGeradosModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id_adm', 'id_user', 'nome_arquivo', 'url_download', 'parametros_busca'
+        'id_adm',
+        'id_user',
+        'nome_arquivo',
+        'url_download',
+        'parametros_busca'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -38,16 +42,76 @@ class RelatoriosGeradosModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['clearCache'];
 
 
-    public function listSearch($input = false, $limit = 15, $order = 'DESC'){
+    private function clearCache(){
+        cache()->deleteMatching("listSearchRelatorio_*") ;
+    }
+
+
+    public function listSearch($input = false, $limit = 15, $order = 'DESC')
+    {
+        $data = [];
+
+        // Define o termo de busca, se houver
+        $search = $input['search'] ?? false;
+        $page = $input['page'] ?? 1;
+
+        // Gera uma chave de cache única baseada nos parâmetros
+        $cacheKey = "listSearchRelatorio_{$search}_{$page}_{$limit}_{$order}";
+
+        // Verifica se os resultados já estão no cache
+        $cachedData = cache()->get($cacheKey);
+
+        if ($cachedData) {
+            // Retorna os dados do cache
+            return $cachedData;
+        }
+
+        // Configura a ordenação
+        $this->orderBy('id', $order);
+
+        // Executa a consulta paginada
+        $relatorios = $this->paginate($limit);
+        $totalResults = $this->countAllResults();
+        $currentPage = $this->pager->getCurrentPage();
+        $start = ($currentPage - 1) * $limit + 1;
+        $end = min($currentPage * $limit, $totalResults);
+
+        // Lógica para definir a mensagem de resultados
+        $resultCount = count($relatorios);
+        if ($search) {
+            if ($resultCount === 1) {
+                $numMessage = "1 resultado encontrado.";
+            } else {
+                $numMessage = "{$resultCount} resultados encontrados.";
+            }
+        } else {
+            $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
+        }
+
+        $data = [
+            'rows'  => $relatorios, // Resultados paginados
+            'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
+            'num'   => $numMessage
+        ];
+
+        // Armazena os resultados no cache por 10 minutos (600 segundos)
+        cache()->save($cacheKey, $data, 600);
+
+        return $data;
+    }
+
+
+    public function listSearch00($input = false, $limit = 15, $order = 'DESC')
+    {
         $data = [];
 
         // Define o termo de busca, se houver
@@ -81,6 +145,5 @@ class RelatoriosGeradosModel extends Model
         ];
 
         return $data;
-
     }
 }

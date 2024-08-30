@@ -3,8 +3,6 @@
 <div class="col-xxl-12">
     <h1 class="mb-3 fw-bolder">Gerenciamento do perfil da empresa</h1>
 </div>
-
-
 <div class="row">
     <div class="col-xxl-3">
         <div class="card">
@@ -306,7 +304,6 @@
                         </form>
                     </div>
                     <!--end tab-pane-->
-
                    <!-- <div class="tab-pane" id="mensagens" role="tabpanel">
                         <div class="text-center">
                             <h4>Configuração de mensagens que são enviadas por WhatsApp</h4>
@@ -443,7 +440,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-lg-6">
                                 <div class="card border card-border-primary">
                                     <div class="card-header text-center">
@@ -521,7 +517,6 @@
 <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
 <div class="modal fade" id="enviaTeste" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
-
         <div class="modal-content">
         <?= form_open('api/v1/administracao/testwhatsapp', ['class' => 'formGeral']) ?>
             <div class="modal-header">
@@ -548,10 +543,7 @@
         </div>
     </div>
 </div>
-
-
 <?= $this->endSection(); ?>
-
 <?= $this->section('js') ?>
 <!-- profile-setting init js -->
 <script src="/assets/js/pages/profile-setting.init.js"></script>

@@ -290,10 +290,10 @@ class Transacoes extends ResourceController
             return $dateTime ? $dateTime->format('Y-m-d') : null;
         }
 
-        $dataInicio = converterData($separa[0]);
-        $dataFim = converterData($separa[1]);
+        $dataInicio    = converterData($separa[0]);
+        $dataFim       = converterData($separa[1]);
         $tipoPagamento = ($this->request->getVar('tipoPagamento') === 'Todos') ? false : $this->request->getVar('tipoPagamento');
-        $status = ($this->request->getVar('statusPagamento') === 'Todos') ? false : $this->request->getVar('statusPagamento');
+        $status        = ($this->request->getVar('statusPagamento') === 'Todos') ? false : $this->request->getVar('statusPagamento');
 
         // Verifica se as datas foram convertidas corretamente
         if (!$dataInicio || !$dataFim) {
@@ -372,8 +372,6 @@ class Transacoes extends ResourceController
             return $this->respond(['status' => 'error', 'message' => 'Erro ao gerar o relatório.'], 500);
         }
     }
-
-
 
     public function listRelatorios()
     {
