@@ -51,8 +51,11 @@ class RelatoriosGeradosModel extends Model
     protected $afterDelete    = ['clearCache'];
 
 
-    private function clearCache(){
+    protected function clearCache(array $data): array{
+
         cache()->deleteMatching("listSearchRelatorio_*") ;
+        return $data;
+    
     }
 
 
