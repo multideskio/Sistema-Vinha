@@ -59,13 +59,13 @@ class TransacoesModel extends Model
     protected function limparCache()
     {
         $cache = service('cache');
-        $deletedItems = $cache->deleteMatching("transacoesList_" . '*');
+        $cache->deleteMatching("transacoesList_" . '*');
     }
+
     public function updateStatus()
     {
         return true;
     }
-
 
     /**
      * Verifica e envia lembretes de pagamento aos usuários.
@@ -82,6 +82,7 @@ class TransacoesModel extends Model
     {
         // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
         $hora = date('H');
+
         if ($hora < 8 || $hora >= 18) {
             log_message('info', 'Fora de horário comercial');
             return false;
@@ -89,10 +90,7 @@ class TransacoesModel extends Model
 
         $dataEnvios = [];
         $db = \Config\Database::connect();
-        $usuariosQuery = $db->table('usuarios')
-            ->select('usuarios.*')
-            ->where('usuarios.tipo !=', 'superadmin')
-            ->get();
+        $usuariosQuery = $db->table('usuarios')->select('usuarios.*')->where('usuarios.tipo !=', 'superadmin')->get();
 
         $usuarios            = $usuariosQuery->getResultArray();
         $controleEnviosModel = new ControleEnviosModel();
@@ -108,7 +106,9 @@ class TransacoesModel extends Model
         }
 
         foreach ($usuarios as $usuario) {
+            
             $perfil = $this->obterPerfilUsuario($usuario);
+
             if (!$perfil) {
                 continue;
             }
@@ -122,6 +122,7 @@ class TransacoesModel extends Model
             $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
 
             if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
+
                 // Adiciona a tarefa de lembrete na fila Redis
                 $job = [
                     'handler' => 'App\Jobs\AvisosWhatsApp',
@@ -182,7 +183,6 @@ class TransacoesModel extends Model
     private function enviarLembrete($usuario, $diasDiferenca)
     {
         $modelMessages = new ConfigMensagensModel();
-
         /**BUSCA MENSAGEM DE LEMBRETE DE PAGAMENTO */
         $lembrete_pagamento = $modelMessages
             ->where('status', 1)
