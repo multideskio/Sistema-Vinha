@@ -81,49 +81,54 @@ class TransacoesModel extends Model
     public function verificarEnvioDeLembretes()
     {
         // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
+        // para o envio de lembretes. Fora desse horário, a função não executa.
         $hora = date('H');
-
         if ($hora < 8 || $hora >= 18) {
             log_message('info', 'Fora de horário comercial');
-            return false;
+            return false; // Termina a execução fora do horário comercial
         }
 
-        $dataEnvios = [];
-        $db = \Config\Database::connect();
+        $dataEnvios = []; // Array para armazenar os registros de envios de lembretes
+        $db = \Config\Database::connect(); // Conecta ao banco de dados
+        // Consulta para obter todos os usuários que não são do tipo 'superadmin'
         $usuariosQuery = $db->table('usuarios')->select('usuarios.*')->where('usuarios.tipo !=', 'superadmin')->get();
 
-        $usuarios            = $usuariosQuery->getResultArray();
-        $controleEnviosModel = new ControleEnviosModel();
-        $hoje                = date('Y-m-d');
-        $mesAtual            = date('Y-m');
+        $usuarios = $usuariosQuery->getResultArray(); // Converte os resultados da consulta para um array associativo
+        $controleEnviosModel = new ControleEnviosModel(); // Instancia o modelo para controle de envios
+        $hoje = date('Y-m-d'); // Data atual
+        $mesAtual = date('Y-m'); // Mês atual no formato 'YYYY-MM'
 
-        // Configuração do Redis com tratamento de exceção
+        // Configuração do Redis com tratamento de exceção para garantir a conexão
         try {
-            $redis = new \Predis\Client((new \Config\Redis())->default);
+            $redis = new \Predis\Client((new \Config\Redis())->default); // Conecta ao Redis usando a configuração padrão
         } catch (\Exception $e) {
+            // Loga um erro se não conseguir conectar ao Redis
             log_message('error', 'Erro ao conectar ao Redis: ' . $e->getMessage());
-            return;
+            return; // Termina a execução caso o Redis não esteja acessível
         }
 
+        // Itera sobre todos os usuários obtidos na consulta
         foreach ($usuarios as $usuario) {
-            
+            // Obtém o perfil do usuário através de uma função auxiliar
             $perfil = $this->obterPerfilUsuario($usuario);
 
             if (!$perfil) {
-                continue;
+                continue; // Se o perfil não for encontrado, pula para o próximo usuário
             }
 
-            $melhorDia = $perfil['data_dizimo'];
-            $dataPagamento = date('Y-m-' . $melhorDia);
+            $melhorDia = $perfil['data_dizimo']; // Melhor dia de pagamento do dízimo para o usuário
+            $dataPagamento = date('Y-m-' . $melhorDia); // Constrói a data de pagamento no formato 'YYYY-MM-DD'
 
-            // Verifica se já foi enviado lembrete recente
+            // Verifica a data do último envio de lembrete para o usuário
             $dataEnvioUltimoLembrete = $controleEnviosModel->where('id_user', $usuario['id'])->orderBy('created_at', 'desc')->first();
 
+            // Calcula a diferença em dias entre hoje e a data de pagamento
             $diasDiferenca = (strtotime($hoje) - strtotime($dataPagamento)) / (60 * 60 * 24);
 
+            // Verifica se o lembrete deve ser enviado: dentro de 3 dias da data de pagamento
+            // e se o lembrete ainda não foi enviado hoje
             if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
-
-                // Adiciona a tarefa de lembrete na fila Redis
+                // Cria um job para enviar o lembrete via WhatsApp, incluindo dados do usuário e diferença de dias
                 $job = [
                     'handler' => 'App\Jobs\AvisosWhatsApp',
                     'data' => [
@@ -133,31 +138,37 @@ class TransacoesModel extends Model
                 ];
 
                 try {
-                    // Adiciona à fila e verifica se foi bem-sucedido
+                    // Tenta adicionar o job à fila Redis e verifica se a adição foi bem-sucedida
                     if ($redis->rpush('jobs_queue', json_encode($job))) {
                         log_message('info', 'Tarefa de lembrete adicionada à fila Redis: ' . json_encode($job));
+                        // Adiciona o envio ao array de registros para posterior inserção em batch no banco de dados
                         $dataEnvios[] = ['id_user' => $usuario['id']];
                     } else {
+                        // Loga um erro se falhar ao adicionar a tarefa na fila Redis
                         log_message('error', 'Falha ao adicionar a tarefa de lembrete à fila Redis.');
                     }
                 } catch (\Exception $e) {
+                    // Loga um erro se houver uma exceção ao tentar adicionar à fila Redis
                     log_message('error', 'Erro ao adicionar tarefa à fila Redis: ' . $e->getMessage());
                 }
             } else {
+                // Loga uma mensagem se o envio não foi registrado por estar fora das condições
                 log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
             }
         }
 
-        // Inserção em batch no banco de dados se houver envios registrados
+        // Verifica se há envios registrados e insere-os no banco de dados em batch
         if ($dataEnvios) {
             try {
-                $controleEnviosModel->insertBatch($dataEnvios);
+                $controleEnviosModel->insertBatch($dataEnvios); // Insere os registros de envios no banco de dados
                 log_message('info', 'Envios registrados com sucesso no banco de dados.');
             } catch (\Exception $e) {
+                // Loga um erro se houver uma exceção ao tentar registrar os envios no banco de dados
                 log_message('error', 'Erro ao registrar envios no banco de dados: ' . $e->getMessage());
             }
         }
     }
+
 
     public function obterPerfilUsuario($usuario)
     {
