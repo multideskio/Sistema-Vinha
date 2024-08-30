@@ -42,7 +42,7 @@ $routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1\Public
     $routes->post('newpass', 'Open::newpass');
 });
 
-$routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1'], static function ($routes) {
+$routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1', 'filter' => 'cors:api'], static function ($routes) {
 
     $routes->post('administradores/update/upload/(:num)', 'Administradores::foto/$1');
     $routes->put('administradores/update/links/(:num)', 'Administradores::links/$1');

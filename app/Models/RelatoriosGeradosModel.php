@@ -52,12 +52,9 @@ class RelatoriosGeradosModel extends Model
 
 
     protected function clearCache(array $data): array{
-
-        cache()->deleteMatching("listSearchRelatorio_*") ;
+        cache()->deleteMatching("*_listSearchRelatorio") ;
         return $data;
-    
     }
-
 
     public function listSearch($input = false, $limit = 15, $order = 'DESC')
     {
@@ -68,7 +65,7 @@ class RelatoriosGeradosModel extends Model
         $page = $input['page'] ?? 1;
 
         // Gera uma chave de cache única baseada nos parâmetros
-        $cacheKey = "listSearchRelatorio_{$search}_{$page}_{$limit}_{$order}";
+        $cacheKey = "{$search}_{$page}_{$limit}_{$order}_listSearchRelatorio";
 
         // Verifica se os resultados já estão no cache
         $cachedData = cache()->get($cacheKey);

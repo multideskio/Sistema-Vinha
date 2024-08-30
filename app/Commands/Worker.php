@@ -69,6 +69,10 @@ class Worker extends BaseCommand
                         // Executa o método handle passando os dados do job
                         $handler->handle($job['data']);
                         CLI::write("Tarefa processada com sucesso.", 'green');
+                        
+                        
+                        cache()->deleteMatching("*_listSearchRelatorio");
+
                     } catch (\Exception $e) {
                         // Loga e mostra um erro se ocorrer uma exceção ao processar o handler
                         CLI::write("Erro ao processar o handler: " . $e->getMessage(), 'red');
