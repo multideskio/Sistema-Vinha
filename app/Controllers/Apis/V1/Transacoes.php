@@ -277,6 +277,10 @@ class Transacoes extends ResourceController
     {
         // Parâmetros da requisição
         $data = $this->request->getVar('dateSearch');
+        if (!$data || strpos($data, ' até ') === false) {
+            return $this->respond(['status' => 'error', 'message' => 'Parâmetro de data inválido.'], 400);
+        }
+
         $separa = explode(" até ", $data);
 
         // Função para converter a data de dd/mm/yyyy para yyyy-mm-dd
@@ -286,79 +290,94 @@ class Transacoes extends ResourceController
             return $dateTime ? $dateTime->format('Y-m-d') : null;
         }
 
-        $dataInicio    = converterData($separa[0]);
-        $dataFim       = converterData($separa[1]);
+        $dataInicio = converterData($separa[0]);
+        $dataFim = converterData($separa[1]);
         $tipoPagamento = ($this->request->getVar('tipoPagamento') === 'Todos') ? false : $this->request->getVar('tipoPagamento');
-        $status        = ($this->request->getVar('statusPagamento') === 'Todos') ? false : $this->request->getVar('statusPagamento');
+        $status = ($this->request->getVar('statusPagamento') === 'Todos') ? false : $this->request->getVar('statusPagamento');
 
-        // Consulta para contar a quantidade de registros
-        $transacoesQuery = (new \App\Models\TransacoesModel())
-            ->where('created_at >=', $dataInicio)
-            ->where('created_at <=', $dataFim);
-
-        if ($tipoPagamento) {
-            $transacoesQuery->where('tipo_pagamento', $tipoPagamento);
+        // Verifica se as datas foram convertidas corretamente
+        if (!$dataInicio || !$dataFim) {
+            return $this->respond(['status' => 'error', 'message' => 'Erro ao converter as datas fornecidas.'], 400);
         }
 
-        if ($status) {
-            $transacoesQuery->where('status_text', $status);
-        }
+        try {
+            // Consulta para contar a quantidade de registros
+            $transacoesQuery = (new \App\Models\TransacoesModel())
+                ->where('created_at >=', $dataInicio)
+                ->where('created_at <=', $dataFim);
 
-        // Contar o número de transações que satisfazem os critérios
-        $totalRegistros = $transacoesQuery->countAllResults(false); // false para não resetar a query
-
-        // Defina o limite de registros para decidir o processamento
-        $limiteParaFila = 1; // Ajuste conforme sua necessidade
-
-        if ($totalRegistros <= $limiteParaFila) {
-
-            if($totalRegistros === 0){
-                return $this->respond(['status' => 'success', 'message' => 'Não há resultados para sua busca.']);
+            if ($tipoPagamento) {
+                $transacoesQuery->where('tipo_pagamento', $tipoPagamento);
             }
-            
-            // Executa a tarefa em primeiro plano
-            $job = new \App\Jobs\GenerateReportJob();
-            $job->handle([
-                'data_inicio' => $dataInicio,
-                'data_fim' => $dataFim,
-                'tipo_pagamento' => $tipoPagamento,
-                'status' => $status,
-                "id_admin"     => session('data')['idAdm'],
-                "id_user"      => session('data')['id'],
-                "whatsapp"     => session('data')['celular']
-            ]);
 
-            log_message('info', 'Relatório gerado em primeiro plano com sucesso.');
+            if ($status) {
+                $transacoesQuery->where('status_text', $status);
+            }
 
-            return $this->respond(['status' => 'success', 'message' => 'Relatório gerado com sucesso em primeiro plano.', 'parametros' => $this->request->getVar()]);
-        } else {
+            // Contar o número de transações que satisfazem os critérios
+            $totalRegistros = $transacoesQuery->countAllResults(false);
 
-            // Adicionar a tarefa na fila Redis
-            $job = [
-                'handler' => 'App\Jobs\GenerateReportJob',
-                'data' => [
+            // Se não houver registros, retornar 204 No Content
+            if ($totalRegistros === 0) {
+                return $this->respond(['status' => 'error', 'message' => 'Não houve resultados para essa pesquisa.']);
+            }
+
+            // Defina o limite de registros para decidir o processamento
+            $limiteParaFila = 1; // Ajuste conforme sua necessidade
+
+            if ($totalRegistros <= $limiteParaFila) {
+                // Executa a tarefa em primeiro plano
+                $job = new \App\Jobs\GenerateReportJob();
+                $job->handle([
                     'data_inicio' => $dataInicio,
                     'data_fim' => $dataFim,
                     'tipo_pagamento' => $tipoPagamento,
                     'status' => $status,
-                    "id_admin"     => session('data')['idAdm'],
-                    "id_user"      => session('data')['id'],
-                    "whatsapp"     => session('data')['celular']
-                ]
-            ];
+                    'id_admin' => session('data')['idAdm'],
+                    'id_user' => session('data')['id'],
+                    'whatsapp' => session('data')['celular']
+                ]);
 
-            // Adiciona a tarefa na fila chamada "jobs_queue"
-            $status = $this->redis->rpush('jobs_queue', json_encode($job));
+                log_message('info', 'Relatório gerado em primeiro plano com sucesso.');
 
-            log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job)."\n". $status);
+                return $this->respondCreated(['status' => 'success', 'message' => 'Relatório gerado com sucesso em primeiro plano.']);
+            } else {
+                // Adicionar a tarefa na fila Redis
+                $job = [
+                    'handler' => 'App\Jobs\GenerateReportJob',
+                    'data' => [
+                        'data_inicio' => $dataInicio,
+                        'data_fim' => $dataFim,
+                        'tipo_pagamento' => $tipoPagamento,
+                        'status' => $status,
+                        'id_admin' => session('data')['idAdm'],
+                        'id_user' => session('data')['id'],
+                        'whatsapp' => session('data')['celular']
+                    ]
+                ];
 
-            return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado na fila.']);
+                // Adiciona a tarefa na fila chamada "jobs_queue"
+                $status = $this->redis->rpush('jobs_queue', json_encode($job));
+
+                if ($status) {
+                    log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+                    return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado na fila.'], 202);
+                } else {
+                    log_message('error', 'Falha ao adicionar a tarefa à fila Redis.');
+                    return $this->respond(['status' => 'error', 'message' => 'Falha ao adicionar a tarefa na fila.'], 500);
+                }
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Erro ao gerar o relatório: ' . $e->getMessage());
+            return $this->respond(['status' => 'error', 'message' => 'Erro ao gerar o relatório.'], 500);
         }
     }
 
-    public function listRelatorios(){
-        $modelRelatorios = new RelatoriosGeradosModel();
 
+
+    public function listRelatorios()
+    {
+        $modelRelatorios = new RelatoriosGeradosModel();
         $data = $modelRelatorios->listSearch($this->request->getGet());
         return $this->respond($data);
     }

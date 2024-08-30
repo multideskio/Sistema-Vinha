@@ -222,16 +222,19 @@
                     icon: 'info'
                 });
             },
-            success: function() {
+            success: function(response) {
+
+                const successMessage    = response.message || 'Operação realizada com sucesso!';
+                const statusSolicitacao = response.status  || 'success';
+
                 atualizarTabela();
                 //$('#formCad')[0].reset();
                 Swal.fire({
-                    title: 'Relatório solicitado!',
-                    icon: 'success',
-                    confirmButtonClass: 'btn btn-primary w-xs mt-2',
-                    buttonsStyling: false,
+                    html: successMessage,
+                    icon: statusSolicitacao
                 });
             },
+
             error: function(xhr) {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.messages ? xhr.responseJSON : {
                     messages: {
