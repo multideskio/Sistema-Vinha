@@ -13,7 +13,28 @@ class IgrejasModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        "id_adm", "id_user", "id_supervisor", "nome_tesoureiro", "sobrenome_tesoureiro", "cpf_tesoureiro", "fundacao", "razao_social", "fantasia", "cnpj", "foto", "uf", "cidade", "cep", "complemento", "bairro", "data_dizimo", "telefone", "celular", "facebook", "instagram", "website"
+        "id_adm",
+        "id_user",
+        "id_supervisor",
+        "nome_tesoureiro",
+        "sobrenome_tesoureiro",
+        "cpf_tesoureiro",
+        "fundacao",
+        "razao_social",
+        "fantasia",
+        "cnpj",
+        "foto",
+        "uf",
+        "cidade",
+        "cep",
+        "complemento",
+        "bairro",
+        "data_dizimo",
+        "telefone",
+        "celular",
+        "facebook",
+        "instagram",
+        "website"
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -34,17 +55,25 @@ class IgrejasModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = ["filterHtml", "limpaStrings"];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ["clearCache"];
     protected $beforeUpdate   = ["filterHtml", "limpaStrings"];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ["clearCache"];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ["clearCache"];
 
     protected function filterHtml(array $data)
     {
         return esc($data);
+    }
+
+    protected function clearCache(array $data): array
+    {
+        $cache = service('cache');
+        $cache->deleteMatching("igrejasList_" . "*");
+
+        return $data;
     }
 
     protected function limpaStrings(array $data)
@@ -74,7 +103,8 @@ class IgrejasModel extends Model
         return $data;
     }
 
-    public function listSearch0(){
+    public function listSearch0()
+    {
         return $this->findAll();
     }
 
@@ -82,6 +112,19 @@ class IgrejasModel extends Model
     {
         // Definir o termo de busca, se houver
         $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? 1;
+        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
+
+        // Gera uma chave de cache única baseada nos parâmetros de entrada
+        $cacheKey = "igrejasList_{$searchCache}_{$limit}_{$order}_{$page}";
+
+        // Verifica se os resultados já estão no cache
+        $cachedData = cache()->get($cacheKey);
+
+        if ($cachedData) {
+            // Retorna os dados do cache
+            return $cachedData;
+        }
 
         // Configurar a query
         $this->orderBy('igrejas.id', $order)
@@ -96,7 +139,7 @@ class IgrejasModel extends Model
             ->join('supervisores', 'supervisores.id = igrejas.id_supervisor')
             ->join('gerentes', 'gerentes.id = supervisores.id_gerente')
             ->join('regioes', 'regioes.id = supervisores.id_regiao')
-            ;
+        ;
 
         // Adicionar condições de busca se o termo estiver presente
         if ($search) {
@@ -140,10 +183,15 @@ class IgrejasModel extends Model
             $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
         }
 
-        return [
+        $data = [
             'rows'  => $igrejas, // Resultados paginados
             'pager' => $pager->links('default', 'paginate'), // Links de paginação
             'num'   => $numMessage
         ];
+
+        helper('auxiliar');
+        cache()->save($cacheKey, $data, getCacheExpirationTimeInSeconds(1));
+
+        return $data;
     }
 }

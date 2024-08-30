@@ -57,18 +57,21 @@ class GerentesModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = ["filterHtml", "limpaStrings"];
-    protected $afterInsert    = ["updateCache"];
+    protected $afterInsert    = ["clearCache"];
     protected $beforeUpdate   = ["filterHtml", "limpaStrings"];
-    protected $afterUpdate    = ["updateCache"];
+    protected $afterUpdate    = ["clearCache"];
     protected $beforeFind     = [];
     protected $afterFind      = ["filterHtml"];
     protected $beforeDelete   = [];
-    protected $afterDelete    = ["updateCache"];
+    protected $afterDelete    = ["clearCache"];
 
-    protected function updateCache()
+    protected function clearCache(array $data): array
     {
-        $cache = \Config\Services::cache();
+        $cache = service('cache');
         $cache->delete("gerentes_Cache");
+        $cache->deleteMatching("gerentesList_" . "*");
+
+        return $data;
     }
 
     protected function filterHtml(array $data)
@@ -123,10 +126,25 @@ class GerentesModel extends Model
             ->limit($limit, $offset)
             ->findAll();
     }
+
+
     public function listSearch($input = false, $limit = 12, $order = 'DESC'): array
     {
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? 1;
+        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
+
+        // Gera uma chave de cache única baseada nos parâmetros de entrada
+        $cacheKey = "gerentesList_{$searchCache}_{$limit}_{$order}_{$page}";
+
+        // Verifica se os resultados já estão no cache
+        $cachedData = cache()->get($cacheKey);
+
+        if ($cachedData) {
+            // Retorna os dados do cache
+            return $cachedData;
+        }
 
         // Configuração inicial da query
         $this->orderBy('gerentes.id', $order)
@@ -147,9 +165,9 @@ class GerentesModel extends Model
         }
 
         // Paginação dos resultados
-        $gerentes     = $this->paginate($limit);
+        $gerentes = $this->paginate($limit);
         $totalResults = $this->countAllResults();
-        $currentPage  = $this->pager->getCurrentPage();
+        $currentPage = $this->pager->getCurrentPage();
         $start = ($currentPage - 1) * $limit + 1;
         $end = min($currentPage * $limit, $totalResults);
 
@@ -165,11 +183,15 @@ class GerentesModel extends Model
             $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
         }
 
-
-        return [
+        $data = [
             'rows'  => $gerentes, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
             'num'   => $numMessage
         ];
+
+        // Armazena os resultados no cache por 10 minutos (600 segundos)
+        cache()->save($cacheKey, $data, getCacheExpirationTimeInSeconds(1));
+
+        return $data;
     }
 }

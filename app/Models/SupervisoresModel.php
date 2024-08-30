@@ -63,16 +63,14 @@ class SupervisoresModel extends Model
     protected $afterDelete    = ["updateCache"];
 
 
-    protected function updateCache(array $data)
+    protected function updateCache(array $data): array
     {
-
-        $cache = \Config\Services::cache();
+        $cache = service('cache');
         $cache->delete("supervisores_Cache");
-        $cache->delete("public_supervisores");
-        $cache->delete("select_supervisores");
-
+        $cache->deleteMatching("supervisoresList_"."*");
         return $data;
     }
+
     protected function filterHtml(array $data)
     {
         // Verifica se o array $data['data'] existe e se possui elementos
@@ -147,6 +145,19 @@ class SupervisoresModel extends Model
 
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? 1;
+        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
+
+        // Gera uma chave de cache única baseada nos parâmetros de entrada
+        $cacheKey = "supervisoresList_{$searchCache}_{$limit}_{$order}_{$page}";
+
+        // Verifica se os resultados já estão no cache
+        $cachedData = cache()->get($cacheKey);
+
+        if ($cachedData) {
+            // Retorna os dados do cache
+            return $cachedData;
+        }
 
         $this->orderBy('supervisores.id', $order)
             ->where('usuarios.tipo', 'supervisor')
@@ -188,11 +199,16 @@ class SupervisoresModel extends Model
             $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
         }
 
-        return [
+        $data = [
             'rows'  => $supervisorores, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
             'num'   => $numMessage
         ];
+
+        // Armazena os resultados no cache por 10 minutos (600 segundos)
+        cache()->save($cacheKey, $data, getCacheExpirationTimeInSeconds(1));
+
+        return $data;
     }
 
     public function listFull()

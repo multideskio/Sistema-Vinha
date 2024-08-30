@@ -25,7 +25,6 @@ class Regioes extends ResourceController
     {
         $data = $this->modelRegioes->listSearch($this->request->getGet());
         return $this->respond($data);
-        
     }
 
     /**

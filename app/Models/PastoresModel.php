@@ -52,14 +52,14 @@ class PastoresModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = ["limpaStrings", "filterHtml"];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['clearCache'];
     protected $beforeUpdate   = ["filterHtml", "limpaStrings"];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['clearCache'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
-    
+    protected $afterDelete    = ['clearCache'];
+
     protected function filterHtml(array $data)
     {
         // Verifica se o array $data['data'] existe e se possui elementos
@@ -82,7 +82,14 @@ class PastoresModel extends Model
         }
         return $data;
     }
-    
+
+    protected function clearCache(array $data): array
+    {
+        $cache = service('cache');
+        $cache->deleteMatching("pastoresList_" . "*");
+        return $data;
+    }
+
     public function listSearch($input = false, $limit = 12, $order = 'DESC'): array
     {
         $data = [];
@@ -90,6 +97,18 @@ class PastoresModel extends Model
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
         $page   = $input['page'] ?? false;
+        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
+
+        // Gera uma chave de cache única baseada nos parâmetros de entrada
+        $cacheKey = "pastoresList_{$searchCache}_{$limit}_{$order}_{$page}";
+
+        // Verifica se os resultados já estão no cache
+        $cachedData = cache()->get($cacheKey);
+
+        if ($cachedData) {
+            // Retorna os dados do cache
+            return $cachedData;
+        }
 
 
 
@@ -143,6 +162,10 @@ class PastoresModel extends Model
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
             'num'   => $numMessage
         ];
+
+        helper('auxiliar');
+        // Armazena os resultados no cache por 10 minutos (600 segundos)
+        cache()->save($cacheKey, $data, getCacheExpirationTimeInSeconds(1));
 
         return $data;
     }

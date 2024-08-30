@@ -56,27 +56,18 @@ class TransacoesModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = ['limparCache'];
 
-    protected function limparCache()
+    protected function limparCache(array $data) :array
     {
         $cache = service('cache');
         $cache->deleteMatching("transacoesList_" . '*');
+
+        return $data;
     }
 
     public function updateStatus()
     {
         return true;
     }
-
-    /**
-     * Verifica e envia lembretes de pagamento aos usuários.
-     *
-     * Este método verifica se o horário atual está dentro do intervalo permitido
-     * (entre 08:00 e 18:00), busca as mensagens de lembrete de pagamento ativas e,
-     * em seguida, envia lembretes de pagamento para usuários que não efetuaram
-     * pagamentos no mês atual. Os lembretes são enviados via WhatsApp.
-     *
-     * @return bool Retorna false se o envio de lembrete está desativado ou fora do horário permitido, true caso contrário.
-     */
 
     public function verificarEnvioDeLembretes()
     {
@@ -258,8 +249,14 @@ class TransacoesModel extends Model
     {
         $request = service('request');
 
+        $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? 1;
+
+        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
+        
+
         // Criação de uma chave de cache única baseada nos parâmetros
-        $cacheKey = "transacoesList_{$limit}_{$order}_" . md5(json_encode($input));
+        $cacheKey = "transacoesList_{$searchCache}_{$limit}_{$order}_{$page}"; 
 
         $cache = \Config\Services::cache();
 
@@ -363,7 +360,7 @@ class TransacoesModel extends Model
 
         helper('auxiliar');
         // Armazena os dados no cache
-        $cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(7)); // Cache por 5 minutos (300 segundos)
+        $cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(1)); // Cache por 5 minutos (300 segundos)
 
         return $result;
     }

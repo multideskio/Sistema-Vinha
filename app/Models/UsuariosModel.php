@@ -73,23 +73,21 @@ class UsuariosModel extends Model
     protected function antesCadastro(array $data)
     {
         helper("auxiliar");
-
         $data["data"]["token"] = gera_token();
-
         if (!empty($data["data"]["password"])) {
             $data["data"]["password"] = password_hash($data["data"]["password"], PASSWORD_BCRYPT);
         }
-
         return $data;
     }
 
-    protected function updateCache()
+    protected function updateCache(array $data) : array
     {
         $cache = service('cache');
         $cache->delete("user_cache");
         $cache->delete('listDashboard');
+        $cache->deleteMatching("userlist_" . '*');
 
-        $deletedItems = $cache->deleteMatching("userlist_" . '*');
+        return $data;
     }
 
     // Caminho: app/Controllers/SeuController.php
@@ -97,9 +95,11 @@ class UsuariosModel extends Model
     public function listGeral($input = false, $limit = 10, $order = 'DESC')
     {
         $search = $input['search'] ?? false;
+        $page   = $input['page'] ?? 1;
+        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
 
         // Chave única para identificar o cache
-        $cacheKey = "userlist_{$search}_{$limit}_{$order}";
+        $cacheKey = "usuariosList_{$searchCache}_{$limit}_{$order}_{$page}";
 
         // Instância do serviço de cache
         $cache = \Config\Services::cache();
@@ -134,7 +134,7 @@ class UsuariosModel extends Model
 
         helper('auxiliar');
         // Armazena os dados processados no cache
-        //$cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(7)); // 300 segundos (5 minutos) de cache
+        $cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(1)); // 300 segundos (5 minutos) de cache
 
         return $result;
     }

@@ -33,12 +33,7 @@ class Gerentes extends ResourceController
 
     public function index()
     {
-        if ($this->request->getGet("search") == "false") {
-            $data = $this->modelGerentes->listSearch();
-        } else {
-            $data = $this->modelGerentes->listSearch($this->request->getGet());
-        }
-
+        $data = $this->modelGerentes->listSearch($this->request->getGet());
         return $this->respond($data);
     }
 
@@ -172,14 +167,14 @@ class Gerentes extends ResourceController
                 return $this->fail('Falha ao criar o usuário.', 400);
             }
             // Confirma a transação
-            $db->transCommit(); 
+            $db->transCommit();
 
             // Notificações
             $notification = new \App\Libraries\NotificationLibrary();
-            
+
             //Verifica
             if ($celular) {
-                $notification->sendWelcomeMessage($nome, $email, $celular); 
+                $notification->sendWelcomeMessage($nome, $email, $celular);
             }
 
             $notification->sendVerificationEmail($email, $nome);

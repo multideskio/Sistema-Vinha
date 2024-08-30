@@ -27,14 +27,11 @@ class Usuarios extends ResourceController
         $this->modelUsuarios = new \App\Models\UsuariosModel;
         $this->LibrariesUpload = new \App\Libraries\UploadsLibraries;
     }
+
     public function index()
     {
         //
-        if ($this->request->getGet("search") == "false") {
-            $data = $this->modelUsuarios->listGeral();
-        } else {
-            $data = $this->modelUsuarios->listGeral($this->request->getGet());
-        }
+        $data = $this->modelUsuarios->listGeral($this->request->getGet());
         return $this->respond($data);
     }
 
