@@ -7,18 +7,18 @@ use CodeIgniter\Config\BaseConfig;
 class Cors extends BaseConfig
 {
     public array $default = [
-        'allowedOrigins' => ['http://localhost:8080', 'https://vinhaonline.com', 'https://vinha.conect.app'],
+        'allowedOrigins' => ['https://vinhaonline.com', 'https://vinha.conect.app'],
         'allowedOriginsPatterns' => [],
         'supportsCredentials' => false,
         'allowedHeaders' => [
-            'X-API-KEY', 
+            /*'X-API-KEY', 
             'Origin', 
             'X-Requested-With', 
             'Content-Type', 
             'Accept', 
             'Access-Control-Requested-Method', 
             'Authorization', 
-            'Accept-Language'
+            'Accept-Language'*/
         ],
         'exposedHeaders' => [],
         'allowedMethods' => ['GET', 'POST', 'OPTIONS', 'PATCH', 'PUT', 'DELETE'],

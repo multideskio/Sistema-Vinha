@@ -6,7 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'Home::index', ['filter' => 'verifyLogged']);
+$routes->get('/', 'Home::index', ['filter' => ['verifyLogged', 'cors'] ]);
 
 $routes->get('health', 'Health::index');
 

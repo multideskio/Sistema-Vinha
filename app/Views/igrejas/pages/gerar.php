@@ -18,9 +18,12 @@
                             <a class="nav-link" id="custom-v-pills-profile-tab" data-bs-toggle="pill" href="#custom-v-pills-profile" role="tab" aria-controls="custom-v-pills-profile" aria-selected="false">
                                 <i class=" ri-bank-card-line d-block fs-20 mb-1"></i> CARTÃO DE CRÉDITO
                             </a>
-                            <!--  <a class="nav-link" id="custom-v-pills-messages-tab" data-bs-toggle="pill" href="#custom-v-pills-messages" role="tab" aria-controls="custom-v-pills-messages" aria-selected="false">
+                            <a class="nav-link" id="custom-v-pills-messages-tab" data-bs-toggle="pill" href="#custom-v-pills-messages" role="tab" aria-controls="custom-v-pills-messages" aria-selected="false">
                                 <i class="ri-mail-line d-block fs-20 mb-1"></i> CARTÃO DE DÉBITO
-                            </a> -->
+                            </a>
+                            <a class="nav-link" id="custom-v-pills-messages-tab" data-bs-toggle="pill" href="#custom-v-pills-messages" role="tab" aria-controls="custom-v-pills-messages" aria-selected="false">
+                                <i class="ri-mail-line d-block fs-20 mb-1"></i> GERAR BOLETO
+                            </a>
                         </div>
                     </div>
                     <!-- end col-->

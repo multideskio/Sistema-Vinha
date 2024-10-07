@@ -174,10 +174,10 @@ class Gerentes extends ResourceController
 
             //Verifica
             if ($celular) {
-                $notification->sendWelcomeMessage($nome, $email, $celular);
+                //$notification->sendWelcomeMessage($nome, $email, $celular);
             }
 
-            $notification->sendVerificationEmail($email, $nome);
+            //$notification->sendVerificationEmail($email, $nome);
 
             // Retorno de sucesso
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado"), 'id' => $id]);
