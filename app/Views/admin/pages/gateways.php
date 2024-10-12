@@ -51,10 +51,10 @@
                             <input class="form-check-input" type="checkbox" role="switch" id="activeDebito" name="activeDebito" value="1">
                             <label class="form-check-label" for="activeDebito">Cartão de débito</label>
                         </div>
-                        <!-- <div class="form-check form-switch form-switch-success">
+                        <div class="form-check form-switch form-switch-success">
                             <input class="form-check-input" type="checkbox" role="switch" id="activeBoletos" name="activeBoletos" value="1">
                             <label class="form-check-label" for="activeBoletos">Boletos</label>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="mt-3 alert alert-warning bg-warning text-dark">
                         <b>Credenciais de desenvolvimento</b>

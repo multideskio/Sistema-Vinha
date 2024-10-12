@@ -116,7 +116,7 @@ function statisticas(search = null) {
         }
     }).fail(() => {
         Swal.fire({
-            text: 'Houve um erro ao atualizar...',
+            html: 'Verifique se já configurou as credenciais da CIELO, qualquer dúvida.<br>Entre em contato com o suporte (62) 9 8115-4120',
             icon: 'error'
         });
     });

@@ -80,7 +80,7 @@ class EmailsLibraries
             }
         } catch (Exception $e) {
             log_message('critical', '[Linha ' . __LINE__ . '] Erro crítico ao enviar o e-mail: ' . $e->getMessage());
-            throw new Exception('Falha ao enviar o e-mail. Detalhes: ' . $e->getMessage());
+            //throw new Exception('Falha ao enviar o e-mail. Detalhes: ' . $e->getMessage());
         }
     }
 

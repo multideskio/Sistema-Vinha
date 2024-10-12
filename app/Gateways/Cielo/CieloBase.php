@@ -133,6 +133,7 @@ class CieloBase
         }
 
         throw new Exception('Nenhuma configuração da Cielo encontrada.');
+        log_message('error', 'Nenhuma configuração da Cielo encontrada.');
     }
 
     /**

@@ -30,7 +30,9 @@ class WhatsappLibraries
 
             $dataSettings = $this->data();
             if (!$dataSettings) {
-                throw new Exception('Nenhuma configuração da API Multidesk encontrada.');
+                //throw new Exception('Nenhuma configuração da API Multidesk encontrada.');
+                log_message('error', 'Nenhuma configuração da API Multidesk encontrada.');
+                return false;
             }
 
             $this->apiUrl = rtrim($dataSettings['apiUrl'], '/');
@@ -120,6 +122,9 @@ class WhatsappLibraries
 
     public function sendMessageImage(array $message, string $number): bool
     {
+        if(!$this->data()){
+            return false;
+        }
         $this->logger->info('Método sendMessageImage chamado.', [
             'number' => $number,
             'message' => $message
@@ -155,6 +160,9 @@ class WhatsappLibraries
 
     public function sendMessageCsv(array $message, string $number): bool
     {
+        if(!$this->data()){
+            return false;
+        }
         $this->logger->info('Método sendMessageImage chamado.', [
             'number' => $number,
             'message' => $message
@@ -190,6 +198,9 @@ class WhatsappLibraries
 
     public function sendMessageText(array $message, string $number): bool
     {
+        if(!$this->data()){
+            return false;
+        }
         $this->logger->info('Método sendMessageText chamado.', [
             'number' => $number,
             'message' => $message

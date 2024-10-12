@@ -29,7 +29,7 @@ class NotificationLibrary
             ];
             $novaString = strtr($messages['mensagem'], $valores);
             $msg['message'] = $novaString;
-            $this->whatsapp->sendMessageText($msg, $celular);
+            $this->whatsapp->sendMessageText($msg, $celular) ?? false;
         }
     }
 
