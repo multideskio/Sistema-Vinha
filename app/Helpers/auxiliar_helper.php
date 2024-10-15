@@ -1,15 +1,14 @@
 <?php
 
-
 if (!function_exists('gera_token')) {
     /**
      * The function "gera_token" generates a token using SHA-256 hashing algorithm with optional input
      * text or current timestamp.
-     * 
+     *
      * @param text The `text` parameter in the `gera_token` function is optional. If a value is
      * provided for `text`, the function will generate a token based on the SHA-256 hash of the
      * provided text. If no value is provided for `text`, the function will generate a token based on
-     * 
+     *
      * @return string The function `gera_token` returns a string that is a 60-character long base64
      * encoded token generated using SHA-256 hashing algorithm. If a text input is provided, the token
      * is generated based on the hash of the text. If no text is provided, the token is generated based
@@ -22,20 +21,20 @@ if (!function_exists('gera_token')) {
         } else {
             $base64Token = substr(hash('sha256', time()), 0, 60);
         }
+
         return $base64Token;
     }
 }
-
 
 //Gera quantidade de dias em segundos para o cache
 if (!function_exists('getCacheExpirationTimeInSeconds')) {
     /**
      * The function `getCacheExpirationTimeInSeconds` converts days to seconds.
-     * 
+     *
      * @param int days The function `getCacheExpirationTimeInSeconds` takes an integer parameter
      * `` representing the number of days for which the cache should be valid. The function
      * calculates and returns the expiration time in seconds based on the provided number of days.
-     * 
+     *
      * @return string the cache expiration time in seconds, which is calculated by multiplying the
      * number of days by 24 hours, 60 minutes, and 60 seconds.
      */
@@ -50,12 +49,12 @@ if (!function_exists('getCacheExpirationTimeInSeconds')) {
 if (!function_exists('limparString')) {
     /**
      * The function "limparString" in PHP removes unwanted characters from a given CNPJ string.
-     * 
+     *
      * @param cnpj The parameter `` in the `limparString` function is expected to be a string
      * representing a CNPJ (Cadastro Nacional da Pessoa Jurídica), which is a unique identifier for
      * Brazilian legal entities. The function is designed to clean up the CNPJ string by removing any
      * characters that are
-     * 
+     *
      * @return string The function `limparString` is returning a string that is the result of removing
      * any non-numeric characters from the input `` using a regular expression.
      */
@@ -76,10 +75,10 @@ if (!function_exists('primeira_letra')) {
     /**
      * The function "primeira_letra" in PHP takes a string input and returns the first letter of the
      * string in uppercase.
-     * 
+     *
      * @param value The function `primeira_letra` takes a string as input and returns the first letter
      * of that string in uppercase.
-     * 
+     *
      * @return The function `primeira_letra` takes a string as input, converts it into an array of
      * characters, retrieves the first element of the array (which is the first letter of the string),
      * converts it to uppercase, and then returns this first letter.
@@ -90,6 +89,7 @@ if (!function_exists('primeira_letra')) {
         $caracteres = str_split($value);
         // Pegar o primeiro elemento do array (a primeira letra)
         $primeiraLetra = strtoupper($caracteres[0]);
+
         return $primeiraLetra;
     }
 }
@@ -98,7 +98,7 @@ if (!function_exists('placehold')) {
     /**
      * The function `placehold` generates a URL for a placeholder image with customizable dimensions,
      * text, background color, and font color.
-     * 
+     *
      * @param height The `height` parameter is used to specify the height of the image placeholder that
      * will be generated. It determines the vertical size of the placeholder image.
      * @param width The `width` parameter in the `placehold` function is used to specify the width of
@@ -115,7 +115,7 @@ if (!function_exists('placehold')) {
      * @param colorFonte The `colorFonte` parameter in the `placehold` function is used to specify the
      * color of the font in the generated image. If you provide a color value for `colorFonte`, it will
      * be added to the URL of the image. If you don't provide a value for `
-     * 
+     *
      * @return The function `placehold` returns a URL for a placeholder image based on the provided
      * parameters. The URL includes the specified height, width, background color, font color, and text
      * (if provided). If certain parameters are not provided, default values or random values are used
@@ -162,12 +162,11 @@ if (!function_exists('placehold')) {
     }
 }
 
-
 if (!function_exists('saudacao')) {
     /**
      * This PHP function returns a greeting message based on the current time of day in the timezone
      * set to America/Sao_Paulo.
-     * 
+     *
      * @return The function `saudacao()` returns a greeting based on the current time in the timezone
      * set to 'America/Sao_Paulo'. If the time is between 5:00 and 11:59, it returns "Bom dia" (Good
      * morning). If the time is between 12:00 and 17:59, it returns "Boa tarde" (Good afternoon).
@@ -192,11 +191,11 @@ if (!function_exists('deleteFolder')) {
     // Função para excluir uma pasta e seu conteúdo recursivamente
     /**
      * The function `deleteFolder` recursively deletes a folder and all its contents in PHP.
-     * 
+     *
      * @param folderPath The `deleteFolder` function you provided is a PHP function that recursively
      * deletes a folder and all its contents. The `folderPath` parameter is the path to the folder that
      * you want to delete.
-     * 
+     *
      * @return The function `deleteFolder` returns `true` if the folder deletion process is successful,
      * and `false` if the specified path is not a directory.
      */
@@ -234,12 +233,12 @@ if (!function_exists('deleteFolder')) {
     }
 }
 
-
 if (!function_exists('centavosParaReais')) {
     function centavosParaReais($valorEmCentavos)
     {
         // Divide o valor recebido por 100 para converter de centavos para reais
         $valorEmReais = $valorEmCentavos / 100;
+
         // Formata o número para 2 casas decimais
         return number_format($valorEmReais, 2, '.', '');
     }
@@ -250,6 +249,7 @@ if (!function_exists('centavosParaReaisBrasil')) {
     {
         // Divide o valor recebido por 100 para converter de centavos para reais
         $valorEmReais = $valorEmCentavos / 100;
+
         // Formata o número para o formato brasileiro de moeda
         return 'R$ ' . number_format($valorEmReais, 2, ',', '.');
     }
@@ -272,26 +272,44 @@ if (!function_exists('getCardType')) {
     function getCardType($number)
     {
         $number = preg_replace('/\D/', '', $number); // Remove caracteres não numéricos
+
+        // Primeiro conjunto de padrões de cartão, baseado nos intervalos tradicionais
         $cardTypes = [
-            'Visa' => '/^4[0-9]{12}(?:[0-9]{3})?$/',
-            'Master' => '/^5[1-5][0-9]{14}$/',
-            'Amex' => '/^3[47][0-9]{13}$/',
-            'ELO' => '/^((636368|438935|504175|451416|636297|5067|4576|4011)\d{0,10})$/',
-            'aura' => '/^50[0-9]{14,17}$/', // Corrigido para reconhecer cartões Aura
-            'Diners' => '/^3(?:0[0-5]|[68][0-9])[0-9]{11}$/',
-            'Discover' => '/^6(?:011|5[0-9]{2})[0-9]{12}$/',
-            'JCB' => '/^(?:2131|1800|35\d{3})\d{11}$/',
-            'Hipercard' => '/^(606282\d{10}(\d{3})?)|(3841\d{15})$/'
+            'Visa'      => '/^4[0-9]{12}(?:[0-9]{3})?$/',
+            'Master'    => '/^5[1-5][0-9]{14}$/',  // Mastercard tradicional (BINs 51-55)
+            'Amex'      => '/^3[47][0-9]{13}$/',
+            'ELO'       => '/^((636368|438935|504175|451416|636297|5067|4576|4011)\d{0,10})$/',
+            'Aura'      => '/^50[0-9]{14,17}$/',
+            'Diners'    => '/^3(?:0[0-5]|[68][0-9])[0-9]{11}$/',
+            'Discover'  => '/^6(?:011|5[0-9]{2})[0-9]{12}$/',
+            'JCB'       => '/^(?:2131|1800|35\d{3})\d{11}$/',
+            'Hipercard' => '/^(606282\d{10}(\d{3})?)|(3841\d{15})$/',
         ];
+
+        // Segundo conjunto de padrões, para detectar novos intervalos de Mastercard (incluindo Infinitpay)
+        $extraMastercardPatterns = [
+            // Mastercard novos BINs (2221-2720) e possível BIN da Infinitpay
+            '/^(5[1-5][0-9]{14}|2(?:2[2-9][0-9]{12}|[3-6][0-9]{13}|7[0-1][0-9]{12}|720[0-9]{12}))$/', // Mastercard novos BINs
+            '/^231038[0-9]{10}$/',  // Exemplo de BIN específico da Infinitpay (mas retorna "Master")
+        ];
+
+        // Primeiro loop: verificar no conjunto tradicional de cartões
         foreach ($cardTypes as $type => $pattern) {
             if (preg_match($pattern, $number)) {
                 return $type;
             }
         }
-        return 'Unknown'; // Retorna 'Unknown' se não for reconhecido nenhum tipo
+
+        // Segundo loop: verificar no conjunto extra de Mastercard
+        foreach ($extraMastercardPatterns as $pattern) {
+            if (preg_match($pattern, $number)) {
+                return 'Master';  // Retorna sempre "Master" se encontrado no segundo array
+            }
+        }
+
+        return 'Unknown'; // Retorna 'Unknown' se não for reconhecido em nenhum dos arrays
     }
 }
-
 
 if (!function_exists('formatDate')) {
     function formatDate($date)
@@ -305,7 +323,6 @@ if (!function_exists('formatDate')) {
         }
     }
 }
-
 
 if (!function_exists('createSlug')) {
     function createSlug($string)
@@ -362,7 +379,7 @@ if (!function_exists('createSlug')) {
             'Û' => 'U',
             'Ü' => 'U',
             'Ç' => 'C',
-            'Ñ' => 'N'
+            'Ñ' => 'N',
         ];
         $string = strtr($string, $unwanted_array);
 
