@@ -3,15 +3,6 @@ $(document).ready(function() {
     forms();
 });
 
-// Função para copiar a linha digitável para a área de transferência
-document.getElementById('copiar-linha-digitavel').addEventListener('click', function() {
-    var linhaDigitavel = document.getElementById('linha-digitavel').innerText;
-    navigator.clipboard.writeText(linhaDigitavel).then(function() {
-        alert('Linha digitável copiada com sucesso!');
-    }, function(err) {
-        alert('Erro ao copiar a linha digitável: ', err);
-    });
-});
 
 
 function mostrarDadosBoleto(data) {
