@@ -45,7 +45,9 @@ class AdminModel extends Model
         's3_region',
         's3_endpoint',
         's3_bucket_name',
-        's3_cdn'
+        's3_cdn',
+        'prazo_boleto',
+        'instrucoes_boleto',
     ];
 
     protected bool $allowEmptyInserts = true;
@@ -78,6 +80,7 @@ class AdminModel extends Model
     {
         return esc($data);
     }
+
     protected function updateCache()
     {
         $cache = service('cache');
@@ -87,45 +90,39 @@ class AdminModel extends Model
     protected function limpaStrings(array $data)
     {
         helper('auxiliar');
+
         if (array_key_exists('cnpj', $data['data'])) {
             $data['data']['cnpj'] = limparString($data['data']['cnpj']);
         }
+
         if (array_key_exists('cep', $data['data'])) {
             $data['data']['cep'] = limparString($data['data']['cep']);
         }
+
         if (array_key_exists('telefone', $data['data'])) {
             $data['data']['telefone'] = limparString($data['data']['telefone']);
         }
+
         if (array_key_exists('celular', $data['data'])) {
             $data['data']['celular'] = limparString($data['data']['celular']);
         }
+
         return $data;
     }
 
-    //Cache dados de config
-    /*public function cacheData()
+    public function searchCacheData($id = 1)
     {
-        helper('auxiliar');
-        $cache = service('cache');
-        if (!$cache->get('config_Cache')) {
-            $builder = $this->first();
-            $cache->save('config_Cache', $builder, getCacheExpirationTimeInSeconds(30));
-        } else {
-            $builder = $cache->get('config_Cache');
-        }
-        return $builder;
-    }*/
-
-    public function searchCacheData($id = 1){
         $data = false ;
         helper('auxiliar');
         $cache = \Config\Services::cache();
+
         if (!$cache->get('searchCacheDataConfig')) {
             $data = $this->first();
             $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
-        }else{
+        } else {
             $data = $cache->get('searchCacheDataConfig');
         }
+
         return $data ;
     }
 }

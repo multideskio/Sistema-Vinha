@@ -6,18 +6,15 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'Home::index', ['filter' => ['verifyLogged', 'cors'] ]);
+$routes->get('/', 'Home::index', ['filter' => ['verifyLogged', 'cors']]);
 
 $routes->get('health', 'Health::index');
-
 
 $routes->get('nova-conta', 'Login::novaconta', ['filter' => 'csrf']);
 $routes->get('recuperacao', 'Login::recuperacao', ['filter' => 'csrf']);
 
 $routes->get('recupera/(:any)', 'Login::novasenha/$1', ['filter' => 'csrf']);
 $routes->get('primeiro-acesso/(:any)', 'Login::primeiroAcesso/$1', ['filter' => 'csrf']);
-
-
 
 $routes->get('sair', 'Home::sair');
 $routes->get('teste', 'Home::teste');
@@ -62,7 +59,6 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1', 'filter' =>
     $routes->post('email/teste', 'Emails::teste');
     $routes->resource('emails', ['filter' => 'logged']);
     $routes->resource('ajuda', ['filter' => 'logged']);
-
 
     $routes->group('transacoes', ['filter' => 'admin'], static function ($routes) {
         $routes->get('user', 'Transacoes::usuario');
@@ -115,7 +111,7 @@ $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1', 'filter' =>
 
     $routes->resource('gateways', ['filter' => 'logged']); //['filter' => 'logged']
 
-    // Ações de login e usuários  
+    // Ações de login e usuários
     $routes->get('usuarios/user', 'Usuarios::userData', ['filter' => 'logged']);
     $routes->resource('usuarios', ['filter' => ['logged', 'admin']]); //, ['filter' => 'logged']
 
@@ -175,10 +171,23 @@ $routes->group('supervisao', ['filter' => 'supervisor'], static function ($route
 
 // Acesso mais baixo de quem dizima
 $routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
+
     $routes->get('', 'Igreja::index');
+
     $routes->get('pagamentos', 'Igreja::pagamentos');
+
+    $routes->get('pix', 'Igreja::pix');
+
+    $routes->get('boleto', 'Igreja::boleto');
+
+    $routes->get('credito', 'Igreja::credito');
+
+    $routes->get('debito', 'Igreja::debito');
+
     $routes->get('transacoes', 'Igreja::transacoes');
+
     $routes->get('(:any)', 'Igreja::index');
+
 });
 
 // Login

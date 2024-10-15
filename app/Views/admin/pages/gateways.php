@@ -40,19 +40,24 @@
                     <legend class="fs-4 mt-2"><b>Configuração do checkout</b></legend>
                     <div class="col-lg-12 fs-6">
                         <div class="form-check form-switch form-switch-success">
-                            <input class="form-check-input" type="checkbox" role="switch" id="activePix" name="activePix" value="1">
+                            <input class="form-check-input" type="checkbox" role="switch" id="activePix"
+                                name="activePix" value="1">
                             <label class="form-check-label" for="activePix">Pix</label>
                         </div>
                         <div class="form-check form-switch form-switch-success">
-                            <input class="form-check-input" type="checkbox" role="switch" id="activeCredito" name="activeCredito" value="1">
+                            <input class="form-check-input" type="checkbox" role="switch" id="activeCredito"
+                                name="activeCredito" value="1">
                             <label class="form-check-label" for="activeCredito">Cartão de crédito</label>
                         </div>
+                        <!--
                         <div class="form-check form-switch form-switch-success">
                             <input class="form-check-input" type="checkbox" role="switch" id="activeDebito" name="activeDebito" value="1">
                             <label class="form-check-label" for="activeDebito">Cartão de débito</label>
                         </div>
+-->
                         <div class="form-check form-switch form-switch-success">
-                            <input class="form-check-input" type="checkbox" role="switch" id="activeBoletos" name="activeBoletos" value="1">
+                            <input class="form-check-input" type="checkbox" role="switch" id="activeBoletos"
+                                name="activeBoletos" value="1">
                             <label class="form-check-label" for="activeBoletos">Boletos</label>
                         </div>
                     </div>

@@ -6,32 +6,41 @@ use Exception;
 
 class CieloCreditCard extends CieloBase
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     public function credito($nome, $valor, $cartao, $securicode, $data, $brand, $desc, $desc_l)
     {
         $cielo = $this->data();
+
         if (!$cielo['active_credito']) {
             throw new Exception('Cobrança por cartão de crédito não está ativa.');
         }
-        $params = [
-            "MerchantOrderId" => time(), // Pode ser substituído por um ID de pedido único do seu sistema
-            "Customer" => [
-                "Name" => $nome
+
+        $countOrders = $this->transactionsModel->select('id')->orderBy('id', 'DESC')->first();
+        $numOrder    = ($countOrders) ? ++$countOrders['id'] : 1 ;
+        $params      = [
+            "MerchantOrderId" => $numOrder , // Pode ser substituído por um ID de pedido único do seu sistema
+            "Customer"        => [
+                "Name" => $nome,
             ],
             "Payment" => [
-                "Type" => "CreditCard",
-                "Amount" => $valor, // valor em centavos, 10000 = R$ 100,00
+                "Type"         => "CreditCard",
+                "Amount"       => $valor, // valor em centavos, 10000 = R$ 100,00
                 "Installments" => 1,
-                "Capture" => true,
-                "CreditCard" => [
-                    "CardNumber" => $cartao,
-                    "Holder" => strtoupper($nome),
+                "Capture"      => true,
+                "CreditCard"   => [
+                    "CardNumber"     => $cartao,
+                    "Holder"         => strtoupper($nome),
                     "ExpirationDate" => $data,
-                    "SecurityCode" => $securicode,
-                    "Brand" => $brand
-                ]
-            ]
+                    "SecurityCode"   => $securicode,
+                    "Brand"          => $brand,
+                ],
+            ],
         ];
+
         return $this->createCreditCardCharge($params, $desc, $desc_l);
     }
 
@@ -56,12 +65,14 @@ class CieloCreditCard extends CieloBase
             // Verificar se o código de retorno está na lista de erros
             if (in_array($response['Payment']['ReturnCode'], $codigosErro)) {
                 $errorMessage = 'Transação não autorizada: ' . $this->getErrorMessage($response['Payment']['ReturnCode']);
+
                 throw new Exception($errorMessage . ' | Resposta: ' . $response['Payment']['ReturnMessage'], 1);
             }
 
             // Verificar se o código de retorno é um sucesso
             if (!in_array($response['Payment']['ReturnCode'], $codigosSucesso)) {
                 $errorMessage = 'Transação não autorizada';
+
                 throw new Exception($errorMessage . ' | Resposta: ' . $response['Payment']['ReturnMessage'], 1);
             }
 
@@ -80,17 +91,16 @@ class CieloCreditCard extends CieloBase
     private function getErrorMessage($codigoRetorno)
     {
         $mensagensErro = [
-            5 => 'Não Autorizada',
+            5  => 'Não Autorizada',
             57 => 'Cartão Expirado',
             78 => 'Cartão Bloqueado',
             99 => 'Time Out',
             77 => 'Cartão Cancelado',
-            70 => 'Problemas com o Cartão de Crédito'
+            70 => 'Problemas com o Cartão de Crédito',
         ];
 
         return isset($mensagensErro[$codigoRetorno]) ? $mensagensErro[$codigoRetorno] : 'Erro desconhecido';
     }
-
 
     public function refundCreditCard($paymentId, $amount)
     {
@@ -100,7 +110,7 @@ class CieloCreditCard extends CieloBase
             }
 
             $params = [
-                "Amount" => $amount // valor em centavos, 10000 = R$ 100,00
+                "Amount" => $amount, // valor em centavos, 10000 = R$ 100,00
             ];
 
             $endPoint = "/1/sales/{$paymentId}/void";
@@ -120,10 +130,10 @@ class CieloCreditCard extends CieloBase
     protected function handleRefundResponse($response)
     {
         return [
-            'paymentId' => $response['PaymentId'],
-            'status' => $response['Status'],
+            'paymentId'  => $response['PaymentId'],
+            'status'     => $response['Status'],
             'statusName' => $this->getPaymentStatusName($response['Status']),
-            'full' => $response
+            'full'       => $response,
         ];
     }
 }

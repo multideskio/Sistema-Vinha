@@ -29,12 +29,15 @@ class IgrejasModel extends Model
         "cep",
         "complemento",
         "bairro",
+        "pais",
+        "rua",
+        "numero",
         "data_dizimo",
         "telefone",
         "celular",
         "facebook",
         "instagram",
-        "website"
+        "website",
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -111,8 +114,8 @@ class IgrejasModel extends Model
     public function listSearch($input = false, $limit = 12, $order = 'DESC'): array
     {
         // Definir o termo de busca, se houver
-        $search = $input['search'] ?? false;
-        $page   = $input['page'] ?? 1;
+        $search      = $input['search'] ?? false;
+        $page        = $input['page']   ?? 1;
         $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
 
         // Gera uma chave de cache única baseada nos parâmetros de entrada
@@ -163,12 +166,12 @@ class IgrejasModel extends Model
 
         // Obter os resultados paginados
         $igrejas = $this->paginate($limit);
-        $pager = $this->pager;
+        $pager   = $this->pager;
 
         // Cálculo de paginação
         $currentPage = $pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $start       = ($currentPage - 1) * $limit + 1;
+        $end         = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($igrejas);
@@ -186,7 +189,7 @@ class IgrejasModel extends Model
         $data = [
             'rows'  => $igrejas, // Resultados paginados
             'pager' => $pager->links('default', 'paginate'), // Links de paginação
-            'num'   => $numMessage
+            'num'   => $numMessage,
         ];
 
         helper('auxiliar');

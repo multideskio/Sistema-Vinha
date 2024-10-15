@@ -2,16 +2,21 @@
 
 namespace App\Gateways\Cielo;
 
-use Exception;
 use CodeIgniter\I18n\Time;
+use Exception;
 
 class CieloCron extends CieloBase
 {
     // Constantes para status de transação
-    private const STATUS_PAID = 'Pago';
+    private const STATUS_PAID     = 'Pago';
     private const STATUS_REFUNDED = 'Reembolsado';
     private const STATUS_CANCELED = 'Cancelado';
-    private const STATUS_PENDING = 'Pendente';
+    private const STATUS_PENDING  = 'Pendente';
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     // Método principal para verificar e atualizar o status das transações
     public function verifyTransaction()
@@ -19,13 +24,13 @@ class CieloCron extends CieloBase
         log_message('info', 'Iniciando verificação de transações.');
 
         $transactions = $this->getRelevantTransactions(); // Busca transações relevantes
-        $now = Time::now(); // Obtém a hora atual
+        $now          = Time::now(); // Obtém a hora atual
 
         log_message('info', 'Número de transações relevantes encontradas: ' . count($transactions));
 
         foreach ($transactions as $transaction) {
             try {
-                $createdAt = Time::parse($transaction['created_at']); // Parseia a data de criação da transação
+                $createdAt       = Time::parse($transaction['created_at']); // Parseia a data de criação da transação
                 $hoursDifference = $createdAt->difference($now)->getHours(); // Calcula a diferença em horas
 
                 log_message('info', "Processando transação ID {$transaction['id']}, diferença em horas: $hoursDifference");
@@ -91,34 +96,39 @@ class CieloCron extends CieloBase
     private function updateTransactionStatus($transaction, $dataReturn)
     {
         $updateData = [
-            'status' => 0, // Status padrão
-            'status_text' => '',
+            'status'         => 0, // Status padrão
+            'status_text'    => '',
             'tipo_pagamento' => $dataReturn['full']['Payment']['Type'],
-            'log' => json_encode($dataReturn)
+            'log'            => json_encode($dataReturn),
         ];
 
         // Atualiza os dados da transação com base no status retornado
         switch ($dataReturn['statusName']) {
             case 'Authorized':
-                $updateData['status'] = 1;
-                $updateData['status_text'] = self::STATUS_PAID;
+                $updateData['status']         = 1;
+                $updateData['status_text']    = self::STATUS_PAID;
                 $updateData['data_pagamento'] = $dataReturn['full']['Payment']['CapturedDate'];
                 break;
+
             case 'PaymentConfirmed':
-                $updateData['status'] = 1;
+                $updateData['status']      = 1;
                 $updateData['status_text'] = self::STATUS_PAID;
                 break;
+
             case 'Refunded':
-                $updateData['status_text'] = self::STATUS_REFUNDED;
+                $updateData['status_text']    = self::STATUS_REFUNDED;
                 $updateData['data_pagamento'] = $dataReturn['full']['Payment']['CapturedDate'];
                 break;
+
             case 'Voided':
                 $updateData['status_text'] = 'Cancelado pelo admin';
                 break;
+
             case 'Pending':
             case 'NotFinished':
                 $updateData['status_text'] = self::STATUS_PENDING;
                 break;
+
             case 'Denied':
             case 'Aborted':
                 $updateData['status_text'] = self::STATUS_CANCELED;
@@ -136,6 +146,7 @@ class CieloCron extends CieloBase
     private function shouldCancelTransaction($statusText)
     {
         $nonCancelableStatuses = [self::STATUS_PAID, self::STATUS_REFUNDED, 'Devolvido'];
+
         return !in_array($statusText, $nonCancelableStatuses);
     }
 
@@ -143,8 +154,8 @@ class CieloCron extends CieloBase
     private function cancelTransaction($transaction)
     {
         $dataUpdate = [
-            'status' => 0,
-            'status_text' => self::STATUS_CANCELED
+            'status'      => 0,
+            'status_text' => self::STATUS_CANCELED,
         ];
         $this->transactionsModel->update($transaction['id'], $dataUpdate);
         log_message('info', "Transação ID {$transaction['id']} foi cancelada.");
@@ -166,6 +177,7 @@ class CieloCron extends CieloBase
         foreach ($paidTransactions as $transaction) {
             try {
                 $dataReturn = $this->checkPaymentStatus($transaction['id_transacao']);
+
                 if ($this->isValidDataReturn($dataReturn) && $dataReturn['statusName'] === 'Refunded') {
                     $this->updateTransactionStatus($transaction, $dataReturn);
                     log_message('info', "Transação ID {$transaction['id']} foi reembolsada.");
@@ -182,9 +194,11 @@ class CieloCron extends CieloBase
     private function isValidDataReturn($dataReturn)
     {
         $isValid = isset($dataReturn['status']) && isset($dataReturn['statusName']) && isset($dataReturn['full']['Payment']);
+
         if (!$isValid) {
             log_message('error', 'Resposta inválida recebida de checkPaymentStatus: ' . json_encode($dataReturn));
         }
+
         return $isValid;
     }
 }

@@ -1,13 +1,15 @@
-<?php namespace App\Gateways\Cielo;
+<?php
+
+namespace App\Gateways\Cielo;
 
 use App\Models\GatewaysModel;
 use App\Models\TransacoesModel;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Exception;
 
-class GatewayCielo {
-
+class GatewayCielo
+{
     private $merchantId;
     private $merchantKey;
     private $apiUrlQuery;
@@ -19,9 +21,9 @@ class GatewayCielo {
 
     public function __construct()
     {
-        $this->modelGateway = new GatewaysModel();
+        $this->modelGateway      = new GatewaysModel();
         $this->transactionsModel = new TransacoesModel();
-        $this->client = new Client();
+        $this->client            = new Client();
         $this->initializeCieloConfig();
     }
 
@@ -33,18 +35,18 @@ class GatewayCielo {
             $this->merchantId  = $cielo['merchantid_pro'];
             $this->merchantKey = $cielo['merchantkey_pro'];
             $this->apiUrlQuery = 'https://apiquery.cieloecommerce.cielo.com.br';
-            $this->apiUrl = 'https://api.cieloecommerce.cielo.com.br';
+            $this->apiUrl      = 'https://api.cieloecommerce.cielo.com.br';
         } else {
             $this->merchantId  = $cielo['merchantid_dev'];
             $this->merchantKey = $cielo['merchantkey_dev'];
             $this->apiUrlQuery = 'https://apiquerysandbox.cieloecommerce.cielo.com.br';
-            $this->apiUrl = 'https://apisandbox.cieloecommerce.cielo.com.br';
+            $this->apiUrl      = 'https://apisandbox.cieloecommerce.cielo.com.br';
         }
 
         $this->headers = [
             'Content-Type' => 'application/json',
-            'MerchantId' => $this->merchantId,
-            'MerchantKey' => $this->merchantKey,
+            'MerchantId'   => $this->merchantId,
+            'MerchantKey'  => $this->merchantKey,
         ];
     }
 
@@ -54,15 +56,15 @@ class GatewayCielo {
 
         if (count($row)) {
             return [
-                'status' => $row[0]['status'],
-                'merchantid_dev' => $row[0]['merchantid_dev'],
+                'status'          => $row[0]['status'],
+                'merchantid_dev'  => $row[0]['merchantid_dev'],
                 'merchantkey_dev' => $row[0]['merchantkey_dev'],
-                'merchantid_pro' => $row[0]['merchantid_pro'],
+                'merchantid_pro'  => $row[0]['merchantid_pro'],
                 'merchantkey_pro' => $row[0]['merchantkey_pro'],
-                'active_pix' => $row[0]['active_pix'],
-                'active_credito' => $row[0]['active_credito'],
-                'active_debito' => $row[0]['active_debito'],
-                'active_boletos' => $row[0]['active_boletos']
+                'active_pix'      => $row[0]['active_pix'],
+                'active_credito'  => $row[0]['active_credito'],
+                'active_debito'   => $row[0]['active_debito'],
+                'active_boletos'  => $row[0]['active_boletos'],
             ];
         }
 
@@ -72,27 +74,28 @@ class GatewayCielo {
     public function credito($nome, $valor, $cartao, $securicode, $data, $brand = 'Visa')
     {
         $cielo = $this->data();
+
         if (!$cielo['active_credito']) {
             throw new Exception('Cobrança por cartão de crédito não está ativa.');
         }
 
         $params = [
             "MerchantOrderId" => time(), // Pode ser substituído por um ID de pedido único do seu sistema
-            "Customer" => [
-                "Name" => $nome
+            "Customer"        => [
+                "Name" => $nome,
             ],
             "Payment" => [
-                "Type" => "CreditCard",
-                "Amount" => $valor, // valor em centavos, 10000 = R$ 100,00
+                "Type"         => "CreditCard",
+                "Amount"       => $valor, // valor em centavos, 10000 = R$ 100,00
                 "Installments" => 1,
-                "CreditCard" => [
-                    "CardNumber" => $cartao,
-                    "Holder" => $nome,
+                "CreditCard"   => [
+                    "CardNumber"     => $cartao,
+                    "Holder"         => $nome,
                     "ExpirationDate" => $data,
-                    "SecurityCode" => $securicode,
-                    "Brand" => $brand
-                ]
-            ]
+                    "SecurityCode"   => $securicode,
+                    "Brand"          => $brand,
+                ],
+            ],
         ];
 
         return $this->createCreditCardCharge($params);
@@ -101,27 +104,28 @@ class GatewayCielo {
     public function debito($nome, $valor, $cartao, $securicode, $data, $brand = 'Visa')
     {
         $cielo = $this->data();
+
         if (!$cielo['active_debito']) {
             throw new Exception('Cobrança por cartão de débito não está ativa.');
         }
 
         $params = [
             "MerchantOrderId" => time(),
-            "Customer" => [
-                "Name" => $nome
+            "Customer"        => [
+                "Name" => $nome,
             ],
             "Payment" => [
-                "Type" => "DebitCard",
-                "Amount" => $valor,
+                "Type"         => "DebitCard",
+                "Amount"       => $valor,
                 "Authenticate" => true,
-                "DebitCard" => [
-                    "CardNumber" => $cartao,
-                    "Holder" => $nome,
+                "DebitCard"    => [
+                    "CardNumber"     => $cartao,
+                    "Holder"         => $nome,
                     "ExpirationDate" => $data,
-                    "SecurityCode" => $securicode,
-                    "Brand" => $brand
-                ]
-            ]
+                    "SecurityCode"   => $securicode,
+                    "Brand"          => $brand,
+                ],
+            ],
         ];
 
         return $this->createDebitCardCharge($params);
@@ -130,25 +134,26 @@ class GatewayCielo {
     public function boleto($nome, $valor, $dataVencimento)
     {
         $cielo = $this->data();
+
         if (!$cielo['active_boletos']) {
             throw new Exception('Cobrança por boleto não está ativa.');
         }
 
         $params = [
             "MerchantOrderId" => time(),
-            "Customer" => [
-                "Name" => $nome
+            "Customer"        => [
+                "Name" => $nome,
             ],
             "Payment" => [
-                "Type" => "Boleto",
-                "Amount" => $valor,
-                "BoletoNumber" => time(),
-                "Assignor" => "Empresa XYZ",
-                "Demonstrative" => "Pagamento de Compra",
+                "Type"           => "Boleto",
+                "Amount"         => $valor,
+                "BoletoNumber"   => time(),
+                "Assignor"       => "Empresa XYZ",
+                "Demonstrative"  => "Pagamento de Compra",
                 "ExpirationDate" => $dataVencimento,
                 "Identification" => "12345678909",
-                "Instructions" => "Não receber após o vencimento"
-            ]
+                "Instructions"   => "Não receber após o vencimento",
+            ],
         ];
 
         return $this->createBoletoCharge($params);
@@ -157,19 +162,20 @@ class GatewayCielo {
     public function pix($nome, $valor)
     {
         $cielo = $this->data();
+
         if (!$cielo['active_pix']) {
             throw new Exception('Cobrança por Pix não está ativa.');
         }
 
         $params = [
             "MerchantOrderId" => time(),
-            "Customer" => [
-                "Name" => $nome
+            "Customer"        => [
+                "Name" => $nome,
             ],
             "Payment" => [
-                "Type" => "Pix",
-                "Amount" => $valor
-            ]
+                "Type"   => "Pix",
+                "Amount" => $valor,
+            ],
         ];
 
         return $this->createPixCharge($params);
@@ -181,6 +187,7 @@ class GatewayCielo {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
             $endPoint = '/1/sales/';
             $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
+
             //$this->saveTransaction($params, $response);
             return $response;
         } catch (Exception $e) {
@@ -193,9 +200,10 @@ class GatewayCielo {
         try {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
             $params['Payment']['Authenticate'] = true;
-            $endPoint = '/1/sales/';
-            $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
+            $endPoint                          = '/1/sales/';
+            $response                          = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
             $this->saveTransaction($params, $response);
+
             return $response;
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança de cartão de débito: " . $e->getMessage());
@@ -207,9 +215,10 @@ class GatewayCielo {
         try {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
             $params['Payment']['Type'] = 'Boleto';
-            $endPoint = '/1/sales/';
-            $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
+            $endPoint                  = '/1/sales/';
+            $response                  = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
             $this->saveTransaction($params, $response);
+
             return $response;
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança de boleto: " . $e->getMessage());
@@ -221,9 +230,10 @@ class GatewayCielo {
         try {
             $this->validateParams($params, ['MerchantOrderId', 'Customer', 'Payment']);
             $params['Payment']['Type'] = 'Pix';
-            $endPoint = '/1/sales/';
-            $response = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
+            $endPoint                  = '/1/sales/';
+            $response                  = $this->makeRequest('POST', $endPoint, $params, 'handleCreateChargeResponse');
             $this->saveTransaction($params, $response);
+
             return $response;
         } catch (Exception $e) {
             throw new Exception("Erro ao criar cobrança Pix: " . $e->getMessage());
@@ -238,6 +248,7 @@ class GatewayCielo {
             }
             $endPoint = "/1/sales/{$paymentId}";
             $response = $this->makeRequest('GET', $endPoint, [], 'handleCheckPaymentStatusResponse', true); // true indica que está usando apiUrlQuery
+
             return $response;
         } catch (Exception $e) {
             throw new Exception("Erro ao verificar status do pagamento: " . $e->getMessage());
@@ -256,13 +267,13 @@ class GatewayCielo {
     private function makeRequest($method, $endPoint, $params, $responseHandler, $useQueryUrl = false)
     {
         try {
-            $url = ($useQueryUrl ? $this->apiUrlQuery : $this->apiUrl) . $endPoint;
+            $url     = ($useQueryUrl ? $this->apiUrlQuery : $this->apiUrl) . $endPoint;
             $options = [
                 'headers' => $this->headers,
-                'json' => $params
+                'json'    => $params,
             ];
             $response = $this->client->request($method, $url, $options);
-            $body = json_decode($response->getBody(), true);
+            $body     = json_decode($response->getBody(), true);
 
             if (isset($body['Code']) && isset($body['Message'])) {
                 throw new Exception("Erro {$body['Code']}: {$body['Message']}");
@@ -270,8 +281,9 @@ class GatewayCielo {
 
             return $this->$responseHandler($body);
         } catch (RequestException $e) {
-            $response = $e->getResponse();
+            $response             = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
+
             throw new Exception("Erro na requisição: {$responseBodyAsString}");
         }
     }
@@ -279,35 +291,35 @@ class GatewayCielo {
     private function handleCreateChargeResponse($response)
     {
         return [
-            'paymentId' => $response['Payment']['PaymentId'],
-            'status' => $response['Payment']['Status'],
-            'statusName' => $this->getPaymentStatusName($response['Payment']['Status']),
-            'returnCode' => $response['Payment']['ReturnCode'],
-            'returnMessage' => $response['Payment']['ReturnMessage'],
-            'authenticationUrl' => $response['Payment']['AuthenticationUrl'] ?? null
+            'paymentId'         => $response['Payment']['PaymentId'],
+            'status'            => $response['Payment']['Status'],
+            'statusName'        => $this->getPaymentStatusName($response['Payment']['Status']),
+            'returnCode'        => $response['Payment']['ReturnCode'],
+            'returnMessage'     => $response['Payment']['ReturnMessage'],
+            'authenticationUrl' => $response['Payment']['AuthenticationUrl'] ?? null,
         ];
     }
 
     private function handleCheckPaymentStatusResponse($response)
     {
         return [
-            'paymentId' => $response['Payment']['PaymentId'],
-            'status' => $response['Payment']['Status'],
-            'statusName' => $this->getPaymentStatusName($response['Payment']['Status'])
+            'paymentId'  => $response['Payment']['PaymentId'],
+            'status'     => $response['Payment']['Status'],
+            'statusName' => $this->getPaymentStatusName($response['Payment']['Status']),
         ];
     }
 
     private function getPaymentStatusName($status)
     {
         $statusNames = [
-            1 => 'NotFinished',
-            2 => 'Authorized',
-            3 => 'PaymentConfirmed',
+            1  => 'NotFinished',
+            2  => 'Authorized',
+            3  => 'PaymentConfirmed',
             10 => 'PaymentCancelled',
             11 => 'Refunded',
             12 => 'Pending',
             13 => 'Aborted',
-            20 => 'Scheduled'
+            20 => 'Scheduled',
         ];
 
         return $statusNames[$status] ?? 'Unknown';
@@ -324,6 +336,6 @@ class GatewayCielo {
             'return_code' => $response['returnCode'],
             'return_message' => $response['returnMessage']
         ]);*/
-         return true;
+        return true;
     }
 }

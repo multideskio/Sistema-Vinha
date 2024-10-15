@@ -25,12 +25,15 @@ class AdministradoresModel extends Model
         'cep',
         'complemento',
         'bairro',
+        "pais",
+        "rua",
+        "numero",
         'data_dizimo',
         'telefone',
         'celular',
         'facebook',
         'instagram',
-        'website'
+        'website',
     ];
 
     protected bool $allowEmptyInserts = true;
@@ -116,11 +119,12 @@ class AdministradoresModel extends Model
         $admins       = $this->paginate($limit);
         $totalResults = $this->countAllResults();
         $currentPage  = $this->pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($admins);
+
         if ($search) {
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
@@ -134,7 +138,7 @@ class AdministradoresModel extends Model
         $data = [
             'rows'  => $admins, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
-            'num'   => $numMessage
+            'num'   => $numMessage,
         ];
 
         return $data;

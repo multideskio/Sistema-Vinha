@@ -26,12 +26,15 @@ class PastoresModel extends Model
         'cep',
         'complemento',
         'bairro',
+        "pais",
+        "rua",
+        "numero",
         'data_dizimo',
         'telefone',
         'celular',
         'facebook',
         'instagram',
-        'website'
+        'website',
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -65,21 +68,27 @@ class PastoresModel extends Model
         // Verifica se o array $data['data'] existe e se possui elementos
         return esc($data);
     }
+
     protected function limpaStrings(array $data)
     {
         helper('auxiliar');
+
         if (array_key_exists('cpf', $data['data'])) {
             $data['data']['cpf'] = limparString($data['data']['cpf']);
         }
+
         if (array_key_exists('cep', $data['data'])) {
             $data['data']['cep'] = limparString($data['data']['cep']);
         }
+
         if (array_key_exists('telefone', $data['data'])) {
             $data['data']['telefone'] = limparString($data['data']['telefone']);
         }
+
         if (array_key_exists('celular', $data['data'])) {
             $data['data']['celular'] = limparString($data['data']['celular']);
         }
+
         return $data;
     }
 
@@ -87,6 +96,7 @@ class PastoresModel extends Model
     {
         $cache = service('cache');
         $cache->deleteMatching("pastoresList_" . "*");
+
         return $data;
     }
 
@@ -95,8 +105,8 @@ class PastoresModel extends Model
         $data = [];
 
         // Define o termo de busca, se houver
-        $search = $input['search'] ?? false;
-        $page   = $input['page'] ?? false;
+        $search      = $input['search'] ?? false;
+        $page        = $input['page']   ?? false;
         $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
 
         // Gera uma chave de cache única baseada nos parâmetros de entrada
@@ -109,8 +119,6 @@ class PastoresModel extends Model
             // Retorna os dados do cache
             return $cachedData;
         }
-
-
 
         // Configuração inicial da query
         $this->orderBy('pastores.id', $order)
@@ -138,14 +146,15 @@ class PastoresModel extends Model
         }
 
         // Paginação dos resultados
-        $pastores = $this->paginate($limit);
+        $pastores     = $this->paginate($limit);
         $totalResults = $this->countAllResults();
-        $currentPage = $this->pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $currentPage  = $this->pager->getCurrentPage();
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($pastores);
+
         if ($search) {
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
@@ -160,7 +169,7 @@ class PastoresModel extends Model
         $data = [
             'rows'  => $pastores, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
-            'num'   => $numMessage
+            'num'   => $numMessage,
         ];
 
         helper('auxiliar');

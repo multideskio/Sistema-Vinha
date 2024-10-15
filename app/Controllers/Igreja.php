@@ -2,31 +2,63 @@
 
 namespace App\Controllers;
 
-
-
 class Igreja extends BaseController
 {
     protected $modelConfig;
     protected $data;
+
     public function __construct()
     {
-        $this->modelConfig = new \App\Models\AdminModel;
+        $this->modelConfig = new \App\Models\AdminModel();
         //$this->data['rowConfig'] = $this->modelConfig->cacheData();
     }
+
     public function index(): string
     {
         $data['titlePage'] = "Dashboard";
+
         return view('igrejas/pages/home', $data);
     }
-    public function pagamentos(): string
+
+    /*public function pagamentos(): string
     {
         $data['titlePage'] = "Dashboard";
+
         return view('igrejas/pages/gerar', $data);
-        
+    }*/
+
+    public function pix(): string
+    {
+        $data['titlePage'] = "Pix";
+
+        return view('igrejas/pages/pix/home', $data);
     }
+
+    public function boleto(): string
+    {
+        $data['titlePage'] = "Boleto";
+
+        return view('igrejas/pages/boleto/home', $data);
+    }
+
+    public function credito(): string
+    {
+        $data['titlePage'] = "Cartão de Crédito";
+
+        return view('igrejas/pages/credito/home', $data);
+    }
+
+    public function debito(): string
+    {
+        $data['titlePage'] = "Cartão de débito";
+
+        return view('igrejas/pages/debito/home', $data);
+    }
+
     public function transacoes(): string
     {
         $data['titlePage'] = "Transações";
+
         return view('igrejas/pages/transacoes', $data);
     }
 }

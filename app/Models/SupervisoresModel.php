@@ -28,12 +28,15 @@ class SupervisoresModel extends Model
         'cep',
         'complemento',
         'bairro',
+        "pais",
+        "rua",
+        "numero",
         'data_dizimo',
         'telefone',
         'celular',
         'facebook',
         'instagram',
-        'website'
+        'website',
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -62,12 +65,12 @@ class SupervisoresModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = ["updateCache"];
 
-
     protected function updateCache(array $data): array
     {
         $cache = service('cache');
         $cache->delete("supervisores_Cache");
-        $cache->deleteMatching("supervisoresList_"."*");
+        $cache->deleteMatching("supervisoresList_" . "*");
+
         return $data;
     }
 
@@ -100,12 +103,10 @@ class SupervisoresModel extends Model
         return $data;
     }
 
-
-
     /**
      * This PHP function caches data related to supervisors, regions, and managers for efficient
      * retrieval.
-     * 
+     *
      * @return The `cacheData` function is returning the data of supervisors along with their region
      * and manager names. This data is retrieved from the database and stored in the cache for 365
      * days. If the data is already cached, it is directly fetched from the cache. The function returns
@@ -115,10 +116,11 @@ class SupervisoresModel extends Model
     {
         helper("auxiliar");
         $cache = \Config\Services::cache();
+
         if (!$cache->get("supervisores_Cache")) {
 
             $builder = $this->select('supervisores.*, regioes.nome as regiao_nome, gerentes.nome as gerente_nome')
-                ->join('regioes',  'supervisores.id_regiao  = regioes.id', 'left')
+                ->join('regioes', 'supervisores.id_regiao  = regioes.id', 'left')
                 ->join('gerentes', 'supervisores.id_gerente = gerentes.id', 'left')
                 ->findAll();
 
@@ -133,10 +135,10 @@ class SupervisoresModel extends Model
 
     /**
      * This PHP function lists search results for supervisors with optional input parameters.
-     * 
+     *
      * @param input The `listSearch` function is a method that performs a search operation on a
      * database table named `supervisores` with optional input parameters.
-     * 
+     *
      * @return An array containing the 'rows' key with paginated search results and the 'pager' key
      * with pagination links.
      */
@@ -144,8 +146,8 @@ class SupervisoresModel extends Model
     {
 
         // Define o termo de busca, se houver
-        $search = $input['search'] ?? false;
-        $page   = $input['page'] ?? 1;
+        $search      = $input['search'] ?? false;
+        $page        = $input['page']   ?? 1;
         $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
 
         // Gera uma chave de cache única baseada nos parâmetros de entrada
@@ -165,7 +167,7 @@ class SupervisoresModel extends Model
             ->select('usuarios.email as email')
             ->select('regioes.nome as regiao_nome')
             ->select('gerentes.nome as gerente_nome, gerentes.sobrenome as gerente_sobrenome')
-            ->join('regioes',  'supervisores.id_regiao  = regioes.id', 'left')
+            ->join('regioes', 'supervisores.id_regiao  = regioes.id', 'left')
             ->join('gerentes', 'supervisores.id_gerente = gerentes.id', 'left')
             ->join('usuarios', 'supervisores.id = usuarios.id_perfil', 'left');
 
@@ -182,13 +184,14 @@ class SupervisoresModel extends Model
 
         // Paginação dos resultados
         $supervisorores = $this->paginate($limit);
-        $totalResults = $this->countAllResults();
-        $currentPage = $this->pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $totalResults   = $this->countAllResults();
+        $currentPage    = $this->pager->getCurrentPage();
+        $start          = ($currentPage - 1) * $limit + 1;
+        $end            = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($supervisorores);
+
         if ($search) {
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
@@ -202,7 +205,7 @@ class SupervisoresModel extends Model
         $data = [
             'rows'  => $supervisorores, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
-            'num'   => $numMessage
+            'num'   => $numMessage,
         ];
 
         // Armazena os resultados no cache por 10 minutos (600 segundos)

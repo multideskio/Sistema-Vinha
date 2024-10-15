@@ -23,6 +23,9 @@ class GerentesModel extends Model
         "cep",
         "complemento",
         "bairro",
+        "pais",
+        "rua",
+        "numero",
         "data_dizimo",
         "telefone",
         "celular",
@@ -30,7 +33,7 @@ class GerentesModel extends Model
         "instagram",
         "id_user",
         "id_adm",
-        "website"
+        "website",
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -102,12 +105,12 @@ class GerentesModel extends Model
         return $data;
     }
 
-
     //Cache dados de config
     public function cacheData()
     {
         helper("auxiliar");
         $cache = \Config\Services::cache();
+
         if (!$cache->get("gerentes_Cache")) {
             $builder = $this->orderBy('id', 'DESC')->findAll();
             // Save into the cache for 365 days
@@ -115,6 +118,7 @@ class GerentesModel extends Model
         } else {
             $builder = $cache->get("gerentes_Cache");
         }
+
         return $builder;
     }
 
@@ -127,12 +131,11 @@ class GerentesModel extends Model
             ->findAll();
     }
 
-
     public function listSearch($input = false, $limit = 12, $order = 'DESC'): array
     {
         // Define o termo de busca, se houver
-        $search = $input['search'] ?? false;
-        $page   = $input['page'] ?? 1;
+        $search      = $input['search'] ?? false;
+        $page        = $input['page']   ?? 1;
         $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
 
         // Gera uma chave de cache única baseada nos parâmetros de entrada
@@ -165,14 +168,15 @@ class GerentesModel extends Model
         }
 
         // Paginação dos resultados
-        $gerentes = $this->paginate($limit);
+        $gerentes     = $this->paginate($limit);
         $totalResults = $this->countAllResults();
-        $currentPage = $this->pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $currentPage  = $this->pager->getCurrentPage();
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($gerentes);
+
         if ($search) {
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
@@ -186,7 +190,7 @@ class GerentesModel extends Model
         $data = [
             'rows'  => $gerentes, // Resultados paginados
             'pager' => $this->pager->links('default', 'paginate'), // Links de paginação
-            'num'   => $numMessage
+            'num'   => $numMessage,
         ];
 
         // Armazena os resultados no cache por 10 minutos (600 segundos)
