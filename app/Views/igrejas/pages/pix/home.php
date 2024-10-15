@@ -79,6 +79,7 @@
         </div>
     </div>
 </div>
+
 <?= $this->endSection() ?>
 <?= $this->section("js") ?>
 <!-- Swiper Js -->

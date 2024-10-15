@@ -22,12 +22,14 @@ class Administracao extends ResourceController
 
     public function __construct()
     {
-        $this->modelAdmin = new \App\Models\AdminModel;
+        $this->modelAdmin = new \App\Models\AdminModel();
     }
+
     public function index()
     {
         //
         $result = $this->modelAdmin->cacheData();
+
         return $this->respond($result);
     }
 
@@ -40,6 +42,7 @@ class Administracao extends ResourceController
     {
         //
         $data = $this->modelAdmin->searchCacheData($id);
+
         return $this->respond($data);
     }
 
@@ -81,11 +84,10 @@ class Administracao extends ResourceController
      *
      * @return ResponseInterface
      */
-
     public function foto($id = null)
     {
         $request = service('request');
-        $file = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
 
         if (!$file || !$file->isValid()) {
             return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
@@ -93,11 +95,11 @@ class Administracao extends ResourceController
 
         try {
             $uploadLibraries = new UploadsLibraries();
-            $path = "admin_geral/{$id}/" . $file->getRandomName();
-            $uploadPath = $uploadLibraries->upload($file, $path);
+            $path            = "admin_geral/{$id}/" . $file->getRandomName();
+            $uploadPath      = $uploadLibraries->upload($file, $path);
 
             $data = [
-                'logo' => $uploadPath
+                'logo' => $uploadPath,
             ];
 
             if (!$this->modelAdmin->update($id, $data)) {
@@ -110,8 +112,6 @@ class Administracao extends ResourceController
         }
     }
 
-
-
     public function links($id = null)
     {
         $input = $this->request->getRawInput();
@@ -119,7 +119,7 @@ class Administracao extends ResourceController
         $data = [
             'facebook'  => $input['linkFacebook'],
             'instagram' => $input['linkInstagram'],
-            'site'   => $input['linkWebsite'],
+            'site'      => $input['linkWebsite'],
         ];
 
         $status = $this->modelAdmin->update($id, $data);
@@ -138,8 +138,8 @@ class Administracao extends ResourceController
                 throw new Exception('ID não informado');
             }
             $request = service('request');
-            $input = $request->getRawInput();
-            $data = [
+            $input   = $request->getRawInput();
+            $data    = [
                 'cnpj'        => $input['cnpj'],
                 'empresa'     => $input['empresa'],
                 'email'       => $input['email'],
@@ -149,9 +149,10 @@ class Administracao extends ResourceController
                 'bairro'      => $input['bairro'],
                 'complemento' => $input['complemento'],
                 'telefone'    => $input['fixo'],
-                'celular'     => $input['celular']
+                'celular'     => $input['celular'],
             ];
             $this->modelAdmin->update($id, $data);
+
             return $this->respond(['msg' => 'Atualizado com sucesso!']);
         } catch (\Exception $e) {
             return $this->fail(['error' => $e->getMessage()]);
@@ -167,7 +168,7 @@ class Administracao extends ResourceController
             }
 
             $request = service('request');
-            $input = $request->getRawInput();
+            $input   = $request->getRawInput();
 
             $data = [
                 'email_remetente' => $input['emailRemetente'],
@@ -177,7 +178,7 @@ class Administracao extends ResourceController
                 'smtp_pass'       => $input['smtpPASS'],
                 'smtp_port'       => $input['smtpPORT'],
                 'ativar_smtp'     => ($input['ativarSMTP']) ?? 0,
-                'smtp_crypt'      => $input['smtpCRYPT'] ?? 'SSL',
+                'smtp_crypt'      => $input['smtpCRYPT']    ?? 'SSL',
             ];
 
             $status = $this->modelAdmin->update($id, $data);
@@ -185,6 +186,7 @@ class Administracao extends ResourceController
             if ($status === false) {
                 return $this->fail($this->modelAdmin->errors());
             }
+
             return $this->respond(['msg' => $data]);
         } catch (\Exception $e) {
 
@@ -201,13 +203,13 @@ class Administracao extends ResourceController
             }
 
             $request = service('request');
-            $input = $request->getRawInput();
+            $input   = $request->getRawInput();
 
             $data = [
-                'url_api' => $input['urlAPI'],
+                'url_api'      => $input['urlAPI'],
                 'instance_api' => $input['instanceAPI'],
-                'key_api' => $input['keyAPI'],
-                'ativar_wa' => ($input['ativawa']) ?? 0,
+                'key_api'      => $input['keyAPI'],
+                'ativar_wa'    => ($input['ativawa']) ?? 0,
             ];
 
             $status = $this->modelAdmin->update($id, $data);
@@ -215,6 +217,7 @@ class Administracao extends ResourceController
             if ($status === false) {
                 return $this->fail($this->modelAdmin->errors());
             }
+
             return $this->respond(['msg' => $data]);
         } catch (\Exception $e) {
 
@@ -231,15 +234,15 @@ class Administracao extends ResourceController
             }
 
             $request = service('request');
-            $input = $request->getRawInput();
+            $input   = $request->getRawInput();
 
             $data = [
-                's3_access_key_id' => $input['s3Id'],
+                's3_access_key_id'     => $input['s3Id'],
                 's3_secret_access_key' => $input['s3Key'],
-                's3_region' => $input['s3Regiao'],
+                's3_region'            => $input['s3Regiao'],
                 //'s3_endpoint' => $input[''],
                 's3_bucket_name' => $input['s3Bucket'],
-                's3_cdn' => $input['s3Cdn']
+                's3_cdn'         => $input['s3Cdn'],
             ];
 
             $status = $this->modelAdmin->update($id, $data);
@@ -247,6 +250,7 @@ class Administracao extends ResourceController
             if ($status === false) {
                 return $this->fail($this->modelAdmin->errors());
             }
+
             return $this->respond(['msg' => $data]);
         } catch (\Exception $e) {
 
@@ -258,14 +262,15 @@ class Administracao extends ResourceController
     {
         try {
             $uploadsLibraries = new UploadsLibraries();
-            $result = $uploadsLibraries->testConnection();
+            $result           = $uploadsLibraries->testConnection();
+
             return $this->respond($result);
         } catch (\Exception $e) {
             log_message('error', 'Erro ao testar a conexão com o S3: ' . $e->getMessage());
+
             return $this->fail('Erro ao testar a conexão com o S3: ' . $e->getMessage());
         }
     }
-
 
     public function testWhatsApp()
     {
@@ -276,7 +281,7 @@ class Administracao extends ResourceController
         $message['message'] = $input['message'];
         $number             = $input['numberSend'];
 
-        $send = $whatsapp->verifyNumber($message, $number, 'text'); 
+        $send = $whatsapp->verifyNumber($message, $number, 'text');
 
         if ($send) {
             return $this->respond(['msg' => 'Executado com sucesso. Verifique se recebeu a mensagem.']);
@@ -287,7 +292,9 @@ class Administracao extends ResourceController
         return $this->respond($input);
     }
 
-    public function update($id = null) {}
+    public function update($id = null)
+    {
+    }
 
     /**
      * Delete the designated resource object from the model
