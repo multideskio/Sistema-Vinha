@@ -24,7 +24,7 @@ class StartWebSocket extends BaseCommand
                     new WebSocketServer()  // Instância do WebSocketServer
                 )
             ),
-            8081 // Porta do WebSocket
+            8088 // Porta do WebSocket
         );
 
         CLI::write('Servidor WebSocket rodando na porta 8081...', 'green');

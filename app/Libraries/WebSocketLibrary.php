@@ -10,7 +10,8 @@ class WebSocketLibrary
     {
         try {
             // Criar um cliente WebSocket e conectar à URL do servidor WebSocket
-            $client = new Client("ws://localhost:8081");
+            //localhost:8088
+            $client = new Client("ws://wss.conect.app");
 
             // Certifique-se de que a mensagem está sendo enviada como JSON
             $payload = json_encode($message);

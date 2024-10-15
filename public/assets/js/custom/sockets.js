@@ -5,7 +5,7 @@ const maxReconnectAttempts = 10; // Número máximo de tentativas de reconexão
 
 function connectWebSocket() {
     // Tentativa de conexão ao WebSocket
-    ws = new WebSocket('ws://localhost:8081'); // Substitua pelo ID correto da empresa
+    ws = new WebSocket('wss://wss.conect.app'); // Substitua pelo ID correto da empresa
 
     ws.onopen = () => {
         console.log('Conectado ao WebSocket');
