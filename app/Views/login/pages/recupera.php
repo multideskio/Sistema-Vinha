@@ -38,7 +38,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="mt-4 text-center">
                     <p class="mb-5">
                         <a href="/" class="fw-semibold text-primary text-decoration-underline">
@@ -46,17 +45,6 @@
                         </a>
                     </p>
                 </div>
-
-
-
-
-
-
-
-
-
-
-
                 <div class="row">
                     <div class="col-md-12">
                         <div class="text-center">
@@ -82,21 +70,57 @@
             </div>
         </div>
     </main>
-    <!-- end auth-page-wrapper -->
     <?= $this->include('partials/vendor-scripts') ?>
+
     <!-- particles js -->
     <script src="/assets/libs/particles.js/particles.js"></script>
+
     <!-- particles app js -->
     <script src="/assets/js/pages/particles.app.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
     <!-- Sweet Alerts js -->
     <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
     <!-- Plugin adicionais -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
         integrity="sha512-YUkaLm+KJ5lQXDBdqBqk7EVhJAdxRnVdT2vtCzwPHSweCzyMgYV/tgGF4/dCyqtCC2eCphz0lRQgatGVdfR0ww=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+    function formSend() {
+        $('.formSend').ajaxForm({
+            beforeSubmit: function(formData, jqForm, options) {
+                Swal.fire({
+                    text: 'Verificando endereço de e-mail',
+                    icon: 'info'
+                })
+            },
+            success: function(responseText, statusText, xhr, $form) {
+                Swal.fire({
+                    text: 'Enviamos um link de recuperação de conta para o seu e-mail!',
+                    icon: 'success'
+                }).then(function(result) {
+                    window.location.href = '/';
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    text: 'Não encotramos uma conta associada a esse endereço de e-mail.',
+                    icon: 'error'
+                }).then(function(result) {
+                    //window.location.href = '/';
+                });
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        formSend();
+    });
+    </script>
 
 </body>
 
