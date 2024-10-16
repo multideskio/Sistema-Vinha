@@ -18,7 +18,7 @@ body {
 
 .left-side {
   position: relative;
-  background-image: url("/assets/images/bg-auth.jpg");
+  background-image: url("https://d2mlkbg44iajgz.cloudfront.net/assets/images/bg-auth.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
