@@ -4,6 +4,7 @@
 <head>
     <?php echo view('partials/title-meta', ['title' => $titlePage]); ?>
     <?= $this->include('partials/head-css') ?>
+    <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="/assets/css/custom/nova-conta.css" rel="stylesheet" type="text/css">
 </head>
 
