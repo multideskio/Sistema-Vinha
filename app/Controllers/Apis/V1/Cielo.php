@@ -6,15 +6,13 @@ use App\Gateways\Cielo\CieloBase;
 use App\Gateways\Cielo\CieloBoleto;
 use App\Gateways\Cielo\CieloCreditCard;
 use App\Gateways\Cielo\CieloCron;
-use App\Gateways\Cielo\CieloDebitCard;
 use App\Gateways\Cielo\CieloPix;
 use App\Libraries\WhatsappLibraries;
 use App\Models\TransacoesModel;
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\RESTful\ResourceController;
 use Exception;
 
-class Cielo extends ResourceController
+class Cielo extends BaseController
 {
     use ResponseTrait;
 
@@ -26,11 +24,13 @@ class Cielo extends ResourceController
 
     public function __construct()
     {
+        // Chama o construtor da classe pai para inicializar os modelos
+        parent::__construct();
+
         $this->creditCardGateway = new CieloCreditCard();
-        //$this->debitCardGateway = new CieloDebitCard();
-        $this->boletoGateway = new CieloBoleto();
-        $this->pixGateway    = new CieloPix();
-        $this->cieloBase     = new CieloBase();
+        $this->boletoGateway     = new CieloBoleto();
+        $this->pixGateway        = new CieloPix();
+        $this->cieloBase         = new CieloBase();
         helper('auxiliar');
     }
 

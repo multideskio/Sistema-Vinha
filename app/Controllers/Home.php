@@ -25,7 +25,7 @@ class Home extends BaseController
     {
 
         //$this->cachePage(getCacheExpirationTimeInSeconds(60));
-        return view('login/login', [
+        return view('login/pages/login', [
             'data'      => $this->modelConfig,
             'titlePage' => 'Entrar',
         ]);

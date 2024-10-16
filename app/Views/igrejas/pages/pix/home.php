@@ -7,7 +7,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-xl-4">
         <div class="card">
             <div class="card-body">
                 <?= form_open('/api/v1/cielo/pix-charge', ['id' => 'formPix']) ?>
@@ -54,12 +54,28 @@
         </div>
     </div>
 
-    <div class="col-lg-6">
+    <div class="col-xl-8">
         <div class="alert alert-warning alert-dismissible bg-warning text-dark alert-label-icon fade show" role="alert">
-            <i class="ri-error-warning-line label-icon"></i><strong>Atenção!</strong> - Os dados para realizar o PIX
-            aparecerão após informar os dados e clicar no botão <b>GERAR PIX</b>
+            <i class="bi bi-info-circle label-icon"></i><strong>Importante:</strong> Os dados para realizar o pagamento
+            via PIX serão exibidos após o preenchimento dos campos e ao clicar em <b>GERAR PIX</b>.
+        </div>
+        <div class="alert alert-dark alert-dismissible bg-dark text-white alert-label-icon fade show" role="alert">
+            <i class="bi bi-lightning-charge label-icon"></i><strong>Processo automático:</strong> O pagamento será
+            confirmado automaticamente após sua conclusão.
+        </div>
+        <div class="alert alert-primary alert-dismissible bg-primary text-white alert-label-icon fade show"
+            role="alert">
+            <i class="bi bi-chat-dots label-icon"></i><strong>Atualize seu WhatsApp:</strong> Certifique-se de que o
+            número está atualizado para receber as confirmações.
+        </div>
+        <div class="alert alert-success alert-dismissible bg-success text-white alert-label-icon fade show"
+            role="alert">
+            <i class="bi bi-shield-check label-icon"></i><strong>Segurança garantida:</strong> Estamos comprometidos com
+            a proteção dos seus dados.
         </div>
     </div>
+
+
 </div>
 
 <div class="modal fade" id="modalPix" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

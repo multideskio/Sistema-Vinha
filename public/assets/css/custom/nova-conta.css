@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+* {
+  box-sizing: border-box;
+}
+
+input {
+  border-radius: 5px !important;
+}
+
+html,
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: hidden !important;
+}
+
+.left-side {
+  position: relative;
+  background-image: url("/assets/images/bg-auth.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+
+.left-side::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.left-side > * {
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-weight: 300;
+  font-size: 33px;
+}
+
+.form-label {
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+.step-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+::-moz-placeholder {
+  color: #888;
+  font-style: italic;
+  opacity: 1;
+}
+
+::placeholder {
+  color: #888;
+  font-style: italic;
+  opacity: 1;
+}
+
+input:focus::-moz-placeholder {
+  color: #bbb;
+  opacity: 0.7;
+}
+
+input:focus::placeholder {
+  color: #bbb;
+  opacity: 0.7;
+}
+
+.right-side {
+  height: 100vh;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  margin-top: 30px !important;
+  margin-bottom: 30px !important;
+}
+
+.invalid-feedback {
+  font-size: 12px !important;
+}
+
+.t-foot {
+  font-size: 12px;
+}
+
+.color-btn {
+  background-color: #1b2d47 !important;
+}
+
+.color-btn:hover {
+  background-color: #355685;
+}
+
+.iti {
+  width: 100%;
+}
+
+.iti__selected-flag {
+  padding: 0 2px 0 20px !important;
+}
+
+@media only screen and (max-width: 768px) {
+  .left-side {
+    display: none;
+  }
+  .right-side {
+    margin-top: 10% !important;
+    z-index: 999;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    width: 100% !important;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+  html,
+  body {
+    font-family: "Poppins", sans-serif;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .right-side {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}/*# sourceMappingURL=nova-conta.css.map */

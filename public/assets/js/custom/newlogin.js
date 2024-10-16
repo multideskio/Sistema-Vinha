@@ -1,52 +1,151 @@
-/** Geral */
-let selectSupervisorIgreja;
-let selectSupervisor;
+/** js */
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.querySelector("#phone");
+    const fullPhoneInput = document.querySelector("#full_phone");
 
-function searchSupervisor() {
-    if (selectSupervisorIgreja) {
-        selectSupervisorIgreja.destroy();
+    // Inicializa o intl-tel-input
+    const iti = window.intlTelInput(input, {
+        initialCountry: "auto", // Detecta o país automaticamente
+        geoIpLookup: function (callback) {
+            fetch('https://ipinfo.io/json', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => callback(data.country))
+                .catch(() => callback('BR')); // Default para 'BR' caso falhe
+        },
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+    });
+
+    // Antes de submeter o formulário, captura o número completo com DDI
+    document.querySelector('#multi-step-form').addEventListener('submit', function (event) {
+        // Captura o número completo com DDI no formato E.164
+        const fullPhoneNumber = iti.getNumber(intlTelInputUtils.numberFormat.E164);
+
+        if (iti.isValidNumber()) {
+            // Insere o número completo no campo oculto
+            fullPhoneInput.value = fullPhoneNumber;
+        } else {
+            // Se o número for inválido, previne o envio e alerta o usuário
+            event.preventDefault();
+            exibirMensagem("error", "Por favor, insira um número de telefone válido.")
+        }
+    });
+});
+
+
+//steps
+let currentStep = 0;
+const steps = document.querySelectorAll('.step');
+
+const form = document.getElementById('multi-step-form');
+
+function updateStep() {
+    steps.forEach((step, index) => {
+        step.classList.toggle('active', index === currentStep);
+    });
+}
+
+function validateStep() {
+    // Valida os campos da etapa atual
+    const currentFields = steps[currentStep].querySelectorAll('input, select');
+    let isValid = true;
+
+    currentFields.forEach(field => {
+        if (!field.checkValidity()) {
+            field.classList.add('is-invalid'); // Adiciona classe de erro
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid'); // Remove erro se válido
+        }
+    });
+
+    return isValid;
+}
+
+function nextStep() {
+    if (validateStep()) {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateStep();
+        }
     }
+}
 
-    if (selectSupervisor) {
-        selectSupervisor.destroy();
+function prevStep() {
+    if (currentStep > 0) {
+        currentStep--;
+        updateStep();
     }
+}
 
-    var option = "<option selected value=''>Carregando dados...</option>";
-    var listOption = $('.selectSupervisor');
+// Remover a classe de erro ao começar a digitar no campo
+form.addEventListener('input', (event) => {
+    const field = event.target;
+    if (field.checkValidity()) {
+        field.classList.remove('is-invalid');
+    }
+});
 
-    listOption.empty().removeAttr('required');
-    listOption.append(option);
+function exibirMensagem(tipo, message) {
+    Swal.fire({
+        text: message,
+        icon: tipo
+    });
+}
 
-    $.getJSON(_baseUrl + "api/v1/public/supervisor", function (data) {
-        listOption.empty().removeAttr('required');
 
-        var option = "<option selected value=''>Escolha uma supervisor...</option>";
 
-        $.each(data, function (index, supervisor) {
-            option += `<option value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
-        });
 
-        listOption.append(option);
+/**jquery */
 
-        listOption.attr('required', true).attr('data-choices', true);
+$(document).ready(function () {
+    searchEmail();
+    initFunctions();
+    searchSupervisor();
+    formSend();
+    setupInputMasks();
+});
 
-        selectSupervisorIgreja = initializeChoices('#selectSupervisorIgreja');
-        selectSupervisor = initializeChoices('#selectSupervisor');
+function initFunctions() {
+    $(".btnMostraIgreja").click(function () {
+        $(".igrejaCad").show();
+        $(".pastorCad").hide();
+    });
+    $(".btnMostraPastor").click(function () {
+        $(".pastorCad").show();
+        $(".igrejaCad").hide();
+    });
+}
 
-    }).fail(() => {
-        Swal.fire({
-            title: 'Ainda não tem supervisores cadastrados',
-            icon: 'error'
-        }).then((result) => {
-            history.back();
-        });
-    });;
+
+//Verifica se o email já está no banco de dados
+function searchEmail() {
+    $("#useremailIgreja").on("change", function () {
+        var email = $("#useremailIgreja").val();
+        if (email) {
+            $.getJSON(`${_baseUrl}api/v1/public/search?email=${email}`,
+                null,
+                function (data, textStatus, jqXHR) {
+                    console.log(data);
+                    if (data.is === 'not') {
+                        $("#useremailIgreja").val("");
+                        exibirMensagem("error",
+                            "O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha."
+                        )
+                    }
+                }
+            );
+        }
+    });
 }
 
 
 function initializeChoices(selector) {
     if (typeof Choices !== 'undefined') {
-        //console.log(`Inicializando Choices.js no seletor: ${selector}`);
+        console.log(`Inicializando Choices.js no seletor: ${selector}`);
         return new Choices(selector, {
             allowHTML: true
         });
@@ -55,6 +154,42 @@ function initializeChoices(selector) {
         return null;
     }
 }
+
+/** SELECTS */
+let selectSupervisorIgreja;
+let selectSupervisor;
+
+function searchSupervisor() {
+    if (selectSupervisorIgreja) {
+        selectSupervisorIgreja.destroy();
+    }
+    if (selectSupervisor) {
+        selectSupervisor.destroy();
+    }
+    var option = "<option selected value=''>Carregando dados...</option>";
+    var listOption = $('.selectSupervisor');
+    listOption.empty().removeAttr('required');
+    listOption.append(option);
+    $.getJSON(_baseUrl + "api/v1/public/supervisor", function (data) {
+        listOption.empty().removeAttr('required');
+        var option = "<option selected value=''>Escolha um supervisor...</option>";
+        $.each(data, function (index, supervisor) {
+            option += `<option value="${supervisor.id}">${supervisor.id} - ${supervisor.nome} ${supervisor.sobrenome}</option>`;
+        });
+        listOption.append(option);
+        listOption.attr('required', true).attr('data-choices', true);
+        selectSupervisorIgreja = initializeChoices('#selectSupervisorIgreja');
+        //selectSupervisor = initializeChoices('#selectSupervisor');
+    }).fail(() => {
+        Swal.fire({
+            title: 'Ainda não tem supervisores cadastrados',
+            icon: 'error'
+        }).then((result) => {
+            history.back();
+        });
+    });
+}
+
 
 function formSend() {
     $('.formSend').ajaxForm({
@@ -105,104 +240,12 @@ function formSend() {
     });
 }
 
-function exibirMensagem(tipo, message) {
-    Swal.fire({
-        text: message,
-        icon: tipo
-    });
-}
-
-
-function checkPasswordPastor() {
-    // Alternar visibilidade da senha
-    $('.auth-pass-inputgroup').each(function () {
-        $(this).find('.password-addon').each(function () {
-            $(this).on('click', function () {
-                const passwordInput = $(this).closest('.auth-pass-inputgroup').find('#password-input-pastor');
-                if (passwordInput.attr('type') === 'password') {
-                    passwordInput.attr('type', 'text');
-                } else {
-                    passwordInput.attr('type', 'password');
-                }
-            });
-        });
-    });
-
-    const passwordInput = $('#password-input-pastor');
-    const messageBox = $('.password-contain');
-    const letter = $('.pass-lower');
-    const capital = $('.pass-upper');
-    const number = $('.pass-number');
-    const special = $('.pass-special'); // Adicionado para caracteres especiais
-    const length = $('.pass-length');
-    const btnSend = $('#btn-send-pastor');
-
-    passwordInput.on('focus', function () {
-        messageBox.show();
-    });
-    passwordInput.on('blur', function () {
-        messageBox.hide();
-    });
-    passwordInput.on('keyup', function () {
-        // Validar letras minúsculas
-        const lowerCaseLetters = /[a-z]/g;
-        if (passwordInput.val().match(lowerCaseLetters)) {
-            letter.removeClass('text-danger').addClass('text-success');
-        } else {
-            letter.removeClass('text-success').addClass('text-danger');
-        }
-
-        // Validar letras maiúsculas
-        const upperCaseLetters = /[A-Z]/g;
-        if (passwordInput.val().match(upperCaseLetters)) {
-            capital.removeClass('text-danger').addClass('text-success');
-        } else {
-            capital.removeClass('text-success').addClass('text-danger');
-        }
-
-        // Validar números
-        const numbers = /[0-9]/g;
-        if (passwordInput.val().match(numbers)) {
-            number.removeClass('text-danger').addClass('text-success');
-        } else {
-            number.removeClass('text-success').addClass('text-danger');
-        }
-
-        // Validar caracteres especiais
-        const specialCharacters = /[!@#$%^&*(),.?":{}|<>]/g; // Adicionado para caracteres especiais
-        if (passwordInput.val().match(specialCharacters)) {
-            special.removeClass('text-danger').addClass('text-success');
-        } else {
-            special.removeClass('text-success').addClass('text-danger');
-        }
-
-        // Validar comprimento
-        if (passwordInput.val().length >= 8) {
-            length.removeClass('text-danger').addClass('text-success');
-        } else {
-            length.removeClass('text-success').addClass('text-danger');
-        }
-
-        // Exibir o botão enviar se todas as condições forem atendidas
-        if (passwordInput.val().match(lowerCaseLetters) &&
-            passwordInput.val().match(upperCaseLetters) &&
-            passwordInput.val().match(numbers) &&
-            passwordInput.val().match(specialCharacters) &&
-            passwordInput.val().length >= 8) {
-            btnSend.show();
-        } else {
-            btnSend.hide();
-        }
-    });
-}
-
-// Configura as máscaras de input nos campos
 function setupInputMasks() {
     const maskConfigs = [
         { selector: '.cpf', mask: '000.000.000-00' },
         { selector: '.cep', mask: '00000-000' },
         { selector: '.telFixo', mask: '(00) 0000-0000' },
-        { selector: '.whatsapp', mask: '+00 (00) 0 0000-0000' },
+        { selector: '.phone', mask: '(00) 0 0000-0000' },
         { selector: '.cnpj', mask: '00.000.000/0000-00' }
     ];
 
@@ -210,30 +253,3 @@ function setupInputMasks() {
         $(config.selector).mask(config.mask);
     });
 }
-
-/**Igreja */
-
-$(document).ready(function () {
-    setupInputMasks();
-
-    searchSupervisor();
-    formSend();
-
-    $('#tipoCadastro').change(function () {
-        var selectedValue = $(this).val();
-
-        console.log(selectedValue);
-
-
-        if (selectedValue == '1') {
-            $('#divPastor').show();
-            $('#divIgreja').hide();
-        } else if (selectedValue == '2') {
-            $('#divPastor').hide();
-            $('#divIgreja').show();
-        } else {
-            $('#divPastor').hide();
-            $('#divIgreja').hide();
-        }
-    });
-});

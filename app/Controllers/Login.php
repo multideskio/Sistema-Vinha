@@ -12,8 +12,8 @@ class Login extends BaseController
     public function __construct()
     {
 
-        $this->modelConfig = new \App\Models\AdminModel;
-        $this->config = $this->modelConfig->searchCacheData(1);
+        $this->modelConfig = new \App\Models\AdminModel();
+        $this->config      = $this->modelConfig->searchCacheData(1);
     }
 
     public function index()
@@ -23,12 +23,12 @@ class Login extends BaseController
 
     public function novaconta(): string
     {
-        $this->cachePage(getCacheExpirationTimeInSeconds(365));
+        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
         $data['titlePage'] = 'Criar conta';
         $data['rowConfig'] = $this->config;
 
         //$this->cachePage(2000);
-        return view('login/nova', $data);
+        return view('login/pages/page', $data);
     }
 
     public function novasenha($token): string
@@ -38,16 +38,18 @@ class Login extends BaseController
 
         if ($token) {
             $modelUser = new UsuariosModel();
-            $row = $modelUser->where('token', $token)->first();
+            $row       = $modelUser->where('token', $token)->first();
 
             if ($row) {
                 $data['titlePage'] = 'Nova senha';
-                $data['token'] = $token;
+                $data['token']     = $token;
+
                 return view('login/novasenha', $data);
             }
         }
 
         $data['titlePage'] = 'Erro';
+
         return view('login/confirm/erro', $data);
     }
 
@@ -58,19 +60,20 @@ class Login extends BaseController
 
         if ($token) {
             $modelUser = new UsuariosModel();
-            $row = $modelUser->where('token', $token)->first();
+            $row       = $modelUser->where('token', $token)->first();
 
             if ($row) {
                 $data['titlePage'] = 'Nova senha';
-                $data['token'] = $token;
+                $data['token']     = $token;
+
                 return view('login/primeiro-acesso', $data);
             }
         }
 
         $data['titlePage'] = 'Erro';
+
         return view('login/confirm/erro', $data);
     }
-
 
     public function recuperacao(): string
     {
@@ -78,8 +81,9 @@ class Login extends BaseController
         $data['titlePage'] = 'Recuperar conta';
         $data['rowConfig'] = $this->config;
 
-        $this->cachePage(getCacheExpirationTimeInSeconds(365));
-        return view('login/recover', $data);
+        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
+
+        return view('login/pages/recupera', $data);
     }
 
     //Apenas avisa que a verificação foi realizada
@@ -87,20 +91,24 @@ class Login extends BaseController
     {
         if ($token) {
             $modelUser = new UsuariosModel();
-            $row = $modelUser->where('token', $token)->findAll();
+            $row       = $modelUser->where('token', $token)->findAll();
+
             if (count($row)) {
                 $modelUser->update($row[0]['id'], ['confirmado' => 1]);
                 $data['titlePage'] = 'Confirma e-mail';
                 $data['rowConfig'] = $this->config;
+
                 return view('login/confirm/sucesso', $data);
             } else {
                 $data['titlePage'] = 'Confirma e-mail';
                 $data['rowConfig'] = $this->config;
+
                 return view('login/confirm/erro', $data);
             }
         } else {
             $data['titlePage'] = 'Confirma e-mail';
             $data['rowConfig'] = $this->config;
+
             return view('login/confirm/erro', $data);
         }
     }

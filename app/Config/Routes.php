@@ -37,6 +37,7 @@ $routes->group('api/v1/public', ['namespace' => '\App\Controllers\Apis\V1\Public
     $routes->post('igreja', 'Open::igreja');
     $routes->post('recover', 'Open::recover');
     $routes->post('newpass', 'Open::newpass');
+    $routes->get('search', 'Open::searchEmail');
 });
 
 $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1', 'filter' => 'cors:api'], static function ($routes) {

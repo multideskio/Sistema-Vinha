@@ -15,7 +15,7 @@
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) {
+/*if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
                 //console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -65,5 +65,5 @@
         });
     } else {
         console.log('O PWA já está instalado.');
-    }
+    }*/
 </script>
