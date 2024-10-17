@@ -4,6 +4,7 @@ namespace App\Controllers\Apis\V1\Publica ;
 
 use App\Controllers\Apis\V1\BaseController;
 use App\Libraries\EmailsLibraries;
+use App\Libraries\NotificationLibrary;
 use App\Models\ConfigMensagensModel;
 use App\Models\IgrejasModel;
 use App\Models\PastoresModel;
@@ -13,11 +14,13 @@ use CodeIgniter\Security\Exceptions\SecurityException;
 
 class Open extends BaseController
 {
-    protected $modelUser;
-    protected $modelPastor;
-    protected $modelIgreja;
-    protected $modelSupervisores;
-    protected $modelMessages;
+    protected UsuariosModel        $modelUser;
+    protected PastoresModel        $modelPastor;
+    protected IgrejasModel         $modelIgreja;
+    protected SupervisoresModel    $modelSupervisores;
+    protected ConfigMensagensModel $modelMessages;
+    protected NotificationLibrary  $notifications;
+    protected EmailsLibraries      $emailsLibrary;
 
     public function __construct()
     {
@@ -28,6 +31,8 @@ class Open extends BaseController
         $this->modelIgreja       = new IgrejasModel();
         $this->modelSupervisores = new SupervisoresModel();
         $this->modelMessages     = new ConfigMensagensModel();
+        $this->notifications     = new NotificationLibrary();
+        $this->emailsLibrary     = new EmailsLibraries();
     }
 
     //Cadastro de pastor
@@ -38,7 +43,6 @@ class Open extends BaseController
         }
 
         try {
-
             $this->modelPastor->transStart();
             $header = $this->request->headers();
             $input  = $this->request->getPost();
@@ -104,15 +108,12 @@ class Open extends BaseController
             $this->modelPastor->transComplete();
             $this->modelUser->transComplete();
 
-            // Notificações
-            $notification = new \App\Libraries\NotificationLibrary();
-
             //Verifica
             if ($celular) {
-                $notification->sendWelcomeMessage($nome, $email, $celular);
+                $this->notifications->sendWelcomeMessage($nome, $email, $celular);
             }
 
-            $notification->sendVerificationEmail($email, $nome);
+            $this->notifications->sendVerificationEmail($email, $nome);
 
             //RESPOSTA DE SUCESSO
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
@@ -203,15 +204,12 @@ class Open extends BaseController
             $this->modelUser->transComplete();
             $this->modelIgreja->transComplete();
 
-            // Notificações
-            $notification = new \App\Libraries\NotificationLibrary();
-
             //Verifica
             if ($celular) {
-                $notification->sendWelcomeMessage($nome, $email, $celular);
+                $this->notifications->sendWelcomeMessage($nome, $email, $celular);
             }
 
-            $notification->sendVerificationEmail($email, $nome);
+            $this->notifications->sendVerificationEmail($email, $nome);
 
             //RESPOSTA DE SUCESSO
             return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
@@ -295,9 +293,9 @@ class Open extends BaseController
             $sendEmail = [
                 'token' => $build['token'],
             ];
-            $email   = new EmailsLibraries();
+
             $message = view('emails/recupera', $sendEmail);
-            $email->envioEmail($input['email'], 'Recuperação de conta', $message);
+            $this->emailsLibrary->envioEmail($input['email'], 'Recuperação de conta', $message);
 
             return $this->respond($build);
         }
@@ -317,8 +315,8 @@ class Open extends BaseController
         if(empty($input['email'])) {
             return $this->fail(['msg' => 'Parametro faltando! ' . $input]);
         }
-        $modelUser = new UsuariosModel();
-        $build     = $modelUser->where('email', esc($input['email']))->countAllResults();
+
+        $build = $this->modelUser->where('email', esc($input['email']))->countAllResults();
 
         if($build) {
             return $this->respond(['is' => 'not']);
