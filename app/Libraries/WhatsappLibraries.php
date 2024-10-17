@@ -3,27 +3,27 @@
 namespace App\Libraries;
 
 use App\Models\AdminModel;
-use CodeIgniter\Log\Logger;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use InvalidArgumentException;
+use JsonException;
+use RuntimeException;
 
 class WhatsappLibraries
 {
-    protected $apiUrl;
-    protected $instance;
-    protected $apikey;
+    protected string $apiUrl;
+    protected string $instance;
+    protected string $apikey;
     protected array $headers;
     protected Client $client;
     protected AdminModel $modelAdmin;
-    protected Logger $logger;
 
-    public function __construct(Client $client = null, AdminModel $modelAdmin = null, Logger $logger = null)
+    public function __construct(Client $client = null, AdminModel $modelAdmin = null)
     {
         $this->modelAdmin = $modelAdmin ?? new AdminModel();
         $this->client     = $client     ?? new Client();
-        $this->logger     = $logger     ?? \Config\Services::logger();
 
         log_message('info', 'Construtor chamado.');
 
@@ -31,9 +31,9 @@ class WhatsappLibraries
 
         if (!$dataSettings) {
             log_message('warning', 'Nenhuma configuração da API Multidesk encontrada. Continuando sem API.');
-            $this->apiUrl   = null;
-            $this->apikey   = null;
-            $this->instance = null;
+            $this->apiUrl   = '';
+            $this->apikey   = '';
+            $this->instance = '';
 
             return;
         }
@@ -84,7 +84,7 @@ class WhatsappLibraries
         if (!in_array($tipo, ['text', 'image', 'csv'])) {
             log_message('error', 'Tipo inválido fornecido: ' . $tipo);
 
-            throw new InvalidArgumentException('Tipo deve ser "text" ou "image".');
+            throw new InvalidArgumentException('Tipo deve ser "text", "image" ou "csv".');
         }
 
         log_message('info', 'Método verifyNumber chamado.', [
@@ -99,115 +99,50 @@ class WhatsappLibraries
             ]);
 
             if (isset($body['Code'], $body['Message'])) {
-                throw new Exception("Erro {$body['Code']}: {$body['Message']}");
+                throw new RuntimeException("Erro {$body['Code']}: {$body['Message']}");
             }
 
             if ($body[0]['exists']) {
                 log_message('info', 'Número verificado com sucesso.');
 
-                if ($tipo === 'text') {
-                    return $this->sendMessageText($message, $number);
-                }
+                switch ($tipo) {
+                    case 'text':
+                        return $this->sendMessageText($message, $number);
 
-                if ($tipo === 'image') {
-                    return $this->sendMessageImage($message, $number);
-                }
+                    case 'image':
+                        return $this->sendMessageImage($message, $number);
 
-                if ($tipo === 'csv') {
-                    return $this->sendMessageCsv($message, $number);
+                    case 'csv':
+                        return $this->sendMessageCsv($message, $number);
                 }
             } else {
-                throw new Exception("Erro: O número não está registrado no WhatsApp");
+                log_message('warning', "Número não registrado no WhatsApp: $number");
+
+                return false; // Retornar false se o número não existe
             }
         } catch (Exception $e) {
             log_message('error', 'Erro em verifyNumber: ' . $e->getMessage());
 
-            return false;
+            return false; // Garantir que o método retorne false em caso de exceção
         }
+
+        return false; // Garantir que o método retorne false em qualquer outro caso
     }
 
+    /**
+     * @throws Exception
+     */
     public function sendMessageImage(array $message, string $number): bool
     {
-        if (!$this->apiUrl || !$this->apikey || !$this->instance) {
-            log_message('error', 'Configuração da API ausente. Não é possível enviar a imagem.');
-
-            return false;
-        }
-
-        log_message('info', 'Método sendMessageImage chamado.', [
-            'number'  => $number,
-            'message' => $message,
-        ]);
-
-        try {
-            $params = [
-                "number"    => $number,
-                "mediatype" => "image",
-                "mimetype"  => "image/png",
-                "caption"   => $message['message'],
-                "media"     => $message['image'],
-                "fileName"  => "imagem.png",
-            ];
-
-            log_message('info', 'Enviando imagem.', $params);
-            $body = $this->postRequest('/message/sendMedia/' . $this->instance, $params);
-
-            if (isset($body['Code'], $body['Message'])) {
-                throw new Exception("Erro {$body['Code']}: {$body['Message']}");
-            }
-
-            log_message('info', 'Imagem enviada com sucesso.');
-
-            return true;
-        } catch (RequestException $e) {
-            $response             = $e->getResponse();
-            $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
-            log_message('error', 'Erro na requisição sendMessageImage: ' . $responseBodyAsString);
-
-            return false;
-        }
+        return $this->sendMessage($number, "image", $message['image'], $message['message'], "imagem.png", "image/png");
     }
 
+    /**
+     * @throws Exception
+     */
     public function sendMessageCsv(array $message, string $number): bool
     {
-        if (!$this->apiUrl || !$this->apikey || !$this->instance) {
-            log_message('error', 'Configuração da API ausente. Não é possível enviar o CSV.');
-
-            return false;
-        }
-
-        log_message('info', 'Método sendMessageCsv chamado.', [
-            'number'  => $number,
-            'message' => $message,
-        ]);
-
-        try {
-            $params = [
-                "number"    => $number,
-                "mediatype" => "document",
-                "mimetype"  => "text/csv",
-                "caption"   => $message['message'],
-                "media"     => $message['csv'],
-                "fileName"  => "relatorio.csv",
-            ];
-
-            log_message('info', 'Enviando CSV.', $params);
-            $body = $this->postRequest('/message/sendMedia/' . $this->instance, $params);
-
-            if (isset($body['Code'], $body['Message'])) {
-                throw new Exception("Erro {$body['Code']}: {$body['Message']}");
-            }
-
-            log_message('info', 'CSV enviado com sucesso.');
-
-            return true;
-        } catch (RequestException $e) {
-            $response             = $e->getResponse();
-            $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
-            log_message('error', 'Erro na requisição sendMessageCsv: ' . $responseBodyAsString);
-
-            return false;
-        }
+        return $this->sendMessage($number, "document", $message['csv'], $message['message'], "relatorio.csv", "text/csv");
     }
 
     public function sendMessageText(array $message, string $number): bool
@@ -238,24 +173,68 @@ class WhatsappLibraries
             $body = $this->postRequest('/message/sendText/' . $this->instance, $params);
 
             if (isset($body['Code'], $body['Message'])) {
-                throw new Exception("Erro {$body['Code']}: {$body['Message']}");
+                throw new RuntimeException("Erro {$body['Code']}: {$body['Message']}");
             }
 
             log_message('info', 'Texto enviado com sucesso.');
 
             return true;
         } catch (RequestException $e) {
-            $response             = $e->getResponse();
-            $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
-            log_message('error', 'Erro na requisição sendMessageText: ' . $responseBodyAsString);
+            return $this->handleRequestException($e, 'sendMessageText');
+        }
+    }
+
+    protected function sendMessage(string $number, string $mediaType, string $media, string $caption, string $fileName, string $mimeType): bool
+    {
+        if (!$this->apiUrl || !$this->apikey || !$this->instance) {
+            log_message('error', 'Configuração da API ausente. Não é possível enviar a mensagem.');
 
             return false;
         }
+
+        log_message('info', 'Método sendMessage chamado.', [
+            'number'    => $number,
+            'mediaType' => $mediaType,
+            'caption'   => $caption,
+        ]);
+
+        try {
+            $params = [
+                "number"    => $number,
+                "mediatype" => $mediaType,
+                "mimetype"  => $mimeType,
+                "caption"   => $caption,
+                "media"     => $media,
+                "fileName"  => $fileName,
+            ];
+
+            log_message('info', 'Enviando mensagem.', $params);
+            $body = $this->postRequest('/message/sendMedia/' . $this->instance, $params);
+
+            if (isset($body['Code'], $body['Message'])) {
+                throw new RuntimeException("Erro {$body['Code']}: {$body['Message']}");
+            }
+
+            log_message('info', 'Mensagem enviada com sucesso.');
+
+            return true;
+        } catch (RequestException $e) {
+            return $this->handleRequestException($e, 'sendMessage');
+        }
+    }
+
+    protected function handleRequestException(RequestException $e, string $method): bool
+    {
+        $response             = $e->getResponse();
+        $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
+        log_message('error', "Erro na requisição $method: " . $responseBodyAsString);
+
+        return false;
     }
 
     protected function postRequest(string $endpoint, array $data): ?array
     {
-        if(empty($this->headers)) {
+        if (empty($this->headers)) {
             return null;
         }
 
@@ -272,9 +251,8 @@ class WhatsappLibraries
 
             log_message('info', 'Enviando requisição POST para ' . $endpoint);
 
-            $response = $this->client->post($this->apiUrl . $endpoint, $options);
-
-            $responseBody = json_decode($response->getBody()->getContents(), true);
+            $response     = $this->client->post($this->apiUrl . $endpoint, $options);
+            $responseBody = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
             log_message('info', 'Resposta da requisição recebida.', $responseBody);
 
@@ -283,6 +261,14 @@ class WhatsappLibraries
             $response             = $e->getResponse();
             $responseBodyAsString = $response ? $response->getBody()->getContents() : 'Sem resposta';
             log_message('error', 'Erro na requisição postRequest: ' . $responseBodyAsString);
+
+            return null;
+        } catch (JsonException $e) {
+            log_message('error', 'Erro ao decodificar JSON: ' . $e->getMessage());
+
+            return null;
+        } catch (GuzzleException $e) {
+            log_message('error', 'Erro na requisição: ' . $e->getMessage());
 
             return null;
         }

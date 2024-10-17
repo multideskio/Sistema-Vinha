@@ -6,14 +6,14 @@ use Predis\Client;
 
 class RedisLibrary
 {
-    protected $redis;
+    protected Client $redis;
 
     public function __construct()
     {
         // Configuração da conexão com o Redis usando Predis e os dados fornecidos
         $this->redis = new Client([
             'scheme'   => 'tcp',
-            'host'     => '5.161.224.162:6381',  // IP do Redis
+            'host'     => '5.161.224.162',  // IP do Redis
             'port'     => 6381,             // Porta do Redis
             'password' => null,             // Senha do Redis (se aplicável)
             'timeout'  => 600,                // Timeout da conexão
@@ -22,19 +22,27 @@ class RedisLibrary
     }
 
     // Método para publicar mensagens no Redis (exemplo de notificação)
-    public function publish($channel, $message)
+    public function publish($channel, $message): void
     {
-        $this->redis->publish($channel, $message);
+        try {
+            $this->redis->publish($channel, $message);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+        }
     }
 
     // Método para definir uma chave no Redis
-    public function set($key, $value)
+    public function set($key, $value): void
     {
-        $this->redis->set($key, $value);
+        try {
+            $this->redis->set($key, $value);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+        }
     }
 
     // Método para obter uma chave do Redis
-    public function get($key)
+    public function get($key): ?string
     {
         return $this->redis->get($key);
     }

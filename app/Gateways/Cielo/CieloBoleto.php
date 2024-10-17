@@ -4,13 +4,19 @@ namespace App\Gateways\Cielo;
 
 use App\Models\AdminModel;
 use App\Models\UsuariosModel;
+use DateMalformedStringException;
+use DateTime;
 use Exception;
+use RuntimeException;
 
 class CieloBoleto extends CieloBase
 {
-    protected $dataAdm ;
-    protected $admModel ;
+    protected array|null|object $dataAdm ;
+    protected AdminModel $admModel ;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         // Chama o construtor da classe pai para inicializar os modelos
@@ -20,6 +26,9 @@ class CieloBoleto extends CieloBase
         $this->dataAdm  = $this->admModel->first();
     }
 
+    /**
+     * @throws Exception
+     */
     public function boleto(int $valor, string $tipo, string $descricao): array
     {
         $cielo = $this->data();
@@ -28,7 +37,7 @@ class CieloBoleto extends CieloBase
         $dados     = $modelUser->userData();
 
         if (!$cielo['active_boletos']) {
-            throw new Exception('Cobrança por boleto não está ativa.');
+            throw new RuntimeException('Cobrança por boleto não está ativa.');
         }
 
         $dataVencimento = $this->calculateDueDate($this->dataAdm['prazo_boleto']);
@@ -92,9 +101,12 @@ class CieloBoleto extends CieloBase
         return $this->createBoletoCharge($params, $tipo, $descricao);
     }
 
-    private function calculateDueDate($days)
+    /**
+     * @throws DateMalformedStringException
+     */
+    private function calculateDueDate($days): string
     {
-        $currentDate = new \DateTime();
+        $currentDate = new DateTime(); // Sem qualificação
         $currentDate->modify("+$days days");
 
         return $currentDate->format('Y-m-d');
@@ -117,30 +129,11 @@ class CieloBoleto extends CieloBase
                     'boletoUrl' => $response['Payment']['Url'], // Usando 'Url' ao invés de 'BoletoUrl'
                     'response'  => $response, // Usando 'Url' ao invés de 'BoletoUrl'
                 ];
-            } else {
-                throw new Exception("URL do boleto não encontrada na resposta.");
             }
+
+            throw new RuntimeException("URL do boleto não encontrada na resposta.");
         } catch (Exception $e) {
-            throw new Exception("Erro ao criar cobrança de boleto: " . $e->getMessage());
+            throw new RuntimeException("Erro ao criar cobrança de boleto: " . $e->getMessage());
         }
-    }
-
-    private function saveTransaction(array $params, array $response): void
-    {
-        /*if (isset($response['Payment']['Status']) && $response['Payment']['Status'] == 'Approved') {
-            $data = [
-                'id_transacao' => $response['Payment']['Tid'],
-                'valor'        => $params['Payment']['Amount'],
-                'log'          => json_encode($response),
-                'status_text'  => 'Aprovado',
-            ];
-
-            $this->transactionsModel->insert($data);
-        } else {
-            $logger = service('logger');
-            // Caso o status não seja 'Aprovado', pode-se tratar o erro aqui
-            $logger->warning('Cobrança de cartão de débito não aprovada.', ['response' => $response]);
-        }
-    }*/
     }
 }

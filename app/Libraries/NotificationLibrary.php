@@ -7,8 +7,8 @@ use App\Models\UsuariosModel;
 
 class NotificationLibrary
 {
-    protected $whatsapp;
-    protected $emailLibrary;
+    protected WhatsappLibraries $whatsapp;
+    protected EmailsLibraries $emailLibrary;
 
     public function __construct()
     {
@@ -16,40 +16,43 @@ class NotificationLibrary
         $this->emailLibrary = new EmailsLibraries();
     }
 
-    public function sendWelcomeMessage($nome, $email, $celular)
+    /**
+     * @throws \Exception
+     */
+    public function sendWelcomeMessage($nome, $email, $celular): void
     {
         $modelMessages = new ConfigMensagensModel();
-        $messages = $modelMessages->where('tipo', 'novo_usuario')->first();
+        $messages      = $modelMessages->where('tipo', 'novo_usuario')->first();
 
         if ($messages['status']) {
             $valores = [
                 '{NOME}'  => $nome,
                 '{EMAIL}' => $email,
-                '{TEL}'   => $celular
+                '{TEL}'   => $celular,
             ];
-            $novaString = strtr($messages['mensagem'], $valores);
+            $novaString     = strtr($messages['mensagem'], $valores);
             $msg['message'] = $novaString;
             $this->whatsapp->sendMessageText($msg, $celular) ?? false;
         }
     }
 
-    public function sendVerificationEmail($email, $nome)
+    public function sendVerificationEmail($email, $nome): void
     {
         $modelUser = new UsuariosModel();
-        $rowUser = $modelUser->where('email', $email)->first();
+        $rowUser   = $modelUser->where('email', $email)->first();
 
         //log_message('info', '[Linha ' . __LINE__ . '] Dados do usuário: '. json_encode($rowUser));
 
         if ($rowUser) {
 
             $sendEmail = [
-                'nome' => $nome,
-                'token' => $rowUser['token']
+                'nome'  => $nome,
+                'token' => $rowUser['token'],
             ];
 
             $message = view('emails/primeiro-acesso', $sendEmail);
             $this->emailLibrary->envioEmail($email, 'Confirme seu e-mail', $message);
-        }else{
+        } else {
             log_message('info', '[Linha ' . __LINE__ . '] O cadastro do usuário não foi encontrado.');
         }
     }
