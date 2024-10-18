@@ -20,7 +20,7 @@
                     <h3 class="title mt-3 mb-3">Recuperação de senha</h3>
                 </div>
                 <div class="row justify-content-center">
-                    <div class="col-md-8 col-xl-10">
+                    <div class="col-md-12 col-lg-12">
                         <div class="card mt-4">
                             <div class="card-body p-4">
                                 <div class="p-2 mt-4">
