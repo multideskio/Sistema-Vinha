@@ -89,7 +89,7 @@ function searchUpdate(id) {
     $.getJSON(url)
         .done(updateFormFields)
         .fail(handleSearchError);
-    
+
     $('#fotoPerfil').on('error', function () {
         $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
     });
@@ -126,7 +126,7 @@ function updateFormFields(data) {
 
     $("#viewNameUser").html(data.razaoSocial),
 
-    globalIdLogin = data.id_login;
+        globalIdLogin = data.id_login;
     atualizarTabela();
     populateSupervisorSelect(data.idSupervisor);
 }

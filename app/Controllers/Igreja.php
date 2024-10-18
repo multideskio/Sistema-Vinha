@@ -2,14 +2,28 @@
 
 namespace App\Controllers;
 
+use App\Models\AdminModel;
+use App\Models\IgrejasModel;
+use App\Models\PastoresModel;
+use App\Models\UsuariosModel;
+
 class Igreja extends BaseController
 {
-    protected $modelConfig;
+    protected AdminModel $modelConfig;
     protected $data;
+    protected UsuariosModel $modelUsuarios;
+    protected IgrejasModel $modelIgrejas;
+    protected PastoresModel $modelPastores;
 
+    /**
+     * METHODOS RETORNANDOS DADOS DIRETO PARA A VIEW
+     */
     public function __construct()
     {
-        $this->modelConfig = new \App\Models\AdminModel();
+        $this->modelConfig   = new AdminModel();
+        $this->modelUsuarios = new UsuariosModel();
+        $this->modelIgrejas  = new IgrejasModel();
+        $this->modelPastores = new PastoresModel();
         //$this->data['rowConfig'] = $this->modelConfig->cacheData();
     }
 
@@ -60,5 +74,22 @@ class Igreja extends BaseController
         $data['titlePage'] = "Transações";
 
         return view('igrejas/pages/transacoes', $data);
+    }
+
+    public function perfis(): string
+    {
+        $data['titlePage'] = "Seu perfil";
+        $data['idSearch']  = session('data')['id_perfil'];
+
+        if(session('data')['tipo'] === 'igreja') {
+            //Perfil Igreja
+            $data['data'] = $this->modelIgrejas->where('id', session('data')['id_perfil'])->first();
+
+            return view('igrejas/pages/perfis/igreja', $data);
+        } else {
+            //Perfil Pastor
+            return view('igrejas/pages/perfis/pastor', $data);
+        }
+
     }
 }

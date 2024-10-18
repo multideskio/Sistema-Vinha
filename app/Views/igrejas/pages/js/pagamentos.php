@@ -238,6 +238,7 @@ function forms() {
         beforeSubmit: function(formData, jqForm, options) {
 
             const expiryDate = $('#card-expiry-input').val();
+            console.log(expiryDate);
 
             if (!validateExpiryDate(expiryDate)) {
                 return false; // Impede o envio do formulário se a validação falhar

@@ -2,9 +2,21 @@
 
 namespace App\Models;
 
+use App\Jobs\AvisosWhatsApp;
 use App\Libraries\WhatsappLibraries;
 use CodeIgniter\Model;
+use Config\Database;
+use Config\Redis;
+use Config\Services;
+use ErrorException;
+use Exception;
+use JsonException;
+use Predis\Client;
 
+/**
+ * @method resetQuery()
+ * @method get()
+ */
 class TransacoesModel extends Model
 {
     protected $table            = 'transacoes';
@@ -58,18 +70,18 @@ class TransacoesModel extends Model
 
     protected function limparCache(array $data): array
     {
-        $cache = service('cache');
-        $cache->deleteMatching("transacoesList_" . '*');
+        /** @noinspection NullPointerExceptionInspection */
+        service('cache')->deleteMatching("transacoesList_" . '*');
 
         return $data;
     }
 
-    public function updateStatus()
+    public function updateStatus(): bool
     {
         return true;
     }
 
-    public function verificarEnvioDeLembretes()
+    public function verificarEnvioDeLembretes(): ?bool
     {
         // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
         // para o envio de lembretes. Fora desse horário, a função não executa.
@@ -82,32 +94,32 @@ class TransacoesModel extends Model
         }
 
         $dataEnvios = []; // Array para armazenar os registros de envios de lembretes
-        $db         = \Config\Database::connect(); // Conecta ao banco de dados
+        $db         = Database::connect(); // Conecta ao banco de dados
         // Consulta para obter todos os usuários que não são do tipo 'superadmin'
         $usuariosQuery = $db->table('usuarios')->select('usuarios.*')->where('usuarios.tipo !=', 'superadmin')->get();
 
         $usuarios            = $usuariosQuery->getResultArray(); // Converte os resultados da consulta para um array associativo
         $controleEnviosModel = new ControleEnviosModel(); // Instancia o modelo para controle de envios
         $hoje                = date('Y-m-d'); // Data atual
-        $mesAtual            = date('Y-m'); // Mês atual no formato 'YYYY-MM'
+        //$mesAtual            = date('Y-m'); // Mês atual no formato 'YYYY-MM'
 
         // Configuração do Redis com tratamento de exceção para garantir a conexão
         try {
-            $redis = new \Predis\Client((new \Config\Redis())->default); // Conecta ao Redis usando a configuração padrão
-        } catch (\Exception $e) {
+            $redis = new Client((new Redis())->default); // Conecta ao Redis usando a configuração padrão
+        } catch (Exception $e) {
             // Loga um erro se não conseguir conectar ao Redis
             log_message('error', 'Erro ao conectar ao Redis: ' . $e->getMessage());
 
-            return; // Termina a execução caso o Redis não esteja acessível
+            return null; // Termina a execução caso o Redis não esteja acessível
         }
 
         // Itera sobre todos os usuários obtidos na consulta
         foreach ($usuarios as $usuario) {
             // Obtém o perfil do usuário através de uma função auxiliar
-            $perfil = $this->obterPerfilUsuario($usuario);
-
-            if (!$perfil) {
-                continue; // Se o perfil não for encontrado, pula para o próximo usuário
+            try {
+                $perfil = $this->obterPerfilUsuario($usuario);
+            } catch (ErrorException) {
+                continue;
             }
 
             $melhorDia     = $perfil['data_dizimo']; // Melhor dia de pagamento do dízimo para o usuário
@@ -121,10 +133,10 @@ class TransacoesModel extends Model
 
             // Verifica se o lembrete deve ser enviado: dentro de 3 dias da data de pagamento
             // e se o lembrete ainda não foi enviado hoje
-            if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) != $hoje)) {
+            if (abs($diasDiferenca) <= 3 && (!$dataEnvioUltimoLembrete || date('Y-m-d', strtotime($dataEnvioUltimoLembrete['created_at'])) !== $hoje)) {
                 // Cria um job para enviar o lembrete via WhatsApp, incluindo dados do usuário e diferença de dias
                 $job = [
-                    'handler' => 'App\Jobs\AvisosWhatsApp',
+                    'handler' => AvisosWhatsApp::class,
                     'data'    => [
                         'usuario'       => $perfil,
                         'diasDiferenca' => $diasDiferenca,
@@ -133,15 +145,15 @@ class TransacoesModel extends Model
 
                 try {
                     // Tenta adicionar o job à fila Redis e verifica se a adição foi bem-sucedida
-                    if ($redis->rpush('jobs_queue', json_encode($job))) {
-                        log_message('info', 'Tarefa de lembrete adicionada à fila Redis: ' . json_encode($job));
+                    if ($redis->rpush('jobs_queue', (array)json_encode($job, JSON_THROW_ON_ERROR))) {
+                        log_message('info', 'Tarefa de lembrete adicionada à fila Redis: ' . json_encode($job, JSON_THROW_ON_ERROR));
                         // Adiciona o envio ao array de registros para posterior inserção em batch no banco de dados
-                        $dataEnvios[] = ['id_user' => $usuario['id']];
+                        //$dataEnvios[] = ['id_user' => $usuario['id']];
                     } else {
                         // Loga um erro se falhar ao adicionar a tarefa na fila Redis
                         log_message('error', 'Falha ao adicionar a tarefa de lembrete à fila Redis.');
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // Loga um erro se houver uma exceção ao tentar adicionar à fila Redis
                     log_message('error', 'Erro ao adicionar tarefa à fila Redis: ' . $e->getMessage());
                 }
@@ -149,6 +161,8 @@ class TransacoesModel extends Model
                 // Loga uma mensagem se o envio não foi registrado por estar fora das condições
                 log_message('info', 'NÃO REGISTROU O ENVIO: ' . $perfil['id']);
             }
+
+            return null;
         }
 
         // Verifica se há envios registrados e insere-os no banco de dados em batch
@@ -156,39 +170,32 @@ class TransacoesModel extends Model
             try {
                 $controleEnviosModel->insertBatch($dataEnvios); // Insere os registros de envios no banco de dados
                 log_message('info', 'Envios registrados com sucesso no banco de dados.');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Loga um erro se houver uma exceção ao tentar registrar os envios no banco de dados
                 log_message('error', 'Erro ao registrar envios no banco de dados: ' . $e->getMessage());
             }
         }
+
+        return null;
     }
 
-    public function obterPerfilUsuario($usuario)
+    /**
+     * @throws ErrorException
+     */
+    public function obterPerfilUsuario($usuario): array|object|null
     {
-        switch ($usuario['tipo']) {
-            case 'gerente':
-                $model = new \App\Models\GerentesModel();
-                break;
-
-            case 'supervisor':
-                $model = new \App\Models\SupervisoresModel();
-                break;
-
-            case 'pastor':
-                $model = new \App\Models\PastoresModel();
-                break;
-
-            case 'igreja':
-                $model = new \App\Models\IgrejasModel();
-                break;
-            default:
-                throw new \ErrorException("Tipo de permissão não definida");
-        }
+        $model = match ($usuario['tipo']) {
+            'gerente'    => new GerentesModel(),
+            'supervisor' => new SupervisoresModel(),
+            'pastor'     => new PastoresModel(),
+            'igreja'     => new IgrejasModel(),
+            default      => throw new ErrorException("Tipo de permissão não definida"),
+        };
 
         return $model->find($usuario['id_perfil']);
     }
 
-    private function enviarLembrete($usuario, $diasDiferenca)
+    private function enviarLembrete($usuario, $diasDiferenca): ?bool
     {
         $modelMessages = new ConfigMensagensModel();
         /**BUSCA MENSAGEM DE LEMBRETE DE PAGAMENTO */
@@ -244,10 +251,16 @@ class TransacoesModel extends Model
             // Exemplo:
             // mail($usuario['email'], 'Lembrete de Pagamento', $mensagem);
             $whatsApp = new WhatsappLibraries();
-            $whatsApp->verifyNumber(['message' => $mensagem], '5562981154120', 'text');
+            $whatsApp->verifyNumber(['message' => $mensagem], '5562981154120');
         } else {
-            log_message('info', 'NÃO ENVIOU: Nome ou razão social não disponível para o usuário ' . json_encode($usuario));
+            try {
+                log_message('info', 'NÃO ENVIOU: Nome ou razão social não disponível para o usuário ' . json_encode($usuario, JSON_THROW_ON_ERROR));
+            } catch (JsonException $e) {
+                log_message('error', 'Erro ao enviar a mensagem: ' . $e->getMessage());
+            }
         }
+
+        return null;
     }
 
     public function transacoes($input = false, $limit = 10, $order = 'DESC'): array
@@ -257,12 +270,12 @@ class TransacoesModel extends Model
         $search = $input['search'] ?? false;
         $page   = $input['page']   ?? 1;
 
-        $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
+        //$searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
 
         // Criação de uma chave de cache única baseada nos parâmetros
-        $cacheKey = "transacoesList_{$searchCache}_{$limit}_{$order}_{$page}";
+        //$cacheKey = "transacoesList_{$searchCache}_{$limit}_{$order}_$page";
 
-        $cache = \Config\Services::cache();
+        //$cache = Services::cache();
 
         // Verifica se os dados estão em cache
         /*if ($data = $cache->get($cacheKey)) {
@@ -271,7 +284,7 @@ class TransacoesModel extends Model
 
         $data             = [];
         $currentPageTotal = 0;
-        $allPagesTotal    = 0;
+        //$allPagesTotal    = 0;
 
         $search = $input['search'] ?? false;
 
@@ -287,7 +300,7 @@ class TransacoesModel extends Model
         $transacoes = $this->paginate($limit);
 
         foreach ($transacoes as $transacao) {
-            if ($transacao['tipo_user'] == 'pastor') {
+            if ($transacao['tipo_user'] === 'pastor') {
                 $rowPastor = $modelPastor->find($transacao['id_cliente']);
                 $data[]    = [
                     'id'           => $transacao['id'],
@@ -307,13 +320,13 @@ class TransacoesModel extends Model
                     'descricao_lg' => $transacao['descricao_longa'],
                 ];
 
-                if ($transacao['status_text'] == 'Pago') {
+                if ($transacao['status_text'] === 'Pago') {
                     $currentPageTotal += $transacao['valor'];
                 }
-            } elseif ($transacao['tipo_user'] == 'igreja') {
+            } elseif ($transacao['tipo_user'] === 'igreja') {
                 $rowIgreja = $modelIgreja->find($transacao['id_cliente']);
                 $data[]    = [
-                    'id'           => intval($transacao['id']),
+                    'id'           => (int)$transacao['id'],
                     'nome'         => $rowIgreja['razao_social'],
                     'email'        => $transacao['email'],
                     'tipo'         => 'igreja',
@@ -330,7 +343,7 @@ class TransacoesModel extends Model
                     'descricao_lg' => $transacao['descricao_longa'],
                 ];
 
-                if ($transacao['status_text'] == 'Pago') {
+                if ($transacao['status_text'] === 'Pago') {
                     $currentPageTotal += $transacao['valor'];
                 }
             }
@@ -350,9 +363,9 @@ class TransacoesModel extends Model
         $resultCount = count($transacoes);
 
         if ($search) {
-            $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "{$resultCount} resultados encontrados.";
+            $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "$resultCount resultados encontrados.";
         } else {
-            $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
+            $numMessage = "Exibindo resultados $start a $end de $totalResults.";
         }
 
         $result = [
@@ -370,14 +383,14 @@ class TransacoesModel extends Model
         return $result;
     }
 
-    public function listTransacaoUsuario($id, $input = false, $limit = 10, $order = 'DESC')
+    public function listTransacaoUsuario($id, $input = false, $limit = 10, $order = 'DESC'): array
     {
         helper('auxiliar');
         $page = $input['page'] ?? false;
 
         $data             = [];
         $currentPageTotal = 0; // Soma dos valores da página atual
-        $allPagesTotal    = 0; // Soma dos valores de todas as páginas da consulta atual
+        //$allPagesTotal    = 0; // Soma dos valores de todas as páginas da consulta atual
 
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
@@ -408,7 +421,7 @@ class TransacoesModel extends Model
         $modelReembolso = new ReembolsosModel();
 
         foreach ($transacoes as $transacao) {
-            if ($transacao['tipo_user'] == 'pastor') {
+            if ($transacao['tipo_user'] === 'pastor') {
                 $rowPastor   = $modelPastor->find($transacao['id_cliente']);
                 $rowRembolso = $modelReembolso->where('id_transacao', $transacao['id'])->first();
 
@@ -434,11 +447,11 @@ class TransacoesModel extends Model
                     'reembolso'    => $dataTransacao,
                 ];
 
-                if ($transacao['status_text'] == 'Pago') {
+                if ($transacao['status_text'] === 'Pago') {
                     // Adiciona o valor da transação à soma da página atual
                     $currentPageTotal += $transacao['valor'];
                 }
-            } elseif ($transacao['tipo_user'] == 'igreja') {
+            } elseif ($transacao['tipo_user'] === 'igreja') {
                 $rowIgreja = $modelIgreja->find($transacao['id_cliente']);
 
                 $rowRembolso = $modelReembolso->select('descricao, created_at')->where('id_transacao', $transacao['id'])->first();
@@ -450,7 +463,7 @@ class TransacoesModel extends Model
                 }
 
                 $data[] = [
-                    'id'           => intval($transacao['id']),
+                    'id'           => (int)$transacao['id'],
                     'nome'         => $rowIgreja['razao_social'],
                     'tipo'         => 'Igreja',
                     'id_transacao' => $transacao['id_transacao'],
@@ -466,7 +479,7 @@ class TransacoesModel extends Model
                     'reembolso'    => $dataTransacao,
                 ];
 
-                if ($transacao['status_text'] == 'Pago') {
+                if ($transacao['status_text'] === 'Pago') {
                     // Adiciona o valor da transação à soma da página atual
                     $currentPageTotal += $transacao['valor'];
                 }
@@ -487,29 +500,27 @@ class TransacoesModel extends Model
         $resultCount = count($transacoes);
 
         if ($search) {
-            $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "{$resultCount} resultados encontrados.";
+            $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "$resultCount resultados encontrados.";
         } else {
-            $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
+            $numMessage = "Exibindo resultados $start a $end de $totalResults.";
         }
 
-        $result = [
+        return [
             'rows'             => $data,
             'pager'            => $this->pager->links('default', 'paginate'),
             'num'              => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
             'allPagesTotal'    => decimalParaReaisBrasil($allPagesTotal), // Certifique-se de formatar a soma total
         ];
-
-        return $result;
     }
 
-    public function listSearchUsers($input = false, $limit = 10, $order = 'DESC')
+    public function listSearchUsers($input = false, $limit = 10): array
     {
         helper('auxiliar');
 
-        $page = $input['page'] ?? false;
+        //$page = $input['page'] ?? false;
 
-        if ($page) {
+        /*if ($page) {
             $cache = \Config\Services::cache();
 
             $search      = $input['search'] ?? false;
@@ -521,11 +532,11 @@ class TransacoesModel extends Model
             if ($cacheData = $cache->get($cacheKey)) {
                 return $cacheData;
             }
-        }
+        }*/
 
         $data             = [];
         $currentPageTotal = 0; // Soma dos valores da página atual
-        $allPagesTotal    = 0; // Soma dos valores de todas as páginas da consulta atual
+        //$allPagesTotal    = 0; // Soma dos valores de todas as páginas da consulta atual
 
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
@@ -535,13 +546,23 @@ class TransacoesModel extends Model
             ->where('transacoes.id_user', session('data')['id'])
             ->join('usuarios', 'usuarios.id = transacoes.id_user');
 
-        $this->orderBy('transacoes.id', $order);
+        if (!empty($input['tipo']) && in_array(strtolower($input['tipo']), ['pix', 'boleto', 'crédito'])) {
+            $this->where('transacoes.tipo_pagamento', strtolower($input['tipo']));
+        }
+
+        if (!empty($input['status']) && in_array(strtolower($input['status']), ['cancelado', 'pedente', 'pago'])) {
+            $this->where('transacoes.status_text', strtolower($input['status']));
+        }
+
+        if (!empty($input['order']) && in_array(strtolower($input['order']), ['asc', 'desc'])) {
+            $this->orderBy('transacoes.id', strtoupper($input['order']));
+        } else {
+            $this->orderBy('transacoes.id', 'desc');
+        }
 
         if ($search) {
             $this->groupStart()
-                ->like('transacoes.status_text', $search)
-                ->orLike('transacoes.tipo_pagamento', $search)
-                ->orLike('transacoes.descricao', $search)
+                ->like('transacoes.descricao', $search)
                 ->orLike('transacoes.descricao_longa', $search)
                 ->orLike('transacoes.id', $search)
                 ->groupEnd();
@@ -554,7 +575,7 @@ class TransacoesModel extends Model
 
         foreach ($transacoes as $transacao) {
 
-            if ($transacao['tipo_user'] == 'pastor') {
+            if ($transacao['tipo_user'] === 'pastor') {
                 $rowPastor = $modelPastor->find($transacao['id_cliente']);
                 $data[]    = [
                     'id'           => $transacao['id'],
@@ -575,10 +596,10 @@ class TransacoesModel extends Model
                 $currentPageTotal += $transacao['valor'];
             }
 
-            if ($transacao['tipo_user'] == 'igreja') {
+            if ($transacao['tipo_user'] === 'igreja') {
                 $rowPastor = $modelIgreja->find($transacao['id_cliente']);
                 $data[]    = [
-                    'id'           => intval($transacao['id']),
+                    'id'           => (int)$transacao['id'],
                     'nome'         => $rowPastor['razao_social'],
                     'tipo'         => 'Igreja',
                     'uf'           => $rowPastor['uf'],
@@ -614,49 +635,42 @@ class TransacoesModel extends Model
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
             } else {
-                $numMessage = "{$resultCount} resultados encontrados.";
+                $numMessage = "$resultCount resultados encontrados.";
             }
         } else {
-            $numMessage = "Exibindo resultados {$start} a {$end} de {$totalResults}.";
+            $numMessage = "Exibindo resultados $start a $end de $totalResults.";
         }
 
-        $result = [
+        return [
             'rows'             => $data,
             'pager'            => $this->pager->links('default', 'paginate'),
             'num'              => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
             'allPagesTotal'    => decimalParaReaisBrasil($allPagesTotal[0]['valor']),
         ];
-
-        if ($page) {
-            // Save the result to cache
-            $cache->save($cacheKey, $result, 3600); // Cache for 1 hour
-        }
-
-        return $result;
     }
 
-    public function dashCredito($dateIn = null, $dateOut = null)
+    public function dashCredito($dateIn = null, $dateOut = null): object|array|null
     {
         return $this->dashPaymentType('Credito', $dateIn, $dateOut);
     }
 
-    public function dashDebito($dateIn = null, $dateOut = null)
+    public function dashDebito($dateIn = null, $dateOut = null): object|array|null
     {
         return $this->dashPaymentType('Debito', $dateIn, $dateOut);
     }
 
-    public function dashBoletos($dateIn = null, $dateOut = null)
+    public function dashBoletos($dateIn = null, $dateOut = null): object|array|null
     {
         return $this->dashPaymentType('Boleto', $dateIn, $dateOut);
     }
 
-    public function dashPix($dateIn = null, $dateOut = null)
+    public function dashPix($dateIn = null, $dateOut = null): object|array|null
     {
         return $this->dashPaymentType('Pix', $dateIn, $dateOut);
     }
 
-    private function dashPaymentType($type, $dateIn = null, $dateOut = null)
+    private function dashPaymentType($type, $dateIn = null, $dateOut = null): object|array|null
     {
         if ($dateIn && $dateOut) {
             $this->where([
@@ -674,7 +688,7 @@ class TransacoesModel extends Model
         return $this->first();
     }
 
-    public function dashMensal()
+    public function dashMensal(): object|array|null
     {
         $this->like('data_pagamento', date('Y-m'));
         $this->where('status_text', 'Pago');
@@ -683,7 +697,7 @@ class TransacoesModel extends Model
         return $this->first();
     }
 
-    public function dashAnual()
+    public function dashAnual(): object|array|null
     {
         $this->like('data_pagamento', date('Y'));
         $this->where('status_text', 'Pago');
@@ -692,7 +706,7 @@ class TransacoesModel extends Model
         return $this->first();
     }
 
-    public function dashTotal()
+    public function dashTotal(): object|array|null
     {
         $this->where('status_text', 'Pago');
         $this->selectSum('valor');
@@ -700,27 +714,27 @@ class TransacoesModel extends Model
         return $this->first();
     }
 
-    public function dashCreditoAnterior()
+    public function dashCreditoAnterior(): object|array|null
     {
         return $this->dashPaymentTypeAnterior('Credito');
     }
 
-    public function dashDebitoAnterior()
+    public function dashDebitoAnterior(): object|array|null
     {
         return $this->dashPaymentTypeAnterior('Debito');
     }
 
-    public function dashBoletosAnterior()
+    public function dashBoletosAnterior(): object|array|null
     {
         return $this->dashPaymentTypeAnterior('Boleto');
     }
 
-    public function dashPixAnterior()
+    public function dashPixAnterior(): object|array|null
     {
         return $this->dashPaymentTypeAnterior('Pix');
     }
 
-    private function dashPaymentTypeAnterior($type)
+    private function dashPaymentTypeAnterior($type): object|array|null
     {
         $previousMonth = date('Y-m', strtotime('first day of last month'));
         $this->like('data_pagamento', $previousMonth);
@@ -731,7 +745,7 @@ class TransacoesModel extends Model
         return $this->first();
     }
 
-    public function dashMensalAnterior()
+    public function dashMensalAnterior(): object|array|null
     {
         $previousMonth = date('Y-m', strtotime('first day of last month'));
         $this->like('data_pagamento', $previousMonth);
@@ -741,7 +755,7 @@ class TransacoesModel extends Model
         return $this->first();
     }
 
-    public function dashAnualAnterior()
+    public function dashAnualAnterior(): object|array|null
     {
         $previousYear = date('Y', strtotime('first day of January last year'));
         $this->like('data_pagamento', $previousYear);

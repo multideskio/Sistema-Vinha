@@ -4,6 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+/**
+ * @method transRollback()
+ */
 class IgrejasModel extends Model
 {
     protected $table            = "igrejas";

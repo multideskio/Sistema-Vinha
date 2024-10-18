@@ -7,7 +7,7 @@
 </div>
 
 <div class="row">
-    <div class="col-xl-4">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
                 <?= form_open('/api/v1/cielo/pix-charge', ['id' => 'formPix']) ?>
@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <div class="col-xl-8">
+    <div class="col-lg-6">
         <div class="alert alert-warning alert-dismissible bg-warning text-dark alert-label-icon fade show" role="alert">
             <i class="bi bi-info-circle label-icon"></i><strong>Importante:</strong> Os dados para realizar o pagamento
             via PIX serão exibidos após o preenchimento dos campos e ao clicar em <b>GERAR PIX</b>.

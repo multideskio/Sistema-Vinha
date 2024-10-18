@@ -1,7 +1,13 @@
-<?= $this->extend('admin/template') ?>
+<?= $this->extend('igrejas/template') ?>
+<?= $this->section('css') ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+<script>
+const _idSearch = <?= $idSearch ?>;
+</script>
+<?= $this->endSection() ?>
 <?= $this->section('page') ?>
 <div class="col-xxl-12">
-    <h1 class="mb-3 fw-bolder">Gerenciamento de igrejas</h1>
+    <h1 class="mb-3 fw-bolder">O perfil da sua igreja</h1>
 </div>
 <div class="row">
     <div class="col-xxl-3">
@@ -82,11 +88,7 @@
                             <i class="fas fa-home"></i> Dados do perfil
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#transacoes" role="tab">
-                            <i class="far fa-envelope"></i> Transações do usuário
-                        </a>
-                    </li>
+                    <!--
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
                             <i class="far fa-envelope"></i> Preferências
@@ -96,7 +98,7 @@
                         <a class="nav-link" data-bs-toggle="tab" href="#preferencias" role="tab">
                             <i class="far fa-envelope"></i> Logs
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
             <div class="card-body p-4">
@@ -104,15 +106,6 @@
                     <div class="tab-pane active" id="personalDetails" role="tabpanel">
                         <?= form_open('api/v1/igrejas/' . $idSearch, 'class="formGeral" autocomplete="off"') ?>
                         <div class="row">
-                            <div class="col-lg-12">
-                                <div class="mb-3">
-                                    <label for="selectSupervisor" class="text-danger">Selecione um supervisor</label>
-                                    <select name="selectSupervisor" id="selectSupervisor" class="form-select"
-                                        required></select>
-                                </div>
-                            </div>
-
-
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="cnpj" class="form-label text-danger">CNPJ</label>
@@ -187,6 +180,14 @@
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
+                                    <label for="pais" class="form-label">País</label>
+                                    <input type="text" class="form-control" name="pais" id="pais"
+                                        placeholder="Ex: Brasil" required>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-lg-4">
+                                <div class="mb-3">
                                     <label for="cep" class="form-label">CEP</label>
                                     <input type="text" class="form-control cep" id="cep" name="cep"
                                         placeholder="00000-000">
@@ -218,6 +219,22 @@
                             <!--end col-->
                             <div class="col-lg-4">
                                 <div class="mb-3">
+                                    <label for="numero" class="form-label">Número</label>
+                                    <input type="number" class="form-control" name="numero" id="numero"
+                                        placeholder="200" required>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="rua" class="form-label">Rua</label>
+                                    <input type="text" class="form-control" name="rua" id="rua" placeholder="Sua rua"
+                                        required>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-lg-4">
+                                <div class="mb-3">
                                     <label for="complemento" class="form-label">Complemento</label>
                                     <input type="text" class="form-control" name="complemento" id="complemento"
                                         placeholder="complemento...">
@@ -241,8 +258,8 @@
                             </div>
                             <!--end col-->
                             <div class="col-lg-12">
-                                <div class="hstack gap-2 justify-content-start">
-                                    <button type="submit" class="btn btn-primary">Alterar</button>
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="submit" class="btn btn-dark">Alterar</button>
                                 </div>
                             </div>
                             <!--end col-->
@@ -251,10 +268,6 @@
                         </form>
                     </div>
 
-                    <!--end tab-pane-->
-                    <div class="tab-pane" id="transacoes" role="tabpanel">
-                        <?= $this->include('admin/pages/includes/transacoes.php') ?>
-                    </div>
                     <!--end tab-pane-->
                     <div class="tab-pane" id="preferencias" role="tabpanel">
                         <?= $this->include('dev/nvModulo') ?>
@@ -270,98 +283,199 @@
     </div>
     <!--end col-->
 </div>
-<div class="modal fade" id="dadosCnpj" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="dadosCnpjLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="dadosCnpjLabel">Dados do CNPJ</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <th>CNPJ Raiz</th>
-                            <td id="cnpj_raiz"></td>
-                        </tr>
-                        <tr>
-                            <th>Razão Social</th>
-                            <td id="razao_social"></td>
-                        </tr>
-                        <tr>
-                            <th>Capital Social</th>
-                            <td id="capital_social"></td>
-                        </tr>
-                        <tr>
-                            <th>Porte</th>
-                            <td id="porte"></td>
-                        </tr>
-                        <tr>
-                            <th>Natureza Jurídica</th>
-                            <td id="natureza_juridica"></td>
-                        </tr>
-                        <tr>
-                            <th>Qualificação do Responsável</th>
-                            <td id="qualificacao_responsavel"></td>
-                        </tr>
-                        <tr>
-                            <th>Simples Nacional</th>
-                            <td id="simples"></td>
-                        </tr>
-                        <tr>
-                            <th>Atividade Principal</th>
-                            <td id="atividade_principal"></td>
-                        </tr>
-                        <tr>
-                            <th>Endereço</th>
-                            <td id="endereco"></td>
-                        </tr>
-                        <tr>
-                            <th>Contato</th>
-                            <td id="contato"></td>
-                        </tr>
-                    </tbody>
-                </table>
 
-                <h2>Sócios</h2>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>CPF/CNPJ Sócio</th>
-                            <th>Nome</th>
-                            <th>Tipo</th>
-                            <th>Data de Entrada</th>
-                            <th>Qualificação</th>
-                            <th>País</th>
-                        </tr>
-                    </thead>
-                    <tbody id="socio_tbody">
-                    </tbody>
-                </table>
 
-                <h2>Atividades Secundárias</h2>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Descrição</th>
-                        </tr>
-                    </thead>
-                    <tbody id="atividades_tbody">
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
 <?= $this->endSection() ?>
-<?= $this->section('js') ?>
-<!-- profile-setting init js -->
+<?= $this->section("js") ?>
+<!-- intl-tel-input JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<!-- Utils script (para validação de números) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script src="/assets/js/pages/profile-setting.init.js"></script>
-<script src="/assets/js/custom/functions.min.js"></script>
-<script src="/assets/js/custom/listaTransacoes.min.js"></script>
-<script src="/assets/js/custom/igrejaUpdate.js"></script>
+
+<script>
+$(document).ready(function() {
+    searchUpdate(1)
+    initializeFormHandlers();
+    inputFormat();
+});
+
+function inputFormat() {
+    const maskConfigs = [{
+            selector: '.cpf',
+            mask: '000.000.000-00'
+        },
+        {
+            selector: '.cep',
+            mask: '00000-000'
+        },
+        {
+            selector: '.telFixo',
+            mask: '(00) 0000-0000'
+        },
+        {
+            selector: '.celular',
+            mask: '+00 (00) 0 0000-0000'
+        },
+        {
+            selector: '.cnpj',
+            mask: '00.000.000/0000-00'
+        },
+    ];
+
+    maskConfigs.forEach(config => {
+        $(config.selector).mask(config.mask);
+    });
+}
+
+/**Atualiza dados */
+function initializeFormHandlers() {
+    $(".enviaLinks").on('change', function() {
+        $('.formTexts').submit();
+    });
+
+    setupAjaxForm('.formTexts', {
+        type: 'PUT',
+        successMessage: 'Dados atualizados com sucesso!',
+        errorMessage: 'Erro ao atualizar dados.',
+        alertElement: $(".alertAlterado"),
+    });
+
+    setupAjaxForm('.formGeral', {
+        type: 'PUT',
+        beforeSubmitMessage: {
+            text: 'Enviando dados!',
+            type: 'info'
+        },
+        successMessage: {
+            text: 'Atualizado com sucesso!',
+            type: 'success'
+        },
+        errorMessage: {
+            title: 'Erro ao atualizar...',
+            type: 'error'
+        },
+    });
+
+    setupAjaxForm('.formUpload', {
+        type: 'POST',
+        beforeSubmitMessage: {
+            text: 'Enviando imagem!',
+            type: 'info'
+        },
+        successMessage: {
+            html: 'Imagem atualizada com sucesso!',
+            type: 'success'
+        },
+        errorMessage: {
+            title: 'Erro ao atualizar imagem',
+            type: 'error'
+        },
+    });
+
+    $("#profile-img-file-input").on('change', function() {
+        $('.formUpload').submit();
+    });
+}
+
+function setupAjaxForm(formSelector, options) {
+    $(formSelector).ajaxForm({
+        beforeSubmit: function(formData, jqForm, ajaxOptions) {
+            if (options.type) ajaxOptions.type = options.type;
+            if (options.beforeSubmitMessage) Swal.fire(options.beforeSubmitMessage);
+        },
+        success: function(responseText, statusText, xhr, $form) {
+            if (options.successMessage) {
+                if (typeof options.successMessage === 'string') {
+                    alertMessage(options.successMessage, options.alertElement);
+                } else {
+                    Swal.fire(options.successMessage);
+                }
+            }
+            searchUpdate(_idSearch);
+        },
+        error: function(xhr, status, error) {
+            Swal.fire(options.errorMessage);
+            console.error(`Erro: ${status}`, error, xhr);
+        }
+    });
+}
+
+function alertMessage(message, alertElement) {
+    if (alertElement) {
+        alertElement.show();
+        setTimeout(() => alertElement.fadeOut(), 1200);
+    } else {
+        Swal.fire({
+            html: message,
+            type: 'success'
+        });
+    }
+}
+
+/**Busca dados do usuário logado*/
+function searchUpdate(id) {
+    if (!id) return;
+    const url = `${_baseUrl}api/v1/igrejas/${id}`;
+    $.getJSON(url)
+        .done(updateFormFields)
+        .fail(handleSearchError);
+
+    $('#fotoPerfil').on('error', function() {
+        $(this).attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+    });
+}
+
+function updateFormFields(data) {
+    if (data.foto) $("#fotoPerfil").attr('src', data.foto);
+
+    const fields = {
+        "#cnpj": data.cnpj,
+        "#razaosocial": data.razaoSocial,
+        "#fantasia": data.nomeFantazia,
+        "#nome": data.nomeTesoureiro,
+        "#sobrenome": data.sobrenomeTesoureiro,
+        "#cpf": data.cpfTesoureiro,
+        "#facebook": data.facebook,
+        "#website": data.website,
+        "#instagram": data.instagram,
+        "#fundacao": data.fundacao,
+        "#numero": data.numero,
+        "#rua": data.rua,
+        "#pais": data.pais,
+        "#cel": data.celular,
+        "#email": data.email,
+        "#tel": data.telefone,
+        "#cep": data.cep,
+        "#uf": data.uf,
+        "#cidade": data.cidade,
+        "#bairro": data.bairro,
+        "#complemento": data.complemento,
+        "#dizimo": data.data_dizimo,
+    };
+
+    for (const [selector, value] of Object.entries(fields)) {
+        $(selector).val(value);
+    }
+    $("#viewNameUser").html(data.razaoSocial),
+        globalIdLogin = data.id_login;
+}
+
+function handleSearchError(jqXHR, textStatus, errorThrown) {
+    $("#fotoPerfil").attr('src', 'https://placehold.co/50/00000/FFF?text=V');
+
+    console.error("Erro ao carregar os dados:", textStatus, errorThrown);
+    $('.loadResult').hide();
+
+    Swal.fire({
+        title: 'Os dados não foram encontrados',
+        type: 'error',
+        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+        buttonsStyling: false,
+    }).then(() => history.back());
+}
+</script>
+
+
 <?= $this->endSection() ?>

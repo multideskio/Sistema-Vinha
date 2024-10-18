@@ -65,7 +65,8 @@
                 </div>
                 <div class="noresult" style="display: none">
                     <div class="text-center">
-                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
+                            colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
                         <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
                     </div>
                 </div>
@@ -89,73 +90,73 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 <script>
-    $(document).ready(function() {
-        flatpickr("#dateSearch", {
-            locale: "pt",
-            mode: "range", // Ativa o modo de seleção de intervalo
-            dateFormat: "d/m/Y", // Define o formato da data
-            maxDate: "today", // Permite apenas datas até hoje
-            minDate: new Date().fp_incr(-365),
-            defaultDate: [new Date().fp_incr(-30), "today"]
-        });
-
-        // Atualiza a tabela ao carregar a página
-        atualizarTabela();
-
-        // Configurações de busca
-        configureSearch();
-
-        // Inicialização do formulário AJAX
-        initializeAjaxForm();
+$(document).ready(function() {
+    flatpickr("#dateSearch", {
+        locale: "pt",
+        mode: "range", // Ativa o modo de seleção de intervalo
+        dateFormat: "d/m/Y", // Define o formato da data
+        maxDate: "today", // Permite apenas datas até hoje
+        minDate: new Date().fp_incr(-365),
+        defaultDate: [new Date().fp_incr(-30), "today"]
     });
 
+    // Atualiza a tabela ao carregar a página
+    atualizarTabela();
 
-    function atualizarTabela(search = '', page = 1) {
-        $('.noresult').hide();
-        $('#relatoriosLista').empty();
-        $('#cardResult').hide();
-        $('.loadResult').show();
+    // Configurações de busca
+    configureSearch();
 
-        const url = _baseUrl + "api/v1/transacoes/relatorios/lista?" + $.param({
-            search,
-            page
+    // Inicialização do formulário AJAX
+    initializeAjaxForm();
+});
+
+
+function atualizarTabela(search = '', page = 1) {
+    $('.noresult').hide();
+    $('#relatoriosLista').empty();
+    $('#cardResult').hide();
+    $('.loadResult').show();
+
+    const url = _baseUrl + "api/v1/transacoes/relatorios/lista?" + $.param({
+        search,
+        page
+    });
+
+    $.getJSON(url)
+        .done(function(data) {
+            renderizarTabela(data);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Erro ao carregar os dados:", textStatus, errorThrown);
         });
+}
 
-        $.getJSON(url)
-            .done(function(data) {
-                renderizarTabela(data);
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-                console.error("Erro ao carregar os dados:", textStatus, errorThrown);
-            });
-    }
+function renderizarTabela(data) {
+    $("#pager").html(data.pager);
+    $("#numResults").html(data.num);
 
-    function renderizarTabela(data) {
-        $("#pager").html(data.pager);
-        $("#numResults").html(data.num);
+    if (data.rows.length === 0) {
+        $('#cardResult').hide();
+        $('.noresult').show();
+    } else {
+        $('#cardResult').show();
+        $('.noresult').hide();
+        $('#relatoriosLista').empty(); // Limpa a lista antes de adicionar novos dados
 
-        if (data.rows.length === 0) {
-            $('#cardResult').hide();
-            $('.noresult').show();
-        } else {
-            $('#cardResult').show();
-            $('.noresult').hide();
-            $('#relatoriosLista').empty(); // Limpa a lista antes de adicionar novos dados
+        data.rows.forEach(function(row) {
+            // Parseia os parametros_busca para um objeto
+            let parametrosBusca = JSON.parse(row.parametros_busca);
 
-            data.rows.forEach(function(row) {
-                // Parseia os parametros_busca para um objeto
-                let parametrosBusca = JSON.parse(row.parametros_busca);
+            // Função para formatar datas no formato dd/mm/yyyy hh:mm:ss
+            function formatarData(data) {
+                if (!data) return 'N/A'; // Se não houver data, retorna N/A
+                let [dataPart, horaPart] = data.split(' '); // Separa data e hora
+                let [ano, mes, dia] = dataPart.split('-'); // Formata a data para dd/mm/yyyy
+                return `${dia}/${mes}/${ano} ${horaPart || ''}`; // Retorna data e hora formatadas
+            }
 
-                // Função para formatar datas no formato dd/mm/yyyy hh:mm:ss
-                function formatarData(data) {
-                    if (!data) return 'N/A'; // Se não houver data, retorna N/A
-                    let [dataPart, horaPart] = data.split(' '); // Separa data e hora
-                    let [ano, mes, dia] = dataPart.split('-'); // Formata a data para dd/mm/yyyy
-                    return `${dia}/${mes}/${ano} ${horaPart || ''}`; // Retorna data e hora formatadas
-                }
-
-                // Formata os parâmetros de busca de forma organizada
-                let parametrosFormatados = `
+            // Formata os parâmetros de busca de forma organizada
+            let parametrosFormatados = `
                 <ul>
                     <li><strong>Data Início:</strong> ${formatarData(parametrosBusca.data_inicio)}</li>
                     <li><strong>Data Fim:</strong> ${formatarData(parametrosBusca.data_fim)}</li>
@@ -164,8 +165,8 @@
                 </ul>
             `;
 
-                // Adiciona a linha na tabela
-                $('#relatoriosLista').append(`<tr>
+            // Adiciona a linha na tabela
+            $('#relatoriosLista').append(`<tr>
                 <td>${row.id}</td>
                 <td>${formatarData(row.created_at)}</td> <!-- Formata a data e hora de criação -->
                 <td>${parametrosFormatados}</td>
@@ -175,88 +176,88 @@
                     </div>
                 </td>
             </tr>`);
-            });
-        }
-        $('.loadResult').hide();
+        });
     }
-    
+    $('.loadResult').hide();
+}
 
-    function configureSearch() {
-        $("#inSearchBtn").click(function() {
+
+function configureSearch() {
+    $("#inSearchBtn").click(function() {
+        const search = $("#inSearch").val();
+        atualizarTabela(search);
+    });
+
+    $("#inSearch").keypress(function(e) {
+        if (e.which === 13) {
             const search = $("#inSearch").val();
             atualizarTabela(search);
-        });
-
-        $("#inSearch").keypress(function(e) {
-            if (e.which === 13) {
-                const search = $("#inSearch").val();
-                atualizarTabela(search);
-            }
-        });
-
-        $("#pager").on("click", "a", function(e) {
-            e.preventDefault();
-            const href = $(this).attr("href");
-            const urlParams = new URLSearchParams(href);
-            const page = urlParams.get('page');
-            const search = urlParams.get('search');
-            if (!isNaN(page)) {
-                atualizarTabela(search, page);
-            }
-        });
-    }
-
-
-
-    function initializeAjaxForm() {
-        $('#formSend').ajaxForm({
-            beforeSubmit: function() {
-                Swal.fire({
-                    title: 'Enviando dados!',
-                    icon: 'info'
-                });
-            },
-            success: function(response) {
-
-                const successMessage    = response.message || 'Operação realizada com sucesso!';
-                const statusSolicitacao = response.status  || 'success';
-
-                atualizarTabela();
-                //$('#formCad')[0].reset();
-                Swal.fire({
-                    html: successMessage,
-                    icon: statusSolicitacao
-                });
-            },
-
-            error: function(xhr) {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.messages ? xhr.responseJSON : {
-                    messages: {
-                        error: 'Erro desconhecido.'
-                    }
-                };
-                exibirMensagem('error', errorMessage);
-            }
-        });
-    }
-
-    function exibirMensagem(type, error) {
-        const messages = error.messages;
-        let errorMessage = '';
-
-        for (const key in messages) {
-            if (messages.hasOwnProperty(key)) {
-                errorMessage += `${messages[key]}\n`;
-            }
         }
+    });
 
-        Swal.fire({
-            title: type === 'error' ? "Erro ao incluir registro" : "Mensagem",
-            text: errorMessage,
-            icon: type,
-            confirmButtonClass: "btn btn-primary w-xs mt-2",
-            buttonsStyling: false,
-        });
+    $("#pager").on("click", "a", function(e) {
+        e.preventDefault();
+        const href = $(this).attr("href");
+        const urlParams = new URLSearchParams(href);
+        const page = urlParams.get('page');
+        const search = urlParams.get('search');
+        if (!isNaN(page)) {
+            atualizarTabela(search, page);
+        }
+    });
+}
+
+
+
+function initializeAjaxForm() {
+    $('#formSend').ajaxForm({
+        beforeSubmit: function() {
+            Swal.fire({
+                title: 'Enviando dados!',
+                icon: 'info'
+            });
+        },
+        success: function(response) {
+
+            const successMessage = response.message || 'Operação realizada com sucesso!';
+            const statusSolicitacao = response.status || 'success';
+
+            atualizarTabela();
+            //$('#formCad')[0].reset();
+            Swal.fire({
+                html: successMessage,
+                icon: statusSolicitacao
+            });
+        },
+
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.messages ? xhr.responseJSON : {
+                messages: {
+                    error: 'Erro desconhecido.'
+                }
+            };
+            exibirMensagem('error', errorMessage);
+        }
+    });
+}
+
+function exibirMensagem(type, error) {
+    const messages = error.messages;
+    let errorMessage = '';
+
+    for (const key in messages) {
+        if (messages.hasOwnProperty(key)) {
+            errorMessage += `${messages[key]}\n`;
+        }
     }
+
+    Swal.fire({
+        title: type === 'error' ? "Erro ao incluir registro" : "Mensagem",
+        text: errorMessage,
+        icon: type,
+        confirmButtonClass: "btn btn-primary w-xs mt-2",
+        buttonsStyling: false,
+    });
+}
 </script>
 <?= $this->endSection() ?>

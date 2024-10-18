@@ -8,7 +8,6 @@
 <?= $this->section("js") ?>
 <!-- Swiper Js -->
 <script src="/assets/libs/swiper/swiper-bundle.min.js"></script>
-<script src="/assets/libs/card/card.js"></script>
 <!-- Widget init -->
 <script src="/assets/js/pages/new-widgets.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>

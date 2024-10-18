@@ -1,5 +1,4 @@
 <?= $this->extend('igrejas/template') ?>
-
 <?= $this->section('page') ?>
 <div class="row mb-3 pb-1">
     <div class="col-12">
@@ -134,8 +133,6 @@
         </div>
     </div>
 </div>
-
-
 <div class="row">
     <div class="col-xl-12">
         <div class="card">

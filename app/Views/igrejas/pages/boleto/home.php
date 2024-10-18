@@ -7,7 +7,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
                 <?= form_open("/api/v1/cielo/boleto-charge", 'id="formBoleto"') ?>
@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    <div class="col-lg-8">
+    <div class="col-lg-6">
         <div class="card card-custom shadow-sm gutter-b d-none" id="boleto-info" style="border: 1px solid #e3e6f0;">
             <!-- Adicionei border e shadow -->
             <div class="card-header py-3" style="background-color: #f8f9fc;">
@@ -145,7 +145,6 @@
 <?= $this->section("js") ?>
 <!-- Swiper Js -->
 <script src="/assets/libs/swiper/swiper-bundle.min.js"></script>
-<script src="/assets/libs/card/card.js"></script>
 <!-- Widget init -->
 <script src="/assets/js/pages/new-widgets.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>

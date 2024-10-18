@@ -187,6 +187,13 @@ $routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
 
     $routes->get('transacoes', 'Igreja::transacoes');
 
+    $routes->get('perfil', 'Igreja::perfis');
+
+    /**API PARA IGREJAS E PASTORES*/
+    $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1', 'filter' => 'cors:api'], static function ($routes) {
+        $routes->get('transacoes', 'Transacoes::transacoesUserIgrejaPastor');
+    });
+
     $routes->get('(:any)', 'Igreja::index');
 
 });
