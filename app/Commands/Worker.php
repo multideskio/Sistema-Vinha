@@ -4,15 +4,15 @@ namespace App\Commands;
 
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
-use Predis\Client as RedisClient;
 use Config\Redis as RedisConfig;
+use Predis\Client as RedisClient;
 
 class Worker extends BaseCommand
 {
-    protected $group = 'App';
-    protected $name = 'worker:start';
+    protected $group       = 'App';
+    protected $name        = 'worker:start';
     protected $description = 'Inicia o worker para processar tarefas em segundo plano';
-    protected $usage = 'worker:start';
+    protected $usage       = 'worker:start';
 
     protected $redis;
 
@@ -26,9 +26,9 @@ class Worker extends BaseCommand
 
     /**
      * Executa o worker que processa tarefas da fila em segundo plano.
-     * 
+     *
      * @param array $params Parâmetros passados para o comando (não utilizados).
-     * 
+     *
      * O loop principal do worker busca e processa as tarefas da fila 'jobs_queue'.
      * Se encontrar um job válido, ele tenta instanciar a classe do handler e executar o método handle.
      * Se a classe ou o método handle não estiverem disponíveis, registra um erro.
@@ -69,8 +69,7 @@ class Worker extends BaseCommand
                         // Executa o método handle passando os dados do job
                         $handler->handle($job['data']);
                         CLI::write("Tarefa processada com sucesso.", 'green');
-                        
-                        
+
                         cache()->deleteMatching("*_listSearchRelatorio");
 
                     } catch (\Exception $e) {
@@ -85,7 +84,7 @@ class Worker extends BaseCommand
                 }
             } else {
                 // Mensagem quando não há jobs disponíveis na fila
-                CLI::write('Nenhum job encontrado na fila.', 'yellow');
+                //CLI::write('Nenhum job encontrado na fila.', 'yellow');
             }
 
             // Pausa para evitar uso excessivo de recursos e dar tempo para novos jobs chegarem na fila
