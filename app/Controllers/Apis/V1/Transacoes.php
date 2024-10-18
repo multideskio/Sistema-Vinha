@@ -397,6 +397,6 @@ class Transacoes extends ResourceController
     {
         $data = $this->modelTransacoes->listSearchUsers($this->request->getGet(), 10);
 
-        return $this->respond($data);
+        //return $this->respond($data);
     }
 }
