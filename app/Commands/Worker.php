@@ -14,7 +14,7 @@ class Worker extends BaseCommand
     protected $description = 'Inicia o worker para processar tarefas em segundo plano';
     protected $usage       = 'worker:start';
 
-    protected $redis;
+    protected RedisClient $redis;
 
     public function __construct()
     {
