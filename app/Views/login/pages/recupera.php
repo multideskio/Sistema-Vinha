@@ -12,9 +12,9 @@
     <main class="container-fluid">
         <div class="row">
             <!-- Coluna esquerda -->
-            <div class="col-lg-6 left-side" id="auth-particles"></div>
+            <div class="col-12 col-md-6 left-side" id="auth-particles"></div>
             <!-- Coluna direita com formulário de múltiplas etapas -->
-            <div class="col-lg-6 right-side p-5">
+            <div class="col-12 col-md-6 right-side p-5">
                 <div class="text-center">
                     <h3 class="text-primary mt-3">Informe seu e-mail para recuperar sua senha</h3>
                     <h3 class="title mt-3 mb-3">Recuperação de senha</h3>
