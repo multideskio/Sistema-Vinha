@@ -7,12 +7,12 @@ use WebSocket\Client;
 
 class WebSocketLibrary
 {
-    public function sendMessage($message): void
+    public function sendMessage(array $message): void
     {
         try {
             // Criar um cliente WebSocket e conectar à URL do servidor WebSocket
             //localhost:8088
-            $client = new Client("ws://wss.conect.app");
+            $client = new Client("wss://wss.conect.app");
 
             // Certifique-se de que a mensagem está sendo enviada como JSON
             $payload = json_encode($message, JSON_THROW_ON_ERROR);

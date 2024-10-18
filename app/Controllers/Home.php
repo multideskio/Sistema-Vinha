@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Libraries\EmailsLibraries;
 use App\Models\AdminModel;
 use App\Models\AjudaModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
@@ -98,13 +97,7 @@ class Home extends BaseController
 
     public function teste(): void
     {
-        $email = new EmailsLibraries();
 
-        try {
-            $email->envioEmail('multidesk.io@gmail.com', 'Teste de envio', 'Minha mensagem');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     public function phpinfo()

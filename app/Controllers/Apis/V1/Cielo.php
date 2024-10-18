@@ -6,6 +6,7 @@ use App\Gateways\Cielo\CieloBase;
 use App\Gateways\Cielo\CieloBoleto;
 use App\Gateways\Cielo\CieloCreditCard;
 use App\Gateways\Cielo\CieloCron;
+use App\Gateways\Cielo\CieloNotifica;
 use App\Gateways\Cielo\CieloPix;
 use App\Libraries\WhatsappLibraries;
 use App\Models\TransacoesModel;
@@ -16,11 +17,12 @@ class Cielo extends BaseController
 {
     use ResponseTrait;
 
-    protected $creditCardGateway;
+    protected CieloCreditCard $creditCardGateway;
     protected $debitCardGateway;
-    protected $boletoGateway;
-    protected $pixGateway;
-    protected $cieloBase;
+    protected CieloBoleto $boletoGateway;
+    protected CieloPix $pixGateway;
+    protected CieloBase $cieloBase;
+    protected CieloNotifica $notifications;
 
     public function __construct()
     {
@@ -31,6 +33,7 @@ class Cielo extends BaseController
         $this->boletoGateway     = new CieloBoleto();
         $this->pixGateway        = new CieloPix();
         $this->cieloBase         = new CieloBase();
+        $this->notifications     = new CieloNotifica();
         helper('auxiliar');
     }
 
@@ -122,6 +125,8 @@ class Cielo extends BaseController
                 throw new Exception("O valor não foi informado.");
             }
             $response = $this->pixGateway->pix($nome, $valor, $descricao, $desc);
+
+            $this->notifications->notificationLive("pixGerado");
 
             return $this->respond($response, 200);
         } catch (Exception $e) {
