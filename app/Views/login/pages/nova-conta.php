@@ -23,7 +23,7 @@
             <!-- Coluna direita com formulário de múltiplas etapas -->
             <div class="col-lg-6 col-md-8 right-side">
                 <div class="text-center">
-                    <img src="<?= $data['logo'] ?>" class="rounded" width="90px">
+                    <img src="<?= $data['logo'] ?>" class="rounded mb-3" width="90px">
                     <h3 class="title mb-3">Crie uma conta</h3>
                     <!-- Barra de progresso -->
                     <p class="fs-4 mb-4 fw-100">Qual cadastro iremos fazer hoje?</p>

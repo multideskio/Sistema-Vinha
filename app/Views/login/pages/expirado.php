@@ -15,7 +15,7 @@
             <!-- Coluna direita com formulário de múltiplas etapas -->
             <div class="col-12 col-md-6 right-side mt-5 pt-5">
                 <div class="text-center">
-                    <img src="<?= $data['logo'] ?>" class="rounded" width="90px">
+                    <img src="<?= $data['logo'] ?>" class="rounded mb-3" width="90px">
                     <h3 class="text-primary">Bem-vindo de volta!</h3>
                     <h3 class="title mb-1">Houve um problema</h3>
                 </div>

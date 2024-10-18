@@ -16,6 +16,7 @@
             <!-- Coluna direita com formulário de múltiplas etapas -->
             <div class="col-12 col-md-6 right-side p-5">
                 <div class="text-center">
+                    <img src="<?= $data['logo'] ?>" class="rounded mb-3" width="90px">
                     <h3 class="text-primary mt-3">Informe seu e-mail para recuperar sua senha</h3>
                     <h3 class="title mt-3 mb-3">Recuperação de senha</h3>
                 </div>
