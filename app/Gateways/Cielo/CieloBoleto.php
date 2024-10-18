@@ -24,6 +24,7 @@ class CieloBoleto extends CieloBase
 
         $this->admModel = new AdminModel();
         $this->dataAdm  = $this->admModel->first();
+        helper('auxiliar');
     }
 
     /**
@@ -45,13 +46,29 @@ class CieloBoleto extends CieloBase
         $countOrders = $this->transactionsModel->select('id')->orderBy('id', 'DESC')->first();
         $numOrder    = ($countOrders) ? ++$countOrders['id'] : 1 ;
 
+        //trata nome completo
+        // Verifica se nome e/ou sobrenome estão presentes
+        $nome = !empty($dados['nome']) ? removerAcentos($dados['nome']) : '';
+        $sobrenome = !empty($dados['sobrenome']) ? removerAcentos($dados['sobrenome']) : '';
+
+// Formata o nome e sobrenome (capitaliza as primeiras letras)
+        $nome = !empty($nome) ? ucwords(strtolower($nome)) : '';
+        $sobrenome = !empty($sobrenome) ? ucwords(strtolower($sobrenome)) : '';
+
+// Concatena nome e sobrenome, garantindo que os espaços fiquem corretos
+        $nomeCompleto = trim($nome . ' ' . $sobrenome);
+
+        if (empty($nomeCompleto)) {
+            $nomeCompleto = 'Nome ou sobrenome ausente';
+        }
+
         $params = [
             // Identificador único do pedido na sua aplicação (pode ser gerado por time() para garantir unicidade)
             "MerchantOrderId" => $numOrder,
             // Informações do cliente que será cobrado
             "Customer" => [
                 // Nome completo do cliente
-                "Name" => $dados['nome'] . ' ' . $dados['sobrenome'],
+                "Name" => $nomeCompleto,
                 // Documento de identidade (CPF ou CNPJ do cliente)
                 "Identity" => $dados['cpf'],
                 // Endereço do cliente

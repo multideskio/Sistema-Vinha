@@ -1,19 +1,7 @@
 <?php
 
+
 if (!function_exists('gera_token')) {
-    /**
-     * The function "gera_token" generates a token using SHA-256 hashing algorithm with optional input
-     * text or current timestamp.
-     *
-     * @param text The `text` parameter in the `gera_token` function is optional. If a value is
-     * provided for `text`, the function will generate a token based on the SHA-256 hash of the
-     * provided text. If no value is provided for `text`, the function will generate a token based on
-     *
-     * @return string The function `gera_token` returns a string that is a 60-character long base64
-     * encoded token generated using SHA-256 hashing algorithm. If a text input is provided, the token
-     * is generated based on the hash of the text. If no text is provided, the token is generated based
-     * on the hash of the current timestamp.
-     */
     function gera_token($text = false): string
     {
         if ($text) {
@@ -26,18 +14,27 @@ if (!function_exists('gera_token')) {
     }
 }
 
+if(!function_exists('removerAcentos')){
+    function removerAcentos($string): array|string|null
+    {
+        return preg_replace(
+            array(
+                '/[áàâãäå]/u', '/[ÁÀÂÃÄÅ]/u',
+                '/[éèêë]/u',   '/[ÉÈÊË]/u',
+                '/[íìîï]/u',   '/[ÍÌÎÏ]/u',
+                '/[óòôõöø]/u', '/[ÓÒÔÕÖØ]/u',
+                '/[úùûü]/u',   '/[ÚÙÛÜ]/u',
+                '/[ñ]/u',      '/[Ñ]/u',
+                '/[ç]/u',      '/[Ç]/u'
+            ),
+            array('a','A','e','E','i','I','o','O','u','U','n','N','c','C'),
+            $string
+        );
+    }
+}
 //Gera quantidade de dias em segundos para o cache
 if (!function_exists('getCacheExpirationTimeInSeconds')) {
-    /**
-     * The function `getCacheExpirationTimeInSeconds` converts days to seconds.
-     *
-     * @param int days The function `getCacheExpirationTimeInSeconds` takes an integer parameter
-     * `` representing the number of days for which the cache should be valid. The function
-     * calculates and returns the expiration time in seconds based on the provided number of days.
-     *
-     * @return string the cache expiration time in seconds, which is calculated by multiplying the
-     * number of days by 24 hours, 60 minutes, and 60 seconds.
-     */
+
     function getCacheExpirationTimeInSeconds(int $days): string
     {
         // Convertendo dias em segundos
@@ -47,17 +44,7 @@ if (!function_exists('getCacheExpirationTimeInSeconds')) {
 
 //limpa as strings antes de mandar para o banco de dados
 if (!function_exists('limparString')) {
-    /**
-     * The function "limparString" in PHP removes unwanted characters from a given CNPJ string.
-     *
-     * @param cnpj The parameter `` in the `limparString` function is expected to be a string
-     * representing a CNPJ (Cadastro Nacional da Pessoa Jurídica), which is a unique identifier for
-     * Brazilian legal entities. The function is designed to clean up the CNPJ string by removing any
-     * characters that are
-     *
-     * @return string The function `limparString` is returning a string that is the result of removing
-     * any non-numeric characters from the input `` using a regular expression.
-     */
+
     function limparString($string): string
     {
         // Limpa o strings removendo caracteres indesejados
@@ -72,56 +59,20 @@ if (!function_exists('limparString')) {
 
 //Primeira letra do nome
 if (!function_exists('primeira_letra')) {
-    /**
-     * The function "primeira_letra" in PHP takes a string input and returns the first letter of the
-     * string in uppercase.
-     *
-     * @param value The function `primeira_letra` takes a string as input and returns the first letter
-     * of that string in uppercase.
-     *
-     * @return The function `primeira_letra` takes a string as input, converts it into an array of
-     * characters, retrieves the first element of the array (which is the first letter of the string),
-     * converts it to uppercase, and then returns this first letter.
-     */
-    function primeira_letra($value)
+
+    function primeira_letra($value): string
     {
         // Converter a string em um array de caracteres
         $caracteres = str_split($value);
         // Pegar o primeiro elemento do array (a primeira letra)
-        $primeiraLetra = strtoupper($caracteres[0]);
-
-        return $primeiraLetra;
+        return strtoupper($caracteres[0]);
     }
 }
 
 if (!function_exists('placehold')) {
-    /**
-     * The function `placehold` generates a URL for a placeholder image with customizable dimensions,
-     * text, background color, and font color.
-     *
-     * @param height The `height` parameter is used to specify the height of the image placeholder that
-     * will be generated. It determines the vertical size of the placeholder image.
-     * @param width The `width` parameter in the `placehold` function is used to specify the width of
-     * the image placeholder that will be generated. If a specific width is provided when calling the
-     * function, it will be used to determine the width of the placeholder image. If no width is
-     * provided, a default width
-     * @param text The `text` parameter in the `placehold` function is used to specify the text that
-     * will be displayed on the generated image. If provided, the function will extract the first
-     * letter of the text and add it as a parameter to the URL of the image. If the `text` parameter is
-     * @param colorFundo The `` parameter in the `placehold` function is used to specify the
-     * background color of the image generated by the function. If a color is provided for
-     * ``, it will be used as the background color in the image URL. If no color is
-     * provided, a
-     * @param colorFonte The `colorFonte` parameter in the `placehold` function is used to specify the
-     * color of the font in the generated image. If you provide a color value for `colorFonte`, it will
-     * be added to the URL of the image. If you don't provide a value for `
-     *
-     * @return The function `placehold` returns a URL for a placeholder image based on the provided
-     * parameters. The URL includes the specified height, width, background color, font color, and text
-     * (if provided). If certain parameters are not provided, default values or random values are used
-     * to generate the URL.
-     */
-    function placehold($height = false, $width = false, $text = false, $colorFundo = false, $colorFonte = false)
+
+
+    function placehold($height = false, $width = false, $text = false, $colorFundo = false, $colorFonte = false): string
     {
         // Construir a parte inicial da URL da imagem
         $image = "https://placehold.co/";
@@ -129,7 +80,7 @@ if (!function_exists('placehold')) {
         // Verificar se $height e $width estão definidos
         if ($height && $width) {
             // Adicionar altura e largura à URL da imagem
-            $image .= "{$width}x{$height}/";
+            $image .= $width."x".$height."/";
         } else {
             $image .= "90/";
         }
@@ -137,17 +88,17 @@ if (!function_exists('placehold')) {
         // Verificar se $colorFundo está definido
         if ($colorFundo) {
             // Adicionar cor de fundo à URL da imagem
-            $image .= "{$colorFundo}/";
+            $image .= "$colorFundo/";
         } else {
             // Gerar uma cor de fundo aleatória se não for fornecida uma cor de fundo
-            $randomColor = dechex(mt_rand(0, 16777215));
-            $image .= "{$randomColor}/";
+            $randomColor = dechex(random_int(0, 16777215));
+            $image .= "$randomColor/";
         }
 
         // Verificar se $colorFonte está definido
         if ($colorFonte) {
             // Adicionar cor da fonte à URL da imagem
-            $image .= "{$colorFonte}/";
+            $image .= "$colorFonte/";
         }
 
         // Verificar se o texto não está vazio e é uma string
@@ -155,7 +106,7 @@ if (!function_exists('placehold')) {
             // Obter a primeira letra do texto
             $letra = primeira_letra($text);
             // Adicionar o parâmetro de texto à URL da imagem
-            $image .= "?text={$letra}";
+            $image .= "?text=$letra";
         }
 
         return $image;
@@ -163,15 +114,8 @@ if (!function_exists('placehold')) {
 }
 
 if (!function_exists('saudacao')) {
-    /**
-     * This PHP function returns a greeting message based on the current time of day in the timezone
-     * set to America/Sao_Paulo.
-     *
-     * @return The function `saudacao()` returns a greeting based on the current time in the timezone
-     * set to 'America/Sao_Paulo'. If the time is between 5:00 and 11:59, it returns "Bom dia" (Good
-     * morning). If the time is between 12:00 and 17:59, it returns "Boa tarde" (Good afternoon).
-     */
-    function saudacao()
+
+    function saudacao(): string
     {
         date_default_timezone_set('America/Sao_Paulo'); // Define o fuso horário para o Brasil
 
@@ -179,27 +123,19 @@ if (!function_exists('saudacao')) {
 
         if ($hora >= 5 && $hora < 12) {
             return "Bom dia";
-        } elseif ($hora >= 12 && $hora < 18) {
-            return "Boa tarde";
-        } else {
-            return "Boa noite";
         }
+
+        if ($hora >= 12 && $hora < 18) {
+            return "Boa tarde";
+        }
+
+        return "Boa noite";
     }
 }
 
 if (!function_exists('deleteFolder')) {
-    // Função para excluir uma pasta e seu conteúdo recursivamente
-    /**
-     * The function `deleteFolder` recursively deletes a folder and all its contents in PHP.
-     *
-     * @param folderPath The `deleteFolder` function you provided is a PHP function that recursively
-     * deletes a folder and all its contents. The `folderPath` parameter is the path to the folder that
-     * you want to delete.
-     *
-     * @return The function `deleteFolder` returns `true` if the folder deletion process is successful,
-     * and `false` if the specified path is not a directory.
-     */
-    function deleteFolder($folderPath)
+
+    function deleteFolder($folderPath): bool
     {
         // Verifica se o caminho especificado é um diretório
         if (is_dir($folderPath)) {
@@ -209,7 +145,7 @@ if (!function_exists('deleteFolder')) {
             // Percorre todos os itens no diretório
             while ($item = readdir($folderHandle)) {
                 // Ignora os itens especiais '.' e '..'
-                if ($item != "." && $item != "..") {
+                if ($item !== "." && $item !== "..") {
                     // Se o item for um diretório, chama a função de exclusão recursivamente
                     if (is_dir($folderPath . "/" . $item)) {
                         deleteFolder($folderPath . "/" . $item);
@@ -227,14 +163,14 @@ if (!function_exists('deleteFolder')) {
             rmdir($folderPath);
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
 
 if (!function_exists('centavosParaReais')) {
-    function centavosParaReais($valorEmCentavos)
+    function centavosParaReais($valorEmCentavos): string
     {
         // Divide o valor recebido por 100 para converter de centavos para reais
         $valorEmReais = $valorEmCentavos / 100;
@@ -245,7 +181,7 @@ if (!function_exists('centavosParaReais')) {
 }
 
 if (!function_exists('centavosParaReaisBrasil')) {
-    function centavosParaReaisBrasil($valorEmCentavos)
+    function centavosParaReaisBrasil($valorEmCentavos): string
     {
         // Divide o valor recebido por 100 para converter de centavos para reais
         $valorEmReais = $valorEmCentavos / 100;
@@ -256,7 +192,7 @@ if (!function_exists('centavosParaReaisBrasil')) {
 }
 
 if (!function_exists('decimalParaReaisBrasil')) {
-    function decimalParaReaisBrasil($valor)
+    function decimalParaReaisBrasil($valor): string
     {
         // Verifica se o valor é null
         if (is_null($valor)) {
@@ -269,7 +205,7 @@ if (!function_exists('decimalParaReaisBrasil')) {
 }
 
 if (!function_exists('getCardType')) {
-    function getCardType($number)
+    function getCardType($number): string
     {
         $number = preg_replace('/\D/', '', $number); // Remove caracteres não numéricos
 
@@ -312,20 +248,20 @@ if (!function_exists('getCardType')) {
 }
 
 if (!function_exists('formatDate')) {
-    function formatDate($date)
+    function formatDate($date): string
     {
         // Verifica se a data não está vazia e se é uma data válida
         if ($date && strtotime($date) !== false) {
             // Formata a data para o formato desejado
             return date("d/m/Y H:i:s", strtotime($date));
-        } else {
-            return ""; // Retorna uma string vazia se a data não for válida
         }
+
+        return ""; // Retorna uma string vazia se a data não for válida
     }
 }
 
 if (!function_exists('createSlug')) {
-    function createSlug($string)
+    function createSlug($string): string
     {
         // Converter todos os caracteres para minúsculas
         $string = strtolower($string);
@@ -390,8 +326,6 @@ if (!function_exists('createSlug')) {
         $string = preg_replace('/[\s-]+/', '-', $string);
 
         // Remover hífens iniciais e finais
-        $string = trim($string, '-');
-
-        return $string;
+        return trim($string, '-');
     }
 }

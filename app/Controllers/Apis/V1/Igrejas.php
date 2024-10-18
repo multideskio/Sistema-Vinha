@@ -5,6 +5,7 @@ namespace App\Controllers\Apis\V1;
 use App\Libraries\NotificationLibrary;
 use App\Libraries\UploadsLibraries;
 use App\Models\IgrejasModel;
+use App\Models\TransacoesModel;
 use App\Models\UsuariosModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -23,10 +24,12 @@ class Igrejas extends ResourceController
      * @return ResponseInterface
      */
     protected IgrejasModel $modelIgrejas;
+    protected TransacoesModel $modelTransacoes;
 
     public function __construct()
     {
-        $this->modelIgrejas = new IgrejasModel();
+        $this->modelIgrejas    = new IgrejasModel();
+        $this->modelTransacoes = new TransacoesModel();
     }
 
     public function index()
@@ -349,5 +352,62 @@ class Igrejas extends ResourceController
     {
         //
         return null;
+    }
+
+    public function dashboard(): void
+    {
+
+    }
+
+    public function relatorioFinanceiro(): ResponseInterface
+    {
+        try {
+            $data = $this->modelTransacoes->listSearchIgrejaPastor($this->request->getGet(), 10);
+
+            return $this->respond($data);
+        } catch (Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
+    public function infoDashboard(): void
+    {
+
+    }
+
+    public function graficoDashboard(): ResponseInterface
+    {
+        // Array dos meses corretamente nomeados
+        $meses = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+        ];
+
+        // Consulta única para somar os valores agrupados por mês
+        $resultados = $this->modelTransacoes
+            ->select("MONTH(data_pagamento) as mes_numero, SUM(valor) as total_valor")
+            ->where('id_user', session('data')['id'])
+            ->where('status_text', 'Pago')
+            ->where("YEAR(data_pagamento)", date('Y'))  // Filtra pelo ano atual
+            ->groupBy("MONTH(data_pagamento)")
+            ->findAll();
+
+        // Inicializa o array de dados com zero para todos os meses
+        $data = [];
+        for ($i = 0; $i < 12; $i++) {
+            $data[$i] = [
+                "mes"   => $meses[$i],
+                "valor" => 0,  // Inicialmente, define o valor como 0
+            ];
+        }
+
+        // Preenche os meses com os valores retornados da consulta
+        foreach ($resultados as $resultado) {
+            $mesNumero                 = $resultado['mes_numero'] - 1;  // Subtrai 1 para alinhar com o índice do array
+            $data[$mesNumero]['valor'] = $resultado['total_valor'];
+        }
+
+        // Retorna a resposta com os dados em formato JSON
+        return $this->respond($data);
     }
 }

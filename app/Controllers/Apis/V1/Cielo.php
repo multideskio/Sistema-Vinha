@@ -11,6 +11,7 @@ use App\Gateways\Cielo\CieloPix;
 use App\Libraries\WhatsappLibraries;
 use App\Models\TransacoesModel;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\HTTP\ResponseInterface;
 use Exception;
 
 class Cielo extends BaseController
@@ -93,23 +94,17 @@ class Cielo extends BaseController
         }
     }
 
-    public function createBoletoCharge()
+    public function createBoletoCharge(): ?ResponseInterface
     {
         $input = $this->request->getPost();
-
-        $valor = intval(limparString($input['valor']));
+        $valor = (int)limparString($input['valor']);
         $tipo  = esc($input['tipo']);
         $desc  = esc($input['desc']);
-
         try {
             $response = $this->boletoGateway->boleto($valor, $tipo, $desc);
-
-            return $this->respond($response, 200);
+            return $this->respond($response);
         } catch (Exception $e) {
-            return $this->fail([
-                'status'  => 'error',
-                'message' => $e->getMessage(),
-            ], 400);
+            return $this->fail("Error: ".$e->getMessage());
         }
     }
 
