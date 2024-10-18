@@ -67,7 +67,7 @@ class Login extends BaseController
         $data['titlePage'] = 'Recuperar conta';
         $data['data']      = $this->dataConfig;
 
-        $this->cachePage(getCacheExpirationTimeInSeconds(2));
+        $this->cachePage(120);
 
         return view('login/pages/recupera', $data);
     }
