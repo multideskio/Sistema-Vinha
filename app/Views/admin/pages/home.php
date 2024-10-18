@@ -14,8 +14,10 @@
                             <div class="row g-3 mb-0 align-items-center">
                                 <div class="col-sm-auto">
                                     <div class="input-group">
-                                        <input id="dateSearch" name="dateSearch" type="text" class="form-control border-0 shadow">
-                                        <button class="input-group-text bg-primary border-primary text-white" id="btnSearchDash">
+                                        <input id="dateSearch" name="dateSearch" type="text"
+                                            class="form-control border-0 shadow">
+                                        <button class="input-group-text bg-primary border-primary text-white"
+                                            id="btnSearchDash">
                                             <i class="ri-calendar-2-line"></i>
                                         </button>
                                     </div>
@@ -228,7 +230,9 @@
             </div><!-- end card header -->
 
             <div class="card-body">
-                <div id="simple_pie_chart" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
+                <div id="simple_pie_chart"
+                    data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]'
+                    class="apex-charts" dir="ltr"></div>
             </div>
         </div> <!-- .card-->
     </div>
@@ -261,7 +265,8 @@
                 </div>
                 <div class="noresult" style="display: none">
                     <div class="text-center">
-                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
+                            colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
                         <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
                     </div>
                 </div>
@@ -306,7 +311,8 @@
                 </div>
                 <div class="noresult" style="display: none">
                     <div class="text-center">
-                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
+                            colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
                         <h5 class="mt-2">Desculpe! Nenhum resultado encontrado</h5>
                     </div>
                 </div>
@@ -323,7 +329,31 @@
     </div>
 </div>
 
-
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header border-0 align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Movimentação anual</h4>
+            </div>
+            <!-- end card header -->
+            <div class="card-body p-0 pb-2">
+                <div class="w-100">
+                    <div id="customer_impression_charts" data-colors='["--vz-primary", "--vz-success", "--vz-danger"]'
+                        data-colors-minimal='["--vz-light", "--vz-primary", "--vz-info"]'
+                        data-colors-saas='["--vz-success", "--vz-info", "--vz-danger"]'
+                        data-colors-modern='["--vz-warning", "--vz-primary", "--vz-success"]'
+                        data-colors-interactive='["--vz-info", "--vz-primary", "--vz-danger"]'
+                        data-colors-creative='["--vz-warning", "--vz-primary", "--vz-danger"]'
+                        data-colors-corporate='["--vz-light", "--vz-primary", "--vz-secondary"]'
+                        data-colors-galaxy='["--vz-secondary", "--vz-primary", "--vz-primary-rgb, 0.50"]'
+                        data-colors-classic='["--vz-light", "--vz-primary", "--vz-secondary"]'
+                        data-colors-vintage='["--vz-success", "--vz-primary", "--vz-secondary"]' class="apex-charts"
+                        dir="ltr"></div>
+                </div>
+            </div><!-- end card body -->
+        </div><!-- end card -->
+    </div><!-- end col -->
+</div>
 
 <?= $this->endSection() ?>
 <?= $this->section('js') ?>
@@ -331,4 +361,6 @@
 <!-- apexcharts -->
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
 <script src="/assets/js/custom/dashboard.min.js?v=1.0.0"></script>
+<!-- Dashboard init -->
+<script src="/assets/js/pages/dashboard-ecommerce.init.js"></script>
 <?= $this->endSection() ?>
