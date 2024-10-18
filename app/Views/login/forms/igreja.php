@@ -1,12 +1,13 @@
 <div class="row justify-content-center igrejaCad" style="display: none;">
-    <div class="col-md-12 col-lg-10 col-xl-10">
+    <div class="col-md-10 col-lg-10">
         <div class="card mt-2">
             <div class="card-body p-4">
-                <div class="p-2 mt-4">
+                <div class="p-2">
+                    <!-- formSend -->
                     <?= form_open("api/v1/public/igreja", 'class="needs-validation formSend" novalidate id="multi-step-form"') ?>
-                    <!-- Primeira Etapa -->
-                    <div class="step active" id="step-1">
-                        <h5 class="mb-4">Informações Iniciais:</h5>
+                    <!-- Etapas do Formulário Igreja -->
+                    <div class="step active igreja-step" id="igreja-step-1">
+                        <h5 class="mb-4 fw-bold">Informações Iniciais:</h5>
                         <div class="row mb-sm-2">
                             <div class="col-md-6 mb-sm-2">
                                 <label for="cnpj" class="form-label">CNPJ/CPF<span class="text-danger">*</span>
@@ -51,22 +52,22 @@
 
                         <div class="row mb-2 mb-sm-2">
                             <div class="col-md-12">
-                                <label for="useremailIgreja" class="form-label">E-mail <span
+                                <label for="userEmailIgreja" class="form-label">E-mail <span
                                         class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="useremailIgreja" name="useremailIgreja"
-                                    placeholder="exemplo@gmail.com" required autocomplete="off" value="">
+                                <input type="email" class="form-control searchEmail" name="useremailIgreja"
+                                    id="userEmailIgreja" placeholder="exemplo@gmail.com" required autocomplete="off"
+                                    value="">
                                 <div class="invalid-feedback">
                                     Informe seu e-mail
                                 </div>
                             </div>
                         </div>
+                        <!-- Primeira Etapa do formulário igreja -->
                         <div class="d-grid gap-2 mt-4">
-                            <button type="button" class="btn btn-dark" onclick="nextStep()">Próximo</button>
+                            <button type="button" class="btn btn-dark" onclick="nextStepIgreja()">Próximo</button>
                         </div>
                     </div>
-
-                    <!-- Segunda Etapa -->
-                    <div class="step" id="step-2">
+                    <div class="step igreja-step" id="igreja-step-2">
                         <h5>Endereço:</h5>
                         <div class="row mb-sm-2">
                             <div class="col-md-6  mb-sm-2">
@@ -138,21 +139,22 @@
                             </div>
                         </div>
                         <input type="hidden" name="paisIgreja" value="Brasil">
+                        <!-- Segunda Etapa do formulário igreja -->
                         <div class="step-buttons">
-                            <button type="button" class="btn btn-danger btn-lg" onclick="prevStep()">Voltar</button>
-                            <button type="button" class="btn btn-dark btn-lg" onclick="nextStep()">Próximo</button>
+                            <button type="button" class="btn btn-danger btn-lg"
+                                onclick="prevStepIgreja()">Voltar</button>
+                            <button type="button" class="btn btn-dark btn-lg"
+                                onclick="nextStepIgreja()">Próximo</button>
                         </div>
                     </div>
-
-                    <!-- Terceira Etapa -->
-                    <div class="step" id="step-3">
+                    <div class="step igreja-step" id="igreja-step-3">
                         <h5>Informações do Tesoureiro:</h5>
                         <div class="row mb-sm-2">
                             <div class="col-md-6 mb-sm-2">
-                                <label for="phone" class="form-label"> Telefone/WhatsApp <span
-                                        class="phone">*</span></label>
+                                <label for="phone" class="form-label"> Telefone/WhatsApp *</label>
                                 <div class="row">
-                                    <input type="tel" id="phone" name="phone" class="form-control phone" required>
+                                    <input type="tel" id="phone" name="phone" class="form-control phone" required
+                                        autocomplete="off">
                                 </div>
                                 <div class="invalid-feedback">
                                     Informe seu número de WhatsApp
@@ -190,7 +192,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-sm-2">
+                        <div class="row mb-3">
                             <div class="col-md-6 mb-sm-2">
                                 <label for="i_cpf" class="form-label">CPF Tesoureiro<span
                                         class="text-danger">*</span></label>
@@ -210,22 +212,42 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row mb-sm-3">
                             <div class="col-md-6">
-                                <label for="password" class="form-label">Informe uma senha<span
+                                <label for="passwordIgreja" class="form-label">Informe uma senha<span
                                         class="text-danger">*</span></label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder=""
-                                    required autocomplete="off">
-                                <div class="invalid-feedback">
-                                    A senha não é valída
+                                <div class="position-relative mb-3 auth-pass-inputgroup">
+                                    <input type="password" class="form-control pe-5 password-input"
+                                        placeholder="Digite sua nova senha" name="password" id="passwordIgreja" required
+                                        autocomplete="off">
+                                    <button
+                                        class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon"
+                                        type="button" id="password-addon">
+                                        <i class="ri-eye-fill align-middle"></i>
+                                    </button>
                                 </div>
+                                <div class="p-3 bg-light mb-2 rounded password-contain">
+                                    <h5 class="fs-13">A senha deve conter:</h5>
+                                    <ul class="list-group ps-3 pe-3">
+                                        <li class="text-danger fs-12 mb-2 pass-length">Mínimo <b>8 caracteres</b></li>
+                                        <li class="text-danger fs-12 mb-2 pass-lower">Em letras <b>minúsculas</b> (a-z)
+                                        </li>
+                                        <li class="text-danger fs-12 mb-2 pass-upper">Pelo menos letra <b>maiúscula</b>
+                                            (A-Z)</li>
+                                        <li class="text-danger fs-12 mb-2 pass-special">Pelo menos um <b>caractere
+                                                especial</b></li>
+                                        <li class="text-danger fs-12 mb-0 pass-number">Pelo menos um <b>número</b> (0-9)
+                                        </li>
+                                    </ul>
+                                </div>
+
                             </div>
                         </div>
-
+                        <!-- Terceira Etapa do formulário igreja -->
                         <div class="step-buttons">
-                            <button type="button" class="btn btn-danger btn-lg" onclick="prevStep()">Voltar</button>
-                            <button type="submit" class="btn btn-dark btn-lg">Cadastrar</button>
+                            <button type="button" class="btn btn-danger btn-lg"
+                                onclick="prevStepIgreja()">Voltar</button>
+                            <button type="submit" class="btn btn-dark btn-lg btn-send">Cadastrar</button>
                         </div>
                     </div>
                     </form>

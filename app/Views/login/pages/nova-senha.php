@@ -6,21 +6,27 @@
     <?= $this->include('partials/head-css') ?>
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="/assets/css/custom/nova-conta.css" rel="stylesheet" type="text/css">
+    <style>
+    .password-contain {
+        display: none;
+    }
+    </style>
 </head>
 
 <body>
     <main class="container-fluid">
         <div class="row">
             <!-- Coluna esquerda -->
-            <div class="col-lg-6 left-side" id="auth-particles"></div>
+            <div class="col-lg-6 col-md-6 left-side" id="auth-particles"></div>
             <!-- Coluna direita com formulário de múltiplas etapas -->
-            <div class="col-lg-6 right-side p-5">
+            <div class="col-lg-6 col-md-6 right-side p-5">
                 <div class="text-center">
+                    <img src="<?= $data['logo'] ?>" class="rounded" width="90px">
                     <h3 class="text-primary mt-3">Recuperação de conta</h3>
                     <h3 class="title mt-3 mb-3">Informe a nova senha</h3>
                 </div>
                 <div class="row justify-content-center">
-                    <div class="col-md-8 col-lg-6 col-xl-5">
+                    <div class="col-md-12 col-lg-12">
                         <div class="card mt-4">
                             <div class="card-body p-4">
                                 <div class="p-2 mt-4">

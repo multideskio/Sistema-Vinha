@@ -2,121 +2,102 @@
 
 namespace App\Controllers;
 
+use App\Models\AdminModel;
 use App\Models\UsuariosModel;
 
 class Login extends BaseController
 {
-    protected $modelConfig;
-    protected $config;
+    protected AdminModel $modelConfig;
+    //protected array $config;
+    protected array $dataConfig;
 
     public function __construct()
     {
-
-        $this->modelConfig = new \App\Models\AdminModel();
-        $this->config      = $this->modelConfig->searchCacheData(1);
+        $this->modelConfig = new AdminModel();
+        //$this->config      = $this->modelConfig->searchCacheData(1);
+        $this->dataConfig = $this->modelConfig->select('logo')->first();
     }
 
     public function index()
     {
-        //
+        // Página inicial do login
     }
 
     public function novaconta(): string
     {
-        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
-        $data['titlePage'] = 'Criar conta';
-        $data['rowConfig'] = $this->config;
 
-        //$this->cachePage(2000);
-        return view('login/pages/page', $data);
+        $data['titlePage'] = 'Criar conta';
+        $data['data']      = $this->dataConfig;
+
+        return view('login/pages/nova-conta', $data);
     }
 
     public function novasenha($token): string
     {
-        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
-        $data['rowConfig'] = $this->config;
+        $data['data'] = $this->dataConfig;
 
-        if ($token) {
-            $modelUser = new UsuariosModel();
-            $row       = $modelUser->where('token', $token)->first();
+        if ($row = $this->getUserByToken($token)) {
+            $data['titlePage'] = 'Nova senha';
+            $data['token']     = $token;
 
-            if ($row) {
-                $data['titlePage'] = 'Nova senha';
-                $data['token']     = $token;
-
-                return view('login/novasenha', $data);
-            }
+            return view('login/pages/nova-senha', $data);
         }
+        $data['titlePage'] = 'Token inválido ou expirado';
 
-        $data['titlePage'] = 'Erro';
-
-        return view('login/confirm/erro', $data);
+        return view('login/pages/expirado', $data);
     }
 
     public function primeiroAcesso($token): string
     {
-        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
-        $data['rowConfig'] = $this->config;
+        $data['data'] = $this->dataConfig;
 
-        if ($token) {
-            $modelUser = new UsuariosModel();
-            $row       = $modelUser->where('token', $token)->first();
+        if ($row = $this->getUserByToken($token)) {
+            $data['titlePage'] = 'Nova senha';
+            $data['token']     = $token;
 
-            if ($row) {
-                $data['titlePage'] = 'Nova senha';
-                $data['token']     = $token;
-
-                return view('login/primeiro-acesso', $data);
-            }
+            return view('login/pages/nova-senha', $data);
         }
+        $data['titlePage'] = 'Token inválido ou expirado';
 
-        $data['titlePage'] = 'Erro';
-
-        return view('login/confirm/erro', $data);
+        return view('login/pages/expirado', $data);
     }
 
     public function recuperacao(): string
     {
-
         $data['titlePage'] = 'Recuperar conta';
-        $data['rowConfig'] = $this->config;
+        $data['data']      = $this->dataConfig;
 
-        //$this->cachePage(getCacheExpirationTimeInSeconds(365));
+        $this->cachePage(getCacheExpirationTimeInSeconds(2));
 
         return view('login/pages/recupera', $data);
     }
 
-    //Apenas avisa que a verificação foi realizada
+    // Confirma a verificação de e-mail usando o token
     public function confirmacao($token = null): string
+    {
+        $data['data'] = $this->dataConfig;
+
+        if ($row = $this->getUserByToken($token)) {
+            $modelUser = new UsuariosModel();
+            $modelUser->update($row['id'], ['confirmado' => 1]);
+            $data['titlePage'] = 'Confirmação de e-mail bem-sucedida';
+
+            return view('login/pages/confirmacao', $data);
+        }
+        $data['titlePage'] = 'Erro ao confirmar e-mail';
+
+        return view('login/pages/expirado', $data);
+    }
+
+    // Função utilitária para buscar usuário pelo token
+    private function getUserByToken(string $token)
     {
         if ($token) {
             $modelUser = new UsuariosModel();
-            $row       = $modelUser->where('token', $token)->findAll();
 
-            if (count($row)) {
-                $modelUser->update($row[0]['id'], ['confirmado' => 1]);
-                $data['titlePage'] = 'Confirma e-mail';
-                $data['rowConfig'] = $this->config;
-
-                return view('login/confirm/sucesso', $data);
-            } else {
-                $data['titlePage'] = 'Confirma e-mail';
-                $data['rowConfig'] = $this->config;
-
-                return view('login/confirm/erro', $data);
-            }
-        } else {
-            $data['titlePage'] = 'Confirma e-mail';
-            $data['rowConfig'] = $this->config;
-
-            return view('login/confirm/erro', $data);
+            return $modelUser->where('token', $token)->first();
         }
-    }
 
-    public function perfil()
-    {
-        $idUser = session('data')['id'];
-
-        echo $idUser;
+        return null;
     }
 }

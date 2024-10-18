@@ -7,36 +7,45 @@
     <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
     <link rel="stylesheet" href="/assets/css/custom/nova-conta.css" rel="stylesheet" type="text/css">
+    <style>
+    .password-contain {
+        display: none;
+    }
+    </style>
 </head>
 
 <body>
     <main class="container-fluid">
         <div class="row">
             <!-- Coluna esquerda -->
-            <div class="col-lg-6 left-side" id="auth-particles"></div>
+            <div class="col-lg-6 col-md-4 left-side" id="auth-particles"></div>
 
             <!-- Coluna direita com formulário de múltiplas etapas -->
-            <div class="col-lg-6 right-side">
-                <h3 class="text-center title mb-3">Crie uma conta</h3>
-                <!-- Barra de progresso -->
-                <p class="text-center fs-4 mb-4 fw-100">Qual cadastro iremos fazer hoje?</p>
-                <div class="row mb-2 ps-5 pe-5">
-                    <div class="col-sm-6 d-grid gap-2">
-                        <button class="btn btnMostraPastor text-white color-btn btn-dark">
-                            Cadastro de Pastor
-                        </button>
-                    </div>
-                    <div class="col-sm-6 d-grid gap-2">
-                        <button class="btn btnMostraIgreja text-white color-btn btn-dark">
-                            Cadastro de igreja
-                        </button>
+            <div class="col-lg-6 col-md-8 right-side">
+                <div class="text-center">
+                    <img src="<?= $data['logo'] ?>" class="rounded" width="90px">
+                    <h3 class="title mb-3">Crie uma conta</h3>
+                    <!-- Barra de progresso -->
+                    <p class="fs-4 mb-4 fw-100">Qual cadastro iremos fazer hoje?</p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-10 col-lg-10">
+                        <div class="row">
+                            <div class="col-sm-6 d-grid gap-2">
+                                <button class="btn btnMostraPastor text-white color-btn btn-dark">
+                                    Cadastro de Pastor
+                                </button>
+                            </div>
+                            <div class="col-sm-6 d-grid gap-2">
+                                <button class="btn btnMostraIgreja text-white color-btn btn-dark">
+                                    Cadastro de igreja
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-
-
+                <?= $this->include("login/forms/pastor") ?>
                 <?= $this->include("login/forms/igreja") ?>
-
                 <div class="row">
                     <div class="col-lg-12 text-center mb-3 mt-4">
                         <p>Já tem uma conta? <a href="<?= site_url() ?>" class="text-info">Faça o

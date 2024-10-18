@@ -2,10 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Models\TransacoesModel;
-use App\Models\UsuariosModel;
 use App\Libraries\UploadsLibraries;
 use App\Libraries\WhatsappLibraries;
+use App\Models\TransacoesModel;
+use App\Models\UsuariosModel;
 
 class GenerateReportJob
 {
@@ -14,31 +14,30 @@ class GenerateReportJob
     public function handle($data)
     {
         log_message('info', 'Iniciando o processo de geração do relatório.');
-        $dataInicio = $data['data_inicio'] ?? null;
-        $dataFim = $data['data_fim'] ?? null;
+        $dataInicio    = $data['data_inicio']    ?? null;
+        $dataFim       = $data['data_fim']       ?? null;
         $tipoPagamento = $data['tipo_pagamento'] ?? false;
-        $status = $data['status'] ?? false;
-        $idAdmin = $data['id_admin'];
-        $idUser = $data['id_user'];
-        $celular = $data['whatsapp'];
+        $status        = $data['status']         ?? false;
+        $idAdmin       = $data['id_admin'];
+        $idUser        = $data['id_user'];
+        $celular       = $data['whatsapp'];
 
         if (!$dataInicio || !$dataFim) {
             log_message('error', 'Datas de início ou fim não fornecidas.');
             $this->notificarErro('Datas de início ou fim não fornecidas.', $idAdmin, $celular);
+
             return;
         }
 
         // Nome do arquivo CSV
-        $nomeArquivo = 'relatorio_transacoes_' . date('Y-m-d_H-i-s') . '.csv';
-        $caminhoPasta = WRITEPATH . 'uploads/'; // Define o caminho da pasta
+        $nomeArquivo    = 'relatorio_transacoes_' . date('Y-m-d_H-i-s') . '.csv';
+        $caminhoPasta   = WRITEPATH . 'uploads/'; // Define o caminho da pasta
         $caminhoArquivo = $caminhoPasta . $nomeArquivo;
-
 
         // Verifica se o diretório existe, caso contrário cria
         if (!is_dir($caminhoPasta)) {
             mkdir($caminhoPasta, 0755, true); // Cria o diretório com permissões adequadas
         }
-
 
         // Abre o arquivo para escrita
         $arquivo = fopen($caminhoArquivo, 'w');
@@ -81,6 +80,7 @@ class GenerateReportJob
             // Processa e escreve cada transação no CSV
             foreach ($transacoes as $transacao) {
                 $linha = $this->processarTransacao($transacao, $celular);
+
                 if ($linha) {
                     fputcsv($arquivo, $linha);
                 }
@@ -99,10 +99,11 @@ class GenerateReportJob
     {
         try {
             $modelUsuarios = new UsuariosModel();
-            $idPerfil = $modelUsuarios->select('id_perfil, tipo, email')->find($transacao['id_user']);
+            $idPerfil      = $modelUsuarios->select('id_perfil, tipo, email')->find($transacao['id_user']);
 
             if (!$idPerfil) {
                 log_message('warning', "Perfil de usuário não encontrado para transação ID: {$transacao['id']}.");
+
                 return null;
             }
 
@@ -116,25 +117,26 @@ class GenerateReportJob
 
             // Retorna a linha formatada para o CSV
             return [
-                'ID no Sistema' => $transacao['id'],
-                'ID do Pedido' => $transacao['id_pedido'],
-                'ID do Cliente' => $perfil['id'],
-                'Cliente' => $clienteNome,
-                'Tipo de acesso' => $idPerfil['tipo'],
-                'Telefone/WhatsApp' => $perfil['celular'],
-                'E-mail' => $idPerfil['email'],
-                'ID da Transacao' => $transacao['id_transacao'],
-                'Gateway' => $transacao['gateway'],
-                'Tipo de Pagamento' => $transacao['tipo_pagamento'],
-                'Descricao' => $transacao['descricao'],
-                'Descricao longa' => $transacao['descricao_longa'],
-                'Data de pagamento' => $transacao['data_pagamento'],
+                'ID no Sistema'       => $transacao['id'],
+                'ID do Pedido'        => $transacao['id_pedido'],
+                'ID do Cliente'       => $perfil['id'],
+                'Cliente'             => $clienteNome,
+                'Tipo de acesso'      => $idPerfil['tipo'],
+                'Telefone/WhatsApp'   => $perfil['celular'],
+                'E-mail'              => $idPerfil['email'],
+                'ID da Transacao'     => $transacao['id_transacao'],
+                'Gateway'             => $transacao['gateway'],
+                'Tipo de Pagamento'   => $transacao['tipo_pagamento'],
+                'Descricao'           => $transacao['descricao'],
+                'Descricao longa'     => $transacao['descricao_longa'],
+                'Data de pagamento'   => $transacao['data_pagamento'],
                 'Status da transacao' => $transacao['status_text'],
-                'Valor' => $transacao['valor'],
+                'Valor'               => $transacao['valor'],
             ];
         } catch (\Exception $e) {
             log_message('error', 'Erro ao processar transação: ' . $e->getMessage());
             $this->notificarErro('Erro ao processar transação: ' . $e->getMessage(), $transacao['id'], $celular);
+
             return null;
         }
     }
@@ -157,7 +159,7 @@ class GenerateReportJob
             'Descricao longa',
             'Data de pagamento',
             'Status da transacao',
-            'Valor'
+            'Valor',
         ]);
     }
 
@@ -167,7 +169,7 @@ class GenerateReportJob
             log_message('info', 'Enviando relatório para o S3.');
             $uploadLib = new UploadsLibraries();
             $caminhoS3 = 'relatorios/' . $nomeArquivo;
-            $urlS3 = $uploadLib->uploadToS3($caminhoArquivo, $caminhoS3, 'text/csv');
+            $urlS3     = $uploadLib->uploadToS3($caminhoArquivo, $caminhoS3, 'text/csv');
 
             // Deleta o arquivo local após upload
             if (file_exists($caminhoArquivo)) {
@@ -179,16 +181,16 @@ class GenerateReportJob
             // Registra o relatório na tabela de relatórios gerados
             $relatoriosModel = new \App\Models\RelatoriosGeradosModel();
             $relatoriosModel->insert([
-                'nome_arquivo' => $nomeArquivo,
-                'url_download' => $urlS3,
+                'nome_arquivo'     => $nomeArquivo,
+                'url_download'     => $urlS3,
                 'parametros_busca' => json_encode([
-                    'data_inicio' => $dataInicio,
-                    'data_fim' => $dataFim,
+                    'data_inicio'    => $dataInicio,
+                    'data_fim'       => $dataFim,
                     'tipo_pagamento' => $tipoPagamento,
-                    'status' => $status,
+                    'status'         => $status,
                 ]),
-                'id_adm' => $idAdmin,
-                'id_user' => $idUser
+                'id_adm'  => $idAdmin,
+                'id_user' => $idUser,
             ]);
 
             $this->notificarSucesso($urlS3, $idAdmin, $celular);
@@ -201,7 +203,7 @@ class GenerateReportJob
     protected function notificarErro($mensagem, $idAdmin, $celular)
     {
         // Enviar notificação pelo WhatsApp
-        $whatsApp = new WhatsappLibraries();
+        $whatsApp          = new WhatsappLibraries();
         $dataWp['message'] = "Não foi possivel gerar o relatório.\nVerifique o erro a seguir:\n\n$mensagem";
         //$dataWp['csv'] = $urlS3;
         $whatsApp->verifyNumber($dataWp, $celular);
@@ -213,9 +215,9 @@ class GenerateReportJob
     protected function notificarSucesso($url, $idAdmin, $celular)
     {
         // Enviar notificação pelo WhatsApp
-        $whatsApp = new WhatsappLibraries();
+        $whatsApp          = new WhatsappLibraries();
         $dataWp['message'] = "Seu relatório está pronto...\n\n{$url}";
-        $dataWp['csv'] = $url;
+        $dataWp['csv']     = $url;
 
         $whatsApp->verifyNumber($dataWp, $celular, 'csv');
 

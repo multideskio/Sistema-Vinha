@@ -41,17 +41,16 @@ class NotificationLibrary
         $modelUser = new UsuariosModel();
         $rowUser   = $modelUser->where('email', $email)->first();
 
-        //log_message('info', '[Linha ' . __LINE__ . '] Dados do usuário: '. json_encode($rowUser));
+        log_message('info', '[Linha ' . __LINE__ . '] Dados do usuário: ' . json_encode($rowUser));
 
         if ($rowUser) {
-
             $sendEmail = [
                 'nome'  => $nome,
                 'token' => $rowUser['token'],
             ];
-
             $message = view('emails/primeiro-acesso', $sendEmail);
             $this->emailLibrary->envioEmail($email, 'Confirme seu e-mail', $message);
+            log_message('info', 'Chegamos ao final do cadastro: ' . $nome);
         } else {
             log_message('info', '[Linha ' . __LINE__ . '] O cadastro do usuário não foi encontrado.');
         }

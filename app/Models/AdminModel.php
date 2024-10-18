@@ -117,7 +117,7 @@ class AdminModel extends Model
         $cache = \Config\Services::cache();
 
         if (!$cache->get('searchCacheDataConfig')) {
-            $data = $this->first();
+            $data = $this->select('cnpj, empresa, logo, email, cep, uf, cidade, bairro, complemento, telefone, celular')->first();
             $cache->save('searchCacheDataConfig', $data, getCacheExpirationTimeInSeconds(30));
         } else {
             $data = $cache->get('searchCacheDataConfig');

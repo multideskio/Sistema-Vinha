@@ -27,7 +27,7 @@ class TransacoesModel extends Model
         'descricao',
         'data_pagamento',
         'status_text',
-        'descricao_longa'
+        'descricao_longa',
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -56,7 +56,7 @@ class TransacoesModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = ['limparCache'];
 
-    protected function limparCache(array $data) :array
+    protected function limparCache(array $data): array
     {
         $cache = service('cache');
         $cache->deleteMatching("transacoesList_" . '*');
@@ -74,20 +74,22 @@ class TransacoesModel extends Model
         // Verifica se o horário atual está dentro do intervalo permitido (08:00 - 18:00)
         // para o envio de lembretes. Fora desse horário, a função não executa.
         $hora = date('H');
+
         if ($hora < 8 || $hora >= 18) {
             log_message('info', 'Fora de horário comercial');
+
             return false; // Termina a execução fora do horário comercial
         }
 
         $dataEnvios = []; // Array para armazenar os registros de envios de lembretes
-        $db = \Config\Database::connect(); // Conecta ao banco de dados
+        $db         = \Config\Database::connect(); // Conecta ao banco de dados
         // Consulta para obter todos os usuários que não são do tipo 'superadmin'
         $usuariosQuery = $db->table('usuarios')->select('usuarios.*')->where('usuarios.tipo !=', 'superadmin')->get();
 
-        $usuarios = $usuariosQuery->getResultArray(); // Converte os resultados da consulta para um array associativo
+        $usuarios            = $usuariosQuery->getResultArray(); // Converte os resultados da consulta para um array associativo
         $controleEnviosModel = new ControleEnviosModel(); // Instancia o modelo para controle de envios
-        $hoje = date('Y-m-d'); // Data atual
-        $mesAtual = date('Y-m'); // Mês atual no formato 'YYYY-MM'
+        $hoje                = date('Y-m-d'); // Data atual
+        $mesAtual            = date('Y-m'); // Mês atual no formato 'YYYY-MM'
 
         // Configuração do Redis com tratamento de exceção para garantir a conexão
         try {
@@ -95,6 +97,7 @@ class TransacoesModel extends Model
         } catch (\Exception $e) {
             // Loga um erro se não conseguir conectar ao Redis
             log_message('error', 'Erro ao conectar ao Redis: ' . $e->getMessage());
+
             return; // Termina a execução caso o Redis não esteja acessível
         }
 
@@ -107,7 +110,7 @@ class TransacoesModel extends Model
                 continue; // Se o perfil não for encontrado, pula para o próximo usuário
             }
 
-            $melhorDia = $perfil['data_dizimo']; // Melhor dia de pagamento do dízimo para o usuário
+            $melhorDia     = $perfil['data_dizimo']; // Melhor dia de pagamento do dízimo para o usuário
             $dataPagamento = date('Y-m-' . $melhorDia); // Constrói a data de pagamento no formato 'YYYY-MM-DD'
 
             // Verifica a data do último envio de lembrete para o usuário
@@ -122,10 +125,10 @@ class TransacoesModel extends Model
                 // Cria um job para enviar o lembrete via WhatsApp, incluindo dados do usuário e diferença de dias
                 $job = [
                     'handler' => 'App\Jobs\AvisosWhatsApp',
-                    'data' => [
-                        'usuario' => $perfil,
-                        'diasDiferenca' => $diasDiferenca
-                    ]
+                    'data'    => [
+                        'usuario'       => $perfil,
+                        'diasDiferenca' => $diasDiferenca,
+                    ],
                 ];
 
                 try {
@@ -160,25 +163,28 @@ class TransacoesModel extends Model
         }
     }
 
-
     public function obterPerfilUsuario($usuario)
     {
         switch ($usuario['tipo']) {
             case 'gerente':
                 $model = new \App\Models\GerentesModel();
                 break;
+
             case 'supervisor':
                 $model = new \App\Models\SupervisoresModel();
                 break;
+
             case 'pastor':
                 $model = new \App\Models\PastoresModel();
                 break;
+
             case 'igreja':
                 $model = new \App\Models\IgrejasModel();
                 break;
             default:
                 throw new \ErrorException("Tipo de permissão não definida");
         }
+
         return $model->find($usuario['id_perfil']);
     }
 
@@ -192,6 +198,7 @@ class TransacoesModel extends Model
 
         if (!$lembrete_pagamento) {
             log_message('info', 'envio de lembrete desativado');
+
             return false;
         }
 
@@ -202,9 +209,9 @@ class TransacoesModel extends Model
 
         if (!$pagamento_atrasado) {
             log_message('info', 'envio de lembrete desativado');
+
             return false;
         }
-
 
         // Determina o nome do usuário
         $nome = !empty($usuario['nome']) ? $usuario['nome'] : (!empty($usuario['razao_social']) ? $usuario['razao_social'] : false);
@@ -213,22 +220,22 @@ class TransacoesModel extends Model
             // Mensagem dinâmica informando os dias restantes ou passados para o pagamento
             if ($diasDiferenca < 0) {
                 $diasRestantes = abs($diasDiferenca);
-                $dados = [
+                $dados         = [
                     '{nome}' => $nome,
                     'number' => $usuario['celular'],
                     '{dias}' => ($diasRestantes > 1) ? $diasRestantes . ' dias' : $diasRestantes . ' dia',
                     '{data}' => $usuario['data_dizimo'],
-                    '{site}' => site_url()
+                    '{site}' => site_url(),
                 ];
                 $mensagem = str_replace(array_keys($dados), array_values($dados), $lembrete_pagamento['mensagem']);
             } else {
                 $diasPassados = $diasDiferenca;
-                $dados = [
+                $dados        = [
                     '{nome}' => $nome,
                     'number' => $usuario['celular'],
                     '{dias}' => ($diasPassados > 1) ? $diasPassados . ' dias' : $diasPassados . ' dia',
                     '{data}' => $usuario['data_dizimo'],
-                    '{site}' => site_url()
+                    '{site}' => site_url(),
                 ];
                 $mensagem = str_replace(array_keys($dados), array_values($dados), $pagamento_atrasado['mensagem']);
             }
@@ -243,31 +250,28 @@ class TransacoesModel extends Model
         }
     }
 
-
-
     public function transacoes($input = false, $limit = 10, $order = 'DESC'): array
     {
         $request = service('request');
 
         $search = $input['search'] ?? false;
-        $page   = $input['page'] ?? 1;
+        $page   = $input['page']   ?? 1;
 
         $searchCache = preg_replace('/[^a-zA-Z0-9]/', '', $search);
-        
 
         // Criação de uma chave de cache única baseada nos parâmetros
-        $cacheKey = "transacoesList_{$searchCache}_{$limit}_{$order}_{$page}"; 
+        $cacheKey = "transacoesList_{$searchCache}_{$limit}_{$order}_{$page}";
 
         $cache = \Config\Services::cache();
 
         // Verifica se os dados estão em cache
-        if ($data = $cache->get($cacheKey)) {
+        /*if ($data = $cache->get($cacheKey)) {
             return $data;
-        }
+        }*/
 
-        $data = [];
+        $data             = [];
         $currentPageTotal = 0;
-        $allPagesTotal = 0;
+        $allPagesTotal    = 0;
 
         $search = $input['search'] ?? false;
 
@@ -285,22 +289,22 @@ class TransacoesModel extends Model
         foreach ($transacoes as $transacao) {
             if ($transacao['tipo_user'] == 'pastor') {
                 $rowPastor = $modelPastor->find($transacao['id_cliente']);
-                $data[] = [
-                    'id'          => $transacao['id'],
-                    'nome'        => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
-                    'email'       => $transacao['email'],
-                    'tipo'        => 'pastor',
+                $data[]    = [
+                    'id'           => $transacao['id'],
+                    'nome'         => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
+                    'email'        => $transacao['email'],
+                    'tipo'         => 'pastor',
                     'id_transacao' => $transacao['id_transacao'],
-                    'uf'          => $rowPastor['uf'],
-                    'cidade'      => $rowPastor['cidade'],
-                    'desc'        => $transacao['descricao'],
-                    'data_criado' => formatDate($transacao['created_at']),
-                    'data_pag'    => formatDate($transacao['data_pagamento']),
-                    'valor'       => decimalParaReaisBrasil($transacao['valor']),
-                    'status'      => $transacao['status_text'],
-                    'forma_pg'    => $transacao['tipo_pagamento'],
-                    'url'         => site_url("admin/pastor/{$transacao['id_cliente']}"),
-                    'descricao_lg' => $transacao['descricao_longa']
+                    'uf'           => $rowPastor['uf'],
+                    'cidade'       => $rowPastor['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
+                    'url'          => site_url("admin/pastor/{$transacao['id_cliente']}"),
+                    'descricao_lg' => $transacao['descricao_longa'],
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
@@ -308,22 +312,22 @@ class TransacoesModel extends Model
                 }
             } elseif ($transacao['tipo_user'] == 'igreja') {
                 $rowIgreja = $modelIgreja->find($transacao['id_cliente']);
-                $data[] = [
-                    'id'          => intval($transacao['id']),
-                    'nome'        => $rowIgreja['razao_social'],
-                    'email'       => $transacao['email'],
-                    'tipo'        => 'igreja',
+                $data[]    = [
+                    'id'           => intval($transacao['id']),
+                    'nome'         => $rowIgreja['razao_social'],
+                    'email'        => $transacao['email'],
+                    'tipo'         => 'igreja',
                     'id_transacao' => $transacao['id_transacao'],
-                    'uf'          => $rowIgreja['uf'],
-                    'cidade'      => $rowIgreja['cidade'],
-                    'desc'        => $transacao['descricao'],
-                    'data_criado' => formatDate($transacao['created_at']),
-                    'data_pag'    => formatDate($transacao['data_pagamento']),
-                    'valor'       => decimalParaReaisBrasil($transacao['valor']),
-                    'status'      => $transacao['status_text'],
-                    'forma_pg'    => $transacao['tipo_pagamento'],
-                    'url'         => site_url("admin/igreja/{$transacao['id_cliente']}"),
-                    'descricao_lg' => $transacao['descricao_longa']
+                    'uf'           => $rowIgreja['uf'],
+                    'cidade'       => $rowIgreja['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
+                    'url'          => site_url("admin/igreja/{$transacao['id_cliente']}"),
+                    'descricao_lg' => $transacao['descricao_longa'],
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
@@ -339,11 +343,12 @@ class TransacoesModel extends Model
         $allPagesTotal = $allPagesTotalResult->total;
 
         $totalResults = $this->countAllResults();
-        $currentPage = $request->getGet('page') ?? 1;
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $currentPage  = $request->getGet('page') ?? 1;
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
 
         $resultCount = count($transacoes);
+
         if ($search) {
             $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "{$resultCount} resultados encontrados.";
         } else {
@@ -351,30 +356,28 @@ class TransacoesModel extends Model
         }
 
         $result = [
-            'rows' => $data,
-            'pager' => $this->pager->links('default', 'paginate'),
-            'num' => $numMessage,
+            'rows'             => $data,
+            'pager'            => $this->pager->links('default', 'paginate'),
+            'num'              => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
-            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal)
+            'allPagesTotal'    => decimalParaReaisBrasil($allPagesTotal),
         ];
 
         helper('auxiliar');
         // Armazena os dados no cache
-        $cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(1)); // Cache por 5 minutos (300 segundos)
+        // $cache->save($cacheKey, $result, getCacheExpirationTimeInSeconds(1)); // Cache por 5 minutos (300 segundos)
 
         return $result;
     }
-
-
 
     public function listTransacaoUsuario($id, $input = false, $limit = 10, $order = 'DESC')
     {
         helper('auxiliar');
         $page = $input['page'] ?? false;
 
-        $data = [];
+        $data             = [];
         $currentPageTotal = 0; // Soma dos valores da página atual
-        $allPagesTotal = 0; // Soma dos valores de todas as páginas da consulta atual
+        $allPagesTotal    = 0; // Soma dos valores de todas as páginas da consulta atual
 
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
@@ -400,13 +403,13 @@ class TransacoesModel extends Model
         $transacoes = $this->paginate($limit);
 
         // Instancia os modelos
-        $modelPastor = new PastoresModel();
-        $modelIgreja = new IgrejasModel();
+        $modelPastor    = new PastoresModel();
+        $modelIgreja    = new IgrejasModel();
         $modelReembolso = new ReembolsosModel();
 
         foreach ($transacoes as $transacao) {
             if ($transacao['tipo_user'] == 'pastor') {
-                $rowPastor = $modelPastor->find($transacao['id_cliente']);
+                $rowPastor   = $modelPastor->find($transacao['id_cliente']);
                 $rowRembolso = $modelReembolso->where('id_transacao', $transacao['id'])->first();
 
                 if ($rowRembolso) {
@@ -415,20 +418,20 @@ class TransacoesModel extends Model
                     $dataTransacao = [];
                 }
                 $data[] = [
-                    'id'          => $transacao['id'],
-                    'nome'        => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
-                    'tipo'        => 'Pastor',
+                    'id'           => $transacao['id'],
+                    'nome'         => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
+                    'tipo'         => 'Pastor',
                     'id_transacao' => $transacao['id_transacao'],
-                    'uf'          => $rowPastor['uf'],
-                    'cidade'      => $rowPastor['cidade'],
-                    'desc'        => $transacao['descricao'],
-                    'data_criado' => formatDate($transacao['created_at']),
-                    'data_pag'    => formatDate($transacao['data_pagamento']),
-                    'valor'       => decimalParaReaisBrasil($transacao['valor']),
-                    'status'      => $transacao['status_text'],
-                    'forma_pg'    => $transacao['tipo_pagamento'],
+                    'uf'           => $rowPastor['uf'],
+                    'cidade'       => $rowPastor['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
                     'descricao_lg' => $transacao['descricao_longa'],
-                    'reembolso' => $dataTransacao
+                    'reembolso'    => $dataTransacao,
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
@@ -447,20 +450,20 @@ class TransacoesModel extends Model
                 }
 
                 $data[] = [
-                    'id'          => intval($transacao['id']),
-                    'nome'        => $rowIgreja['razao_social'],
-                    'tipo'        => 'Igreja',
+                    'id'           => intval($transacao['id']),
+                    'nome'         => $rowIgreja['razao_social'],
+                    'tipo'         => 'Igreja',
                     'id_transacao' => $transacao['id_transacao'],
-                    'uf'          => $rowIgreja['uf'],
-                    'cidade'      => $rowIgreja['cidade'],
-                    'desc'        => $transacao['descricao'],
-                    'data_criado' => formatDate($transacao['created_at']),
-                    'data_pag'    => formatDate($transacao['data_pagamento']),
-                    'valor'       => decimalParaReaisBrasil($transacao['valor']),
-                    'status'      => $transacao['status_text'],
-                    'forma_pg'    => $transacao['tipo_pagamento'],
+                    'uf'           => $rowIgreja['uf'],
+                    'cidade'       => $rowIgreja['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
                     'descricao_lg' => $transacao['descricao_longa'],
-                    'reembolso' => $dataTransacao
+                    'reembolso'    => $dataTransacao,
                 ];
 
                 if ($transacao['status_text'] == 'Pago') {
@@ -476,12 +479,13 @@ class TransacoesModel extends Model
 
         // Paginação dos resultados
         $totalResults = $this->where('transacoes.id_user', $id)->countAllResults();
-        $currentPage = $this->pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $currentPage  = $this->pager->getCurrentPage();
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($transacoes);
+
         if ($search) {
             $numMessage = $resultCount === 1 ? "1 resultado encontrado." : "{$resultCount} resultados encontrados.";
         } else {
@@ -489,16 +493,15 @@ class TransacoesModel extends Model
         }
 
         $result = [
-            'rows' => $data,
-            'pager' => $this->pager->links('default', 'paginate'),
-            'num' => $numMessage,
+            'rows'             => $data,
+            'pager'            => $this->pager->links('default', 'paginate'),
+            'num'              => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
-            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal) // Certifique-se de formatar a soma total
+            'allPagesTotal'    => decimalParaReaisBrasil($allPagesTotal), // Certifique-se de formatar a soma total
         ];
 
         return $result;
     }
-
 
     public function listSearchUsers($input = false, $limit = 10, $order = 'DESC')
     {
@@ -509,10 +512,10 @@ class TransacoesModel extends Model
         if ($page) {
             $cache = \Config\Services::cache();
 
-            $search = $input['search'] ?? false;
+            $search      = $input['search'] ?? false;
             $currentPage = $page;
-            $userId = session('data')['id_perfil'];
-            $cacheKey = "transacoes_{$userId}_{$search}_{$limit}_{$order}_{$currentPage}";
+            $userId      = session('data')['id_perfil'];
+            $cacheKey    = "transacoes_{$userId}_{$search}_{$limit}_{$order}_{$currentPage}";
 
             // Check if the cache exists
             if ($cacheData = $cache->get($cacheKey)) {
@@ -520,10 +523,9 @@ class TransacoesModel extends Model
             }
         }
 
-
-        $data = array();
+        $data             = [];
         $currentPageTotal = 0; // Soma dos valores da página atual
-        $allPagesTotal = 0; // Soma dos valores de todas as páginas da consulta atual
+        $allPagesTotal    = 0; // Soma dos valores de todas as páginas da consulta atual
 
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
@@ -554,19 +556,19 @@ class TransacoesModel extends Model
 
             if ($transacao['tipo_user'] == 'pastor') {
                 $rowPastor = $modelPastor->find($transacao['id_cliente']);
-                $data[] = [
-                    'id'          => $transacao['id'],
-                    'nome'        => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
-                    'tipo'        => 'Pastor',
-                    'uf'          => $rowPastor['uf'],
-                    'cidade'      => $rowPastor['cidade'],
-                    'desc'        => $transacao['descricao'],
-                    'data_criado' => formatDate($transacao['created_at']),
-                    'data_pag'    => formatDate($transacao['data_pagamento']),
-                    'valor'       => decimalParaReaisBrasil($transacao['valor']),
-                    'status'      => $transacao['status_text'],
-                    'forma_pg'    => $transacao['tipo_pagamento'],
-                    'descricao_lg' => $transacao['descricao_longa']
+                $data[]    = [
+                    'id'           => $transacao['id'],
+                    'nome'         => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
+                    'tipo'         => 'Pastor',
+                    'uf'           => $rowPastor['uf'],
+                    'cidade'       => $rowPastor['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
+                    'descricao_lg' => $transacao['descricao_longa'],
                 ];
 
                 // Adiciona o valor da transação à soma da página atual
@@ -575,38 +577,39 @@ class TransacoesModel extends Model
 
             if ($transacao['tipo_user'] == 'igreja') {
                 $rowPastor = $modelIgreja->find($transacao['id_cliente']);
-                $data[] = [
-                    'id'          => intval($transacao['id']),
-                    'nome'        => $rowPastor['razao_social'],
-                    'tipo'        => 'Igreja',
-                    'uf'          => $rowPastor['uf'],
-                    'cidade'      => $rowPastor['cidade'],
-                    'desc'        => $transacao['descricao'],
-                    'data_criado' => formatDate($transacao['created_at']),
-                    'data_pag'    => formatDate($transacao['data_pagamento']),
-                    'valor'       => decimalParaReaisBrasil($transacao['valor']),
-                    'status'      => $transacao['status_text'],
-                    'forma_pg'    => $transacao['tipo_pagamento'],
-                    'descricao_lg' => $transacao['descricao_longa']
+                $data[]    = [
+                    'id'           => intval($transacao['id']),
+                    'nome'         => $rowPastor['razao_social'],
+                    'tipo'         => 'Igreja',
+                    'uf'           => $rowPastor['uf'],
+                    'cidade'       => $rowPastor['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
+                    'descricao_lg' => $transacao['descricao_longa'],
                 ];
 
                 // Adiciona o valor da transação à soma da página atual
                 $currentPageTotal += $transacao['valor'];
             }
-        };
+        }
 
         // Calcula a soma dos valores de todas as páginas da consulta atual
         $allPagesTotalQuery = $this->where('transacoes.id_cliente', session('data')['id_perfil']);
-        $allPagesTotal = $allPagesTotalQuery->selectSum('valor')->find();
+        $allPagesTotal      = $allPagesTotalQuery->selectSum('valor')->find();
 
         // Paginação dos resultados
         $totalResults = $this->where('transacoes.id_cliente', session('data')['id_perfil'])->countAllResults();
-        $currentPage = $this->pager->getCurrentPage();
-        $start = ($currentPage - 1) * $limit + 1;
-        $end = min($currentPage * $limit, $totalResults);
+        $currentPage  = $this->pager->getCurrentPage();
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
 
         // Lógica para definir a mensagem de resultados
         $resultCount = count($transacoes);
+
         if ($search) {
             if ($resultCount === 1) {
                 $numMessage = "1 resultado encontrado.";
@@ -618,18 +621,17 @@ class TransacoesModel extends Model
         }
 
         $result = [
-            'rows' => $data,
-            'pager' => $this->pager->links('default', 'paginate'),
-            'num' => $numMessage,
+            'rows'             => $data,
+            'pager'            => $this->pager->links('default', 'paginate'),
+            'num'              => $numMessage,
             'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
-            'allPagesTotal' => decimalParaReaisBrasil($allPagesTotal[0]['valor'])
+            'allPagesTotal'    => decimalParaReaisBrasil($allPagesTotal[0]['valor']),
         ];
 
         if ($page) {
             // Save the result to cache
             $cache->save($cacheKey, $result, 3600); // Cache for 1 hour
         }
-
 
         return $result;
     }
@@ -659,7 +661,7 @@ class TransacoesModel extends Model
         if ($dateIn && $dateOut) {
             $this->where([
                 'data_pagamento >=' => $dateIn,
-                'data_pagamento <=' => $dateOut
+                'data_pagamento <=' => $dateOut,
             ]);
         } else {
             $this->like('data_pagamento', date('Y-m'));
@@ -668,6 +670,7 @@ class TransacoesModel extends Model
         $this->where('status_text', 'Pago');
         $this->where('tipo_pagamento', $type);
         $this->selectSum('valor');
+
         return $this->first();
     }
 
@@ -676,6 +679,7 @@ class TransacoesModel extends Model
         $this->like('data_pagamento', date('Y-m'));
         $this->where('status_text', 'Pago');
         $this->selectSum('valor');
+
         return $this->first();
     }
 
@@ -684,6 +688,7 @@ class TransacoesModel extends Model
         $this->like('data_pagamento', date('Y'));
         $this->where('status_text', 'Pago');
         $this->selectSum('valor');
+
         return $this->first();
     }
 
@@ -691,6 +696,7 @@ class TransacoesModel extends Model
     {
         $this->where('status_text', 'Pago');
         $this->selectSum('valor');
+
         return $this->first();
     }
 
@@ -721,6 +727,7 @@ class TransacoesModel extends Model
         $this->where('status_text', 'Pago');
         $this->where('tipo_pagamento', $type);
         $this->selectSum('valor');
+
         return $this->first();
     }
 
@@ -730,6 +737,7 @@ class TransacoesModel extends Model
         $this->like('data_pagamento', $previousMonth);
         $this->where('status_text', 'Pago');
         $this->selectSum('valor');
+
         return $this->first();
     }
 
@@ -739,6 +747,7 @@ class TransacoesModel extends Model
         $this->like('data_pagamento', $previousYear);
         $this->where('status_text', 'Pago');
         $this->selectSum('valor');
+
         return $this->first();
     }
 }

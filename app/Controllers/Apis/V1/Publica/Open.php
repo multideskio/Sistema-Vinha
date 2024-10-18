@@ -56,11 +56,9 @@ class Open extends BaseController
             if ($this->modelUser->where('email', $input['email'])->countAllResults()) {
                 throw new SecurityException("O endereço de e-mail informado já está cadastrado no sistema, clique em recuperar conta para redefinir sua senha.", 1);
             }
-
             $nome    = $input['nome'];
-            $celular = $input['whatsapp'];
+            $celular = $input['full_phone'];
             $email   = $input['email'];
-
             //ARRAY CADASTRO DO PASTOR
             $data = [
                 "id_adm" => 1,
@@ -72,13 +70,15 @@ class Open extends BaseController
                 'uf'            => $input['uf'],
                 'cidade'        => $input['cidade'],
                 'cep'           => $input['cep'],
-                'complemento'   => $input['complemento'],
+                'complemento'   => $input['complementoPastor'],
                 'nascimento'    => $input['nascimento'],
                 'bairro'        => $input['bairro'],
+                "pais"          => $input['paisPastor'],
+                "numero"        => $input['numeroPastor'],
+                "rua"           => $input['ruaPastor'],
                 'data_dizimo'   => $input['dia'],
                 'celular'       => $celular,
             ];
-
             //INSERE PASTOR
             $id = $this->modelPastor->insert($data);
 
@@ -86,7 +86,6 @@ class Open extends BaseController
             if ($id === false) {
                 throw new SecurityException($this->modelPastor->errors()[]);
             }
-
             //ARRAY CADASTRO USUARIO PASTOR
             $dataUser = [
                 'tipo'      => 'pastor',
@@ -96,7 +95,6 @@ class Open extends BaseController
                 'password'  => $input['password'],
                 'nivel'     => '4',
             ];
-
             $this->modelUser->transStart();
             //INSERE USUÁRIO
             $user = $this->modelUser->insert($dataUser);
@@ -116,7 +114,7 @@ class Open extends BaseController
             $this->notifications->sendVerificationEmail($email, $nome);
 
             //RESPOSTA DE SUCESSO
-            return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
+            return $this->respondCreated(['msg' => "Cadastro realizado com sucesso"]);
         } catch (SecurityException $e) {
             //FAZ O ROLLBACK DOS CADASTROS DE REALIZADOS ANTERIORMENTE
             $this->modelPastor->transRollback();
@@ -130,6 +128,10 @@ class Open extends BaseController
     //cadastro de igreja
     public function igreja()
     {
+        if (!$this->request->isAJAX()) {
+            return $this->failUnauthorized();
+        }
+
         try {
 
             $this->modelIgreja->transStart();
@@ -137,6 +139,7 @@ class Open extends BaseController
             $header = $this->request->headers();
             $input  = $this->request->getPost();
 
+            //VERIFICA ORIGEM
             if ($header['Origin']->getValue() != rtrim(site_url(), '/')) {
                 throw new SecurityException('Origem de solicitação não permitida.');
             }
@@ -212,7 +215,7 @@ class Open extends BaseController
             $this->notifications->sendVerificationEmail($email, $nome);
 
             //RESPOSTA DE SUCESSO
-            return $this->respondCreated(['msg' => lang("Sucesso.cadastrado")]);
+            return $this->respondCreated(['msg' => 'Cadastrado com sucesso']);
 
         } catch (SecurityException $e) {
             $this->modelIgreja->transRollback();
@@ -222,14 +225,6 @@ class Open extends BaseController
         }
     }
 
-    /**
-     * The supervisor function checks if the request is AJAX, retrieves supervisor data, and returns a
-     * response accordingly.
-     *
-     * @return If the request is not an AJAX request, the function will return a "failUnauthorized"
-     * response. If there is data retrieved from the model, it will return a "respond" response with
-     * the data. If there is no data found, it will return a "failNotFound" response.
-     */
     public function supervisor()
     {
         if (!$this->request->isAJAX()) {
@@ -301,11 +296,6 @@ class Open extends BaseController
         }
 
         return $this->failNotFound();
-    }
-
-    protected function enviaWhatsApp()
-    {
-
     }
 
     public function searchEmail()

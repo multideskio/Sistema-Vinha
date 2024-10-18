@@ -1,4 +1,6 @@
-<?php namespace App\Jobs;
+<?php
+
+namespace App\Jobs;
 
 use App\Libraries\WhatsappLibraries;
 use App\Models\ConfigMensagensModel;
@@ -11,6 +13,7 @@ class AvisosWhatsApp
         // Verifica se os dados necessários estão presentes
         if (!isset($data['usuario'], $data['diasDiferenca'])) {
             log_message('error', 'Dados insuficientes para envio de lembrete.');
+
             return;
         }
 
@@ -33,6 +36,7 @@ class AvisosWhatsApp
 
         if (!$lembrete_pagamento) {
             log_message('info', 'Envio de lembrete desativado');
+
             return;
         }
 
@@ -43,6 +47,7 @@ class AvisosWhatsApp
 
         if (!$pagamento_atrasado) {
             log_message('info', 'Envio de lembrete desativado');
+
             return;
         }
 
@@ -58,25 +63,25 @@ class AvisosWhatsApp
             // Prepara a mensagem dinâmica
             if ($diasDiferenca < 0) {
                 $diasRestantes = abs($diasDiferenca);
-                
+
                 $dados = [
-                    '{nome}' => $nome,
-                    'number' => $usuario['celular'],
-                    '{dias}' => ($diasRestantes > 1) ? $diasRestantes . ' dias' : $diasRestantes . ' dia',
+                    '{nome}'        => $nome,
+                    'number'        => $usuario['celular'],
+                    '{dias}'        => ($diasRestantes > 1) ? $diasRestantes . ' dias' : $diasRestantes . ' dia',
                     '{data_dizimo}' => $usuario['data_dizimo'],
-                    '{site}' => site_url()
+                    '{site}'        => site_url(),
                 ];
-                
+
                 $mensagem = str_replace(array_keys($dados), array_values($dados), $lembrete_pagamento['mensagem']);
 
             } else {
                 $diasPassados = $diasDiferenca;
-                $dados = [
-                    '{nome}' => $nome,
-                    'number' => $usuario['celular'],
-                    '{dias}' => ($diasPassados > 1) ? $diasPassados . ' dias' : $diasPassados . ' dia',
+                $dados        = [
+                    '{nome}'        => $nome,
+                    'number'        => $usuario['celular'],
+                    '{dias}'        => ($diasPassados > 1) ? $diasPassados . ' dias' : $diasPassados . ' dia',
                     '{data_dizimo}' => $usuario['data_dizimo'],
-                    '{site}' => site_url()
+                    '{site}'        => site_url(),
                 ];
                 $mensagem = str_replace(array_keys($dados), array_values($dados), $pagamento_atrasado['mensagem']);
             }

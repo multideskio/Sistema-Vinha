@@ -4,18 +4,17 @@ namespace App\Controllers\Apis\V1;
 
 use App\Gateways\Cielo\CieloCron;
 use App\Gateways\Cielo\CieloPix;
-use App\Libraries\UploadsLibraries;
 use App\Models\ReembolsosModel;
 use App\Models\RelatoriosGeradosModel;
+use App\Models\TransacoesModel;
 use App\Models\UsuariosModel;
-use App\Workers\RedisWorker;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
 
-use Predis\Client as RedisClient;
 use Config\Redis as RedisConfig;
 use DateTime;
+use Predis\Client as RedisClient;
 
 class Transacoes extends ResourceController
 {
@@ -26,18 +25,18 @@ class Transacoes extends ResourceController
      * @return ResponseInterface
      */
 
-    protected $modelTransacoes;
-    protected $modelReembolso;
-    protected $cieloCron;
-    protected $cieloPix;
-    protected $redis;
+    protected TransacoesModel $modelTransacoes;
+    protected ReembolsosModel $modelReembolso;
+    protected CieloCron $cieloCron;
+    protected CieloPix $cieloPix;
+    protected RedisClient $redis;
 
     public function __construct()
     {
-        $this->modelTransacoes = new \App\Models\TransacoesModel();
-        $this->modelReembolso = new ReembolsosModel();
-        $this->cieloCron = new CieloCron;
-        $this->cieloPix = new CieloPix;
+        $this->modelTransacoes = new TransacoesModel();
+        $this->modelReembolso  = new ReembolsosModel();
+        $this->cieloCron       = new CieloCron();
+        $this->cieloPix        = new CieloPix();
 
         // Carrega as configurações do Redis
         $config = new RedisConfig();
@@ -55,6 +54,7 @@ class Transacoes extends ResourceController
 
         helper('auxiliar');
     }
+
     public function index()
     {
         //
@@ -74,12 +74,14 @@ class Transacoes extends ResourceController
     {
         //
         $data = $this->modelTransacoes->listSearchUsers($this->request->getGet(), 10);
+
         return $this->respond($data);
     }
 
     public function adminUsers($id = null)
     {
         $data = $this->modelTransacoes->listTransacaoUsuario($id, $this->request->getGet(), 10);
+
         return $this->respond($data);
     }
 
@@ -157,8 +159,8 @@ class Transacoes extends ResourceController
 
         try {
             $modelUser = new UsuariosModel();
-            $dateIn = $this->request->getGet('dateIn');
-            $dateOut = $this->request->getGet('dateOut') . ' 23:59:59';
+            $dateIn    = $this->request->getGet('dateIn');
+            $dateOut   = $this->request->getGet('dateOut') . ' 23:59:59';
 
             // Função auxiliar para garantir que o valor seja 0 se for null
             $getValor = function ($result) {
@@ -169,6 +171,7 @@ class Transacoes extends ResourceController
             $calculateGrowthRate = function ($current, $previous) {
                 if ($previous > 0) {
                     $growth = round((($current - $previous) / $previous) * 100, 2);
+
                     return ($growth > 0 ? '+' : '') . $growth . '%';
                 } else {
                     return ($current > 0 ? '+100%' : '0%');
@@ -176,59 +179,59 @@ class Transacoes extends ResourceController
             };
 
             // Obter valores do mês atual
-            $currentMonth = $getValor($this->modelTransacoes->dashMensal());
+            $currentMonth   = $getValor($this->modelTransacoes->dashMensal());
             $currentBoletos = $getValor($this->modelTransacoes->dashBoletos($dateIn, $dateOut));
-            $currentPix = $getValor($this->modelTransacoes->dashPix($dateIn, $dateOut));
+            $currentPix     = $getValor($this->modelTransacoes->dashPix($dateIn, $dateOut));
             $currentCredito = $getValor($this->modelTransacoes->dashCredito($dateIn, $dateOut));
-            $currentDebito = $getValor($this->modelTransacoes->dashDebito($dateIn, $dateOut));
-            $currentYear = $getValor($this->modelTransacoes->dashAnual());
-            $currentTotal = $getValor($this->modelTransacoes->dashTotal());
+            $currentDebito  = $getValor($this->modelTransacoes->dashDebito($dateIn, $dateOut));
+            $currentYear    = $getValor($this->modelTransacoes->dashAnual());
+            $currentTotal   = $getValor($this->modelTransacoes->dashTotal());
 
             // Obter valores do mês anterior
-            $previousMonth = $getValor($this->modelTransacoes->dashMensalAnterior());
+            $previousMonth   = $getValor($this->modelTransacoes->dashMensalAnterior());
             $previousBoletos = $getValor($this->modelTransacoes->dashBoletosAnterior());
-            $previousPix = $getValor($this->modelTransacoes->dashPixAnterior());
+            $previousPix     = $getValor($this->modelTransacoes->dashPixAnterior());
             $previousCredito = $getValor($this->modelTransacoes->dashCreditoAnterior());
-            $previousDebito = $getValor($this->modelTransacoes->dashDebitoAnterior());
-            $previousYear = $getValor($this->modelTransacoes->dashAnualAnterior());
-            $previousTotal = $getValor($this->modelTransacoes->dashTotal());
+            $previousDebito  = $getValor($this->modelTransacoes->dashDebitoAnterior());
+            $previousYear    = $getValor($this->modelTransacoes->dashAnualAnterior());
+            $previousTotal   = $getValor($this->modelTransacoes->dashTotal());
 
             // Calcular variações percentuais
-            $growthRateMonth = $calculateGrowthRate($currentMonth, $previousMonth);
+            $growthRateMonth   = $calculateGrowthRate($currentMonth, $previousMonth);
             $growthRateBoletos = $calculateGrowthRate($currentBoletos, $previousBoletos);
-            $growthRatePix = $calculateGrowthRate($currentPix, $previousPix);
+            $growthRatePix     = $calculateGrowthRate($currentPix, $previousPix);
             $growthRateCredito = $calculateGrowthRate($currentCredito, $previousCredito);
-            $growthRateDebito = $calculateGrowthRate($currentDebito, $previousDebito);
-            $growthRateYear = $calculateGrowthRate($currentYear, $previousYear);
-            $growthRateTotal = $calculateGrowthRate($currentTotal, $previousTotal);
+            $growthRateDebito  = $calculateGrowthRate($currentDebito, $previousDebito);
+            $growthRateYear    = $calculateGrowthRate($currentYear, $previousYear);
+            $growthRateTotal   = $calculateGrowthRate($currentTotal, $previousTotal);
 
             $data['mes'] = [
-                'valor' => decimalParaReaisBrasil($currentMonth),
-                'crescimento' => $growthRateMonth
+                'valor'       => decimalParaReaisBrasil($currentMonth),
+                'crescimento' => $growthRateMonth,
             ];
             $data['boletos'] = [
-                'valor' => decimalParaReaisBrasil($currentBoletos),
-                'crescimento' => $growthRateBoletos
+                'valor'       => decimalParaReaisBrasil($currentBoletos),
+                'crescimento' => $growthRateBoletos,
             ];
             $data['pix'] = [
-                'valor' => decimalParaReaisBrasil($currentPix),
-                'crescimento' => $growthRatePix
+                'valor'       => decimalParaReaisBrasil($currentPix),
+                'crescimento' => $growthRatePix,
             ];
             $data['credito'] = [
-                'valor' => decimalParaReaisBrasil($currentCredito),
-                'crescimento' => $growthRateCredito
+                'valor'       => decimalParaReaisBrasil($currentCredito),
+                'crescimento' => $growthRateCredito,
             ];
             $data['debito'] = [
-                'valor' => decimalParaReaisBrasil($currentDebito),
-                'crescimento' => $growthRateDebito
+                'valor'       => decimalParaReaisBrasil($currentDebito),
+                'crescimento' => $growthRateDebito,
             ];
             $data['totalAnual'] = [
-                'valor' => decimalParaReaisBrasil($currentYear),
-                'crescimento' => $growthRateYear
+                'valor'       => decimalParaReaisBrasil($currentYear),
+                'crescimento' => $growthRateYear,
             ];
             $data['totalGeral'] = [
-                'valor' => decimalParaReaisBrasil($currentTotal),
-                'crescimento' => $growthRateTotal
+                'valor'       => decimalParaReaisBrasil($currentTotal),
+                'crescimento' => $growthRateTotal,
             ];
             $data['totalUsers'] = $modelUser->countAllResults();
 
@@ -238,7 +241,9 @@ class Transacoes extends ResourceController
         }
     }
 
-    public function ultimosCadastros() {}
+    public function ultimosCadastros()
+    {
+    }
 
     public function ultimasTransacoes()
     {
@@ -251,22 +256,24 @@ class Transacoes extends ResourceController
             $input = $this->request->getPost();
             //GRAVA DADAOS DO REEMBOLSO
             $valor = intval(limparString($input['valor']));
-            $data = [
+            $data  = [
                 "id_admin"     => session('data')['idAdm'],
                 "id_user"      => session('data')['id'],
                 "valor"        => centavosParaReais($valor),
                 'id_transacao' => $input['id_transacao'],
-                'descricao'    => $input['desc']
+                'descricao'    => $input['desc'],
             ];
             $this->modelReembolso->transStart();
             $this->modelReembolso->insert($data);
 
             $reembolso = $this->cieloPix->refundPix($id, $valor);
             $this->modelReembolso->transComplete();
+
             //return $this->respond([$data, $valor]);
             return $this->respond($reembolso);
         } catch (\Exception $e) {
             $this->modelReembolso->transRollback();
+
             return $this->fail($e->getMessage());
         }
     }
@@ -277,6 +284,7 @@ class Transacoes extends ResourceController
     {
         // Parâmetros da requisição
         $data = $this->request->getVar('dateSearch');
+
         if (!$data || strpos($data, ' até ') === false) {
             return $this->respond(['status' => 'error', 'message' => 'Parâmetro de data inválido.'], 400);
         }
@@ -287,6 +295,7 @@ class Transacoes extends ResourceController
         function converterData($data)
         {
             $dateTime = DateTime::createFromFormat('d/m/Y', $data);
+
             return $dateTime ? $dateTime->format('Y-m-d') : null;
         }
 
@@ -329,13 +338,13 @@ class Transacoes extends ResourceController
                 // Executa a tarefa em primeiro plano
                 $job = new \App\Jobs\GenerateReportJob();
                 $job->handle([
-                    'data_inicio' => $dataInicio,
-                    'data_fim' => $dataFim,
+                    'data_inicio'    => $dataInicio,
+                    'data_fim'       => $dataFim,
                     'tipo_pagamento' => $tipoPagamento,
-                    'status' => $status,
-                    'id_admin' => session('data')['idAdm'],
-                    'id_user' => session('data')['id'],
-                    'whatsapp' => session('data')['celular']
+                    'status'         => $status,
+                    'id_admin'       => session('data')['idAdm'],
+                    'id_user'        => session('data')['id'],
+                    'whatsapp'       => session('data')['celular'],
                 ]);
 
                 log_message('info', 'Relatório gerado em primeiro plano com sucesso.');
@@ -345,15 +354,15 @@ class Transacoes extends ResourceController
                 // Adicionar a tarefa na fila Redis
                 $job = [
                     'handler' => 'App\Jobs\GenerateReportJob',
-                    'data' => [
-                        'data_inicio' => $dataInicio,
-                        'data_fim' => $dataFim,
+                    'data'    => [
+                        'data_inicio'    => $dataInicio,
+                        'data_fim'       => $dataFim,
                         'tipo_pagamento' => $tipoPagamento,
-                        'status' => $status,
-                        'id_admin' => session('data')['idAdm'],
-                        'id_user' => session('data')['id'],
-                        'whatsapp' => session('data')['celular']
-                    ]
+                        'status'         => $status,
+                        'id_admin'       => session('data')['idAdm'],
+                        'id_user'        => session('data')['id'],
+                        'whatsapp'       => session('data')['celular'],
+                    ],
                 ];
 
                 // Adiciona a tarefa na fila chamada "jobs_queue"
@@ -361,14 +370,17 @@ class Transacoes extends ResourceController
 
                 if ($status) {
                     log_message('info', 'Tarefa adicionada à fila Redis: ' . json_encode($job));
+
                     return $this->respond(['status' => 'success', 'message' => 'Relatório sendo gerado na fila.'], 202);
                 } else {
                     log_message('error', 'Falha ao adicionar a tarefa à fila Redis.');
+
                     return $this->respond(['status' => 'error', 'message' => 'Falha ao adicionar a tarefa na fila.'], 500);
                 }
             }
         } catch (\Exception $e) {
             log_message('error', 'Erro ao gerar o relatório: ' . $e->getMessage());
+
             return $this->respond(['status' => 'error', 'message' => 'Erro ao gerar o relatório.'], 500);
         }
     }
@@ -376,7 +388,8 @@ class Transacoes extends ResourceController
     public function listRelatorios()
     {
         $modelRelatorios = new RelatoriosGeradosModel();
-        $data = $modelRelatorios->listSearch($this->request->getGet());
+        $data            = $modelRelatorios->listSearch($this->request->getGet());
+
         return $this->respond($data);
     }
 }
