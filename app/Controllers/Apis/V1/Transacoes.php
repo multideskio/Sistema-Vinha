@@ -395,8 +395,8 @@ class Transacoes extends ResourceController
 
     public function transacoesUserIgrejaPastor()
     {
-        $data = $this->modelTransacoes->listSearchUsers($this->request->getGet(), 10);
+        $data = $this->modelTransacoes->listSearchIgrejaPastor($this->request->getGet(), 10);
 
-        //return $this->respond($data);
+        return $this->respond($data);
     }
 }

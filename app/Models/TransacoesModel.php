@@ -514,7 +514,7 @@ class TransacoesModel extends Model
         ];
     }
 
-    public function listSearchUsers($input = false, $limit = 10): array
+    public function listSearchIgrejaPastor($input = false, $limit = 10): array
     {
         helper('auxiliar');
 
@@ -603,11 +603,11 @@ class TransacoesModel extends Model
         }
 
         // Calcula a soma dos valores de todas as páginas da consulta atual
-        $allPagesTotalQuery = $this->where('transacoes.id_cliente', session('data')['id_perfil']);
+        $allPagesTotalQuery = $this->where('transacoes.id_user', session('data')['id']);
         $allPagesTotal      = $allPagesTotalQuery->selectSum('valor')->find();
 
         // Paginação dos resultados
-        $totalResults = $this->where('transacoes.id_cliente', session('data')['id_perfil'])->countAllResults();
+        $totalResults = $this->where('transacoes.id_user', session('data')['id'])->countAllResults();
         $currentPage  = $this->pager->getCurrentPage();
         $start        = ($currentPage - 1) * $limit + 1;
         $end          = min($currentPage * $limit, $totalResults);
@@ -634,7 +634,7 @@ class TransacoesModel extends Model
         ];
     }
 
-    public function listSearchUsers00($input = false, $limit = 10): array
+    public function listSearchUsers($input = false, $limit = 10): array
     {
         helper('auxiliar');
 
