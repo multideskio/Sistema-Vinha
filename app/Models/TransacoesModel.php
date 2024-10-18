@@ -518,6 +518,126 @@ class TransacoesModel extends Model
     {
         helper('auxiliar');
 
+        $data             = [];
+        $currentPageTotal = 0; // Soma dos valores da página atual
+
+        // Define o termo de busca, se houver
+        $search = $input['search'] ?? false;
+
+        $this->groupStart();
+        $this->select("transacoes.*")
+            ->select('usuarios.tipo AS tipo_user')
+            ->where('transacoes.id_user', session('data')['id'])
+            ->join('usuarios', 'usuarios.id = transacoes.id_user');
+
+        if (!empty($input['tipo']) && in_array(strtolower($input['tipo']), ['pix', 'boleto', 'crédito'])) {
+            $this->where('transacoes.tipo_pagamento', strtolower($input['tipo']));
+        }
+
+        if (!empty($input['status']) && in_array(strtolower($input['status']), ['cancelado', 'pedente', 'pago'])) {
+            $this->where('transacoes.status_text', strtolower($input['status']));
+        }
+
+        if (!empty($input['order']) && in_array(strtolower($input['order']), ['asc', 'desc'])) {
+            $this->orderBy('transacoes.id', strtoupper($input['order']));
+        } else {
+            $this->orderBy('transacoes.id', 'desc');
+        }
+
+        if ($search) {
+            $this->like('transacoes.descricao', $search)
+                ->orLike('transacoes.descricao_longa', $search)
+                ->orLike('transacoes.id', $search);
+        }
+
+        $this->groupEnd();
+
+        $transacoes = $this->paginate($limit);
+
+        $modelPastor = new PastoresModel();
+        $modelIgreja = new IgrejasModel();
+
+        foreach ($transacoes as $transacao) {
+
+            if ($transacao['tipo_user'] === 'pastor') {
+                $rowPastor = $modelPastor->find($transacao['id_cliente']);
+                $data[]    = [
+                    'id'           => $transacao['id'],
+                    'nome'         => $rowPastor['nome'] . ' ' . $rowPastor['sobrenome'],
+                    'tipo'         => 'Pastor',
+                    'uf'           => $rowPastor['uf'],
+                    'cidade'       => $rowPastor['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
+                    'descricao_lg' => $transacao['descricao_longa'],
+                ];
+
+                // Adiciona o valor da transação à soma da página atual
+                $currentPageTotal += $transacao['valor'];
+            }
+
+            if ($transacao['tipo_user'] === 'igreja') {
+                $rowPastor = $modelIgreja->find($transacao['id_cliente']);
+                $data[]    = [
+                    'id'           => (int)$transacao['id'],
+                    'nome'         => $rowPastor['razao_social'],
+                    'tipo'         => 'Igreja',
+                    'uf'           => $rowPastor['uf'],
+                    'cidade'       => $rowPastor['cidade'],
+                    'desc'         => $transacao['descricao'],
+                    'data_criado'  => formatDate($transacao['created_at']),
+                    'data_pag'     => formatDate($transacao['data_pagamento']),
+                    'valor'        => decimalParaReaisBrasil($transacao['valor']),
+                    'status'       => $transacao['status_text'],
+                    'forma_pg'     => $transacao['tipo_pagamento'],
+                    'descricao_lg' => $transacao['descricao_longa'],
+                ];
+
+                // Adiciona o valor da transação à soma da página atual
+                $currentPageTotal += $transacao['valor'];
+            }
+        }
+
+        // Calcula a soma dos valores de todas as páginas da consulta atual
+        $allPagesTotalQuery = $this->where('transacoes.id_cliente', session('data')['id_perfil']);
+        $allPagesTotal      = $allPagesTotalQuery->selectSum('valor')->find();
+
+        // Paginação dos resultados
+        $totalResults = $this->where('transacoes.id_cliente', session('data')['id_perfil'])->countAllResults();
+        $currentPage  = $this->pager->getCurrentPage();
+        $start        = ($currentPage - 1) * $limit + 1;
+        $end          = min($currentPage * $limit, $totalResults);
+
+        // Lógica para definir a mensagem de resultados
+        $resultCount = count($transacoes);
+
+        if ($search) {
+            if ($resultCount === 1) {
+                $numMessage = "1 resultado encontrado.";
+            } else {
+                $numMessage = "$resultCount resultados encontrados.";
+            }
+        } else {
+            $numMessage = "Exibindo resultados $start a $end de $totalResults.";
+        }
+
+        return [
+            'rows'             => $data,
+            'pager'            => $this->pager->links('default', 'paginate'),
+            'num'              => $numMessage,
+            'currentPageTotal' => decimalParaReaisBrasil($currentPageTotal),
+            'allPagesTotal'    => decimalParaReaisBrasil($allPagesTotal[0]['valor']),
+        ];
+    }
+
+    public function listSearchUsers00($input = false, $limit = 10): array
+    {
+        helper('auxiliar');
+
         //$page = $input['page'] ?? false;
 
         /*if ($page) {
@@ -541,9 +661,10 @@ class TransacoesModel extends Model
         // Define o termo de busca, se houver
         $search = $input['search'] ?? false;
 
+        $this->groupStart();
         $this->select("transacoes.*")
             ->select('usuarios.tipo AS tipo_user')
-            ->where('transacoes.id_user', session('data')['id'])
+            ->where('transacoes.id_user', session('data')['id_perfil'])
             ->join('usuarios', 'usuarios.id = transacoes.id_user');
 
         if (!empty($input['tipo']) && in_array(strtolower($input['tipo']), ['pix', 'boleto', 'crédito'])) {
@@ -561,12 +682,12 @@ class TransacoesModel extends Model
         }
 
         if ($search) {
-            $this->groupStart()
-                ->like('transacoes.descricao', $search)
+            $this->like('transacoes.descricao', $search)
                 ->orLike('transacoes.descricao_longa', $search)
-                ->orLike('transacoes.id', $search)
-                ->groupEnd();
+                ->orLike('transacoes.id', $search);
         }
+
+        $this->groupEnd();
 
         $transacoes = $this->paginate($limit);
 
