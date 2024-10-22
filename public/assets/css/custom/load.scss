@@ -1,0 +1,62 @@
+// Variáveis
+$primary-color: #4CAF50;
+$secondary-color: #ffffff;
+$button-hover-bg: darken($primary-color, 10%);
+$button-hover-color: $secondary-color;
+$button-padding: 0.5em 1em;
+$banner-padding: 1em;
+$progress-bar-color: #229fdd;
+$z-index-banner: 1000;
+$z-index-progress-bar: 2000;
+
+#pwa-install-banner {
+    display: none;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: $primary-color;
+    color: $secondary-color;
+    text-align: center;
+    padding: $banner-padding;
+    z-index: $z-index-banner;
+
+    button {
+        background-color: $secondary-color;
+        color: $primary-color;
+        border: none;
+        padding: $button-padding;
+        margin-left: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+
+        &:hover {
+            background-color: $button-hover-bg;
+            color: $button-hover-color;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 2px 2px rgba($primary-color, 0.5);
+        }
+    }
+}
+
+.pace {
+    pointer-events: none;
+    user-select: none;
+
+    &.pace-inactive {
+        display: none;
+    }
+
+    .pace-progress {
+        background: $progress-bar-color;
+        position: fixed;
+        top: 0;
+        right: 100%;
+        width: 100%;
+        height: 2px;
+        z-index: $z-index-progress-bar;
+        transition: right 0.4s ease-out;
+    }
+}
