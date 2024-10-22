@@ -102,9 +102,10 @@ class Cielo extends BaseController
         $desc  = esc($input['desc']);
         try {
             $response = $this->boletoGateway->boleto($valor, $tipo, $desc);
+
             return $this->respond($response);
         } catch (Exception $e) {
-            return $this->fail("Error: ".$e->getMessage());
+            return $this->fail("Error: " . $e->getMessage());
         }
     }
 
