@@ -4,10 +4,13 @@ namespace App\Controllers\Apis\V1;
 
 use App\Libraries\UploadsLibraries;
 use App\Libraries\WhatsappLibraries;
+use App\Models\AdminModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use Config\Services;
 use Exception;
+use RuntimeException;
 
 class Administracao extends ResourceController
 {
@@ -18,27 +21,29 @@ class Administracao extends ResourceController
      * @return ResponseInterface
      */
 
-    protected $modelAdmin;
+    protected AdminModel $modelAdmin;
+    protected $request;
 
     public function __construct()
     {
-        $this->modelAdmin = new \App\Models\AdminModel();
+        $this->modelAdmin = new AdminModel();
+        $this->request = Services::request();
     }
 
     public function index()
     {
         //
         $result = $this->modelAdmin->cacheData();
-
         return $this->respond($result);
     }
 
     /**
      * Return the properties of a resource object
      *
+     * @param null $id
      * @return ResponseInterface
      */
-    public function show($id = null)
+    public function show($id = null): ResponseInterface
     {
         //
         $data = $this->modelAdmin->searchCacheData($id);
@@ -51,7 +56,7 @@ class Administracao extends ResourceController
      *
      * @return ResponseInterface
      */
-    public function new()
+    public function new(): ResponseInterface
     {
         //
         return $this->failNotFound();
@@ -62,7 +67,7 @@ class Administracao extends ResourceController
      *
      * @return ResponseInterface
      */
-    public function create()
+    public function create(): ResponseInterface
     {
         //
         return $this->failNotFound();
@@ -71,9 +76,10 @@ class Administracao extends ResourceController
     /**
      * Return the editable properties of a resource object
      *
+     * @param null $id
      * @return ResponseInterface
      */
-    public function edit($id = null)
+    public function edit($id = null): ResponseInterface
     {
         //
         return $this->failNotFound();
@@ -82,12 +88,15 @@ class Administracao extends ResourceController
     /**
      * Add or update a model resource, from "posted" properties
      *
+     * @param null $id
      * @return ResponseInterface
      */
-    public function foto($id = null)
+    public function foto($id = null): ResponseInterface
     {
-        $request = service('request');
-        $file    = $request->getFile('foto'); // O nome do campo deve corresponder ao do frontend
+        $file = null;
+        if (!empty($this->request)) {
+            $file    = $this->request->getFile('foto');
+        } // O nome do campo deve corresponder ao do frontend
 
         if (!$file || !$file->isValid()) {
             return $this->fail('Nenhum arquivo foi enviado ou o arquivo é inválido.');
@@ -95,7 +104,7 @@ class Administracao extends ResourceController
 
         try {
             $uploadLibraries = new UploadsLibraries();
-            $path            = "admin_geral/{$id}/" . $file->getRandomName();
+            $path            = "admin_geral/$id/" . $file->getRandomName();
             $uploadPath      = $uploadLibraries->upload($file, $path);
 
             $data = [
@@ -107,12 +116,12 @@ class Administracao extends ResourceController
             }
 
             return $this->respond(['message' => 'Imagem enviada com sucesso!', 'file' => $uploadPath]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
 
-    public function links($id = null)
+    public function links($id = null): ResponseInterface
     {
         $input = $this->request->getRawInput();
 
@@ -128,17 +137,16 @@ class Administracao extends ResourceController
             return $this->fail($this->modelAdmin->errors());
         }
 
-        return $this->respondUpdated(['msg' => lang("Sucesso.alterado"), 'id' => $id]);
+        return $this->respondUpdated(['msg' => "Alteração realizada", 'id' => $id]);
     }
 
-    public function updateInfo($id = null)
+    public function updateInfo($id = null): ResponseInterface
     {
         try {
             if (!$id) {
-                throw new Exception('ID não informado');
+                throw new RuntimeException('ID não informado');
             }
-            $request = service('request');
-            $input   = $request->getRawInput();
+            $input   = $this->request->getRawInput();
             $data    = [
                 'cnpj'        => $input['cnpj'],
                 'empresa'     => $input['empresa'],
@@ -154,21 +162,20 @@ class Administracao extends ResourceController
             $this->modelAdmin->update($id, $data);
 
             return $this->respond(['msg' => 'Atualizado com sucesso!']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->fail(['error' => $e->getMessage()]);
         }
     }
 
-    public function updateSmtp($id = null)
+    public function updateSmtp($id = null): ResponseInterface
     {
         try {
 
             if (!$id) {
-                throw new Exception('ID não informado');
+                throw new RuntimeException('ID não informado');
             }
 
-            $request = service('request');
-            $input   = $request->getRawInput();
+            $input   = $this->request->getRawInput();
 
             $data = [
                 'email_remetente' => $input['emailRemetente'],
@@ -188,22 +195,21 @@ class Administracao extends ResourceController
             }
 
             return $this->respond(['msg' => $data]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return $this->fail(['error' => $e->getMessage()]);
         }
     }
 
-    public function updateWa($id = null)
+    public function updateWa($id = null): ResponseInterface
     {
         try {
 
             if (!$id) {
-                throw new Exception('ID não informado');
+                throw new RuntimeException('ID não informado');
             }
 
-            $request = service('request');
-            $input   = $request->getRawInput();
+            $input   = $this->request->getRawInput();
 
             $data = [
                 'url_api'      => $input['urlAPI'],
@@ -219,22 +225,21 @@ class Administracao extends ResourceController
             }
 
             return $this->respond(['msg' => $data]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return $this->fail(['error' => $e->getMessage()]);
         }
     }
 
-    public function updateS3($id = null)
+    public function updateS3($id = null): ResponseInterface
     {
         try {
 
             if (!$id) {
-                throw new Exception('ID não informado');
+                throw new RuntimeException('ID não informado');
             }
 
-            $request = service('request');
-            $input   = $request->getRawInput();
+            $input   = $this->request->getRawInput();
 
             $data = [
                 's3_access_key_id'     => $input['s3Id'],
@@ -252,27 +257,27 @@ class Administracao extends ResourceController
             }
 
             return $this->respond(['msg' => $data]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return $this->fail(['error' => $e->getMessage()]);
         }
     }
 
-    public function testeS3()
+    public function testeS3(): ResponseInterface
     {
         try {
             $uploadsLibraries = new UploadsLibraries();
             $result           = $uploadsLibraries->testConnection();
 
             return $this->respond($result);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             log_message('error', 'Erro ao testar a conexão com o S3: ' . $e->getMessage());
 
             return $this->fail('Erro ao testar a conexão com o S3: ' . $e->getMessage());
         }
     }
 
-    public function testWhatsApp()
+    public function testWhatsApp(): ResponseInterface
     {
         $whatsapp = new WhatsappLibraries();
 
@@ -281,27 +286,29 @@ class Administracao extends ResourceController
         $message['message'] = $input['message'];
         $number             = $input['numberSend'];
 
-        $send = $whatsapp->verifyNumber($message, $number, 'text');
+        $send = $whatsapp->verifyNumber($message, $number);
 
         if ($send) {
             return $this->respond(['msg' => 'Executado com sucesso. Verifique se recebeu a mensagem.']);
-        } else {
-            return $this->fail('Houve um erro na requisição. Tente novamente caso o erro persista, verifique com suporte se a instância está conectada.');
         }
 
-        return $this->respond($input);
+        return $this->fail('Houve um erro na requisição. Tente novamente caso o erro persista, verifique com suporte se a instância está conectada.');
+
+        //return $this->respond($input);
     }
 
     public function update($id = null)
     {
+        return $this->failNotFound();
     }
 
     /**
      * Delete the designated resource object from the model
      *
+     * @param null $id
      * @return ResponseInterface
      */
-    public function delete($id = null)
+    public function delete($id = null): ResponseInterface
     {
         //
         return $this->failNotFound();

@@ -76,18 +76,23 @@ class AdminModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = ["updateCache"];
 
-    protected function filterHtml(array $data)
+    public function cacheData(): array
+    {
+        return [];
+    }
+
+    protected function filterHtml(array $data): array|string
     {
         return esc($data);
     }
 
-    protected function updateCache()
+
+    protected function updateCache(): void
     {
-        $cache = service('cache');
-        $cache->delete('searchCacheDataConfig');
+        service('cache')->delete('searchCacheDataConfig');
     }
 
-    protected function limpaStrings(array $data)
+    protected function limpaStrings(array $data): array
     {
         helper('auxiliar');
 
@@ -110,7 +115,7 @@ class AdminModel extends Model
         return $data;
     }
 
-    public function searchCacheData($id = 1)
+    public function searchCacheData($id = 1): float|object|int|bool|array|string|null
     {
         $data = false ;
         helper('auxiliar');
