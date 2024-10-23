@@ -14,7 +14,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="row">
-            <div class="col-md-3 col-xl-3">
+            <div class="col-md-6 col-xl-3">
                 <!-- card -->
                 <div class="card card-animate card-height-100">
                     <div class="card-body">
@@ -25,14 +25,14 @@
                             </div>
                             <div class="flex-shrink-0">
                                 <h5 class="text-success fs-14 mb-0" id="mesGrowth">
-                                    <i class="ri-arrow-right-up-line fs-13 align-middle"></i> +0 %
+                                    <!-- <i class="ri-arrow-right-up-line fs-13 align-middle"></i> +0 % -->
                                 </h5>
                             </div>
                         </div>
                         <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                    R$ <span id="mesDash" class="counter-value">0,00</span>
+                                <h4 class="fs-1 fw-semibold ff-secondary mb-4">
+                                    <span id="mesDash" class="counter-value">R$ 0,00</span>
                                 </h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0">
@@ -44,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-xl-3">
+            <div class="col-md-6 col-xl-3">
                 <!-- card -->
                 <div class="card card-animate card-height-100">
                     <div class="card-body">
@@ -54,14 +54,14 @@
                             </div>
                             <div class="flex-shrink-0">
                                 <h5 class="text-success fs-14 mb-0" id="pixGrowth">
-                                    <i class="ri-arrow-right-up-line fs-13 align-middle"></i> 0%
+                                    <!-- <i class="ri-arrow-right-up-line fs-13 align-middle"></i> 0% -->
                                 </h5>
                             </div>
                         </div>
                         <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                    R$ <span class="counter-value" id="dashPix">0,00</span>
+                                <h4 class="fs-1 fw-semibold ff-secondary mb-4">
+                                    <span class="counter-value" id="dashPix">R$ 0,00</span>
                                 </h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-xl-3">
+            <div class="col-md-6 col-xl-3">
                 <!-- card -->
                 <div class="card card-animate card-height-100">
                     <div class="card-body">
@@ -83,14 +83,14 @@
                             </div>
                             <div class="flex-shrink-0">
                                 <h5 class="fs-14 mb-0" id="creditoGrowth">
-                                    +0.00 %
+                                    <!-- +0.00 % -->
                                 </h5>
                             </div>
                         </div>
                         <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                    R$ <span class="counter-value" id="dashCredito">0,00</span>
+                                <h4 class="fs-1 fw-semibold ff-secondary mb-4">
+                                    <span class="counter-value" id="dashCredito">R$ 0,00</span>
                                 </h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0">
@@ -102,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-xl-3">
+            <div class="col-md-6 col-xl-3">
                 <div class="card card-animate">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -110,15 +110,15 @@
                                 <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Boletos</p>
                             </div>
                             <div class="flex-shrink-0">
-                                <h5 class="fs-14 mb-0" id="anualGrowth">
-                                    <i class="ri-arrow-right-up-line fs-13 align-middle"></i> 0 %
+                                <h5 class="fs-1 mb-0" id="anualGrowth">
+                                    <!-- <i class="ri-arrow-right-up-line fs-13 align-middle"></i> 0 % -->
                                 </h5>
                             </div>
                         </div>
                         <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                    R$ <span class="counter-value" id="dashBoletos">0,00</span>
+                                <h4 class="fs-1 fw-semibold ff-secondary mb-4">
+                                    <span class="counter-value" id="dashBoletos">R$ 0,00</span>
                                 </h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0">
@@ -158,6 +158,26 @@
 <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
 
 <script>
+function formatCurrency(value) {
+    return value.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function statusDashboard() {
+    $.getJSON(`${_baseUrl}/igreja/api/v1/dashboard`, null, function(data, textStatus, jqXHR) {
+        // Formata e insere os valores no HTML
+        $("#dashBoletos").text(formatCurrency(data.boleto));
+        $("#dashPix").text(formatCurrency(data.pix));
+        $("#dashCredito").text(formatCurrency(data.credito));
+        $("#mesDash").text(formatCurrency(data.total));
+    });
+}
+
+
+statusDashboard()
+
 function appChart() {
     // Faz a requisição para a API
     $.getJSON(`${_baseUrl}/igreja/api/v1/grafico`, null, function(data, textStatus, jqXHR) {

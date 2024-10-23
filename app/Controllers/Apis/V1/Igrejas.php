@@ -410,4 +410,40 @@ class Igrejas extends ResourceController
         // Retorna a resposta com os dados em formato JSON
         return $this->respond($data);
     }
+
+    public function dashboardGeral()
+    {
+        $data = [
+            'boleto'  => 0,
+            'pix'     => 0,
+            'credito' => 0,
+            'total'   => 0,// Chave para o total
+        ];
+
+        // Busca todas as transações do usuário atual
+        $builder = $this->modelTransacoes->where('status', 1)
+                                        ->like('created_at', date('Y-m'))
+                                        ->where('id_user', session('data')['id'])
+                                        ->findAll();
+
+        foreach ($builder as $item) {
+            // Verifica o tipo de pagamento e soma os valores corretamente
+            if ($item['tipo_pagamento'] === 'Boleto') {
+                $data['boleto'] += $item['valor']; // Soma o valor de boletos
+            }
+
+            if ($item['tipo_pagamento'] === 'Pix') {
+                $data['pix'] += $item['valor']; // Soma o valor de Pix
+            }
+
+            if ($item['tipo_pagamento'] === 'Crédito') {
+                $data['credito'] += $item['valor']; // Soma o valor de Crédito
+            }
+
+            // Soma o valor de todas as transações para o total geral
+            $data['total'] += $item['valor'];
+        }
+
+        return $this->respond($data);
+    }
 }

@@ -172,27 +172,19 @@ $routes->group('supervisao', ['filter' => 'supervisor'], static function ($route
 
 // Acesso mais baixo de quem dizima
 $routes->group('igreja', ['filter' => 'igreja'], static function ($routes) {
-
     $routes->get('', 'Igreja::index');
-
     $routes->get('pagamentos', 'Igreja::pagamentos');
-
     $routes->get('pix', 'Igreja::pix');
-
     $routes->get('boleto', 'Igreja::boleto');
-
     $routes->get('credito', 'Igreja::credito');
-
     $routes->get('debito', 'Igreja::debito');
-
     $routes->get('transacoes', 'Igreja::transacoes');
-
     $routes->get('perfil', 'Igreja::perfis');
-
     /**API PARA IGREJAS E PASTORES*/
     $routes->group('api/v1', ['namespace' => '\App\Controllers\Apis\V1', 'filter' => 'cors:api'], static function ($routes) {
         $routes->get('transacoes', 'Igrejas::relatorioFinanceiro');
         $routes->get('grafico', 'Igrejas::graficoDashboard');
+        $routes->get('dashboard', 'Igrejas::dashboardGeral');
     });
 
     $routes->get('(:any)', 'Igreja::index');
